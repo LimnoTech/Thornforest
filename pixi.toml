@@ -32,9 +32,10 @@ s3fs = "*"
 dataretrieval = "*"
 
 # HyRiver packages for data fetching
-hydrosignatures = "*"
-pygeoogc = "*"
-pynhd = "*"
+hydrosignatures = ">=0.19"
+pygeohydro = ">=0.19"
+pygeoogc = ">=0.19"
+pynhd = ">=0.19"
 
 # Visualization
 hvplot = "*"

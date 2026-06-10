@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pixi run jupytext --sync *)",
+      "Bash(pixi run jupytext --to *)"
+    ]
+  }
+}
