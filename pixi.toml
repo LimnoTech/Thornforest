@@ -1,0 +1,50 @@
+[workspace]
+authors = ["Anthony Aufdenkampe <aaufdenkampe@limno.com>"]
+channels = ["conda-forge"]
+name = "Thornforest"
+platforms = ["osx-arm64", "win-64", "linux-64"]
+version = "0.1.0"
+
+[dependencies]
+python = "3.13.*"
+
+# Data processing
+geopandas = "*"
+
+pyarrow = "*"
+rioxarray = "*"
+xarray = "*"
+xvec = "*"
+zarr = ">=3"
+
+cfunits = "*"
+
+# Other Geospatial
+gdal = "*"
+libgdal-arrow-parquet = "*"
+
+# Remote Access
+fsspec = "*"
+universal_pathlib = "*"
+s3fs = "*"
+
+# USGS packages for data fetching
+dataretrieval = "*"
+
+# HyRiver packages for data fetching
+hydrosignatures = "*"
+pygeoogc = "*"
+pynhd = "*"
+
+# Visualization
+hvplot = "*"
+geoviews = "*"
+contextily = "*"
+
+# Interactivity via Jupyter Notebooks
+jupyter_bokeh = "*"
+jupyterlab = "*"
+jupytext = "*"
+
+[pypi-dependencies]
+# Put pip-only requirements here if needed
