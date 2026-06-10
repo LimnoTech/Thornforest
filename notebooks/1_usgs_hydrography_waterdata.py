@@ -27,8 +27,10 @@
 #
 # **In this first part we will:**
 #
-# 1. Look up the **boundaries** of our three watersheds of interest, and
-# 2. Draw them on an **interactive map**.
+# 1. Look up the **boundaries** of our three watersheds of interest,
+# 2. Draw them on an **interactive map**,
+# 3. **Discover the monitoring stations** within them, and
+# 4. See **which data types** (daily, continuous, field measurements, samples) each offers.
 #
 # > **New to Python notebooks?** A Jupyter notebook is a list of *cells*. A cell holds
 # > either explanatory text (like this one) or Python code. Run a code cell by selecting
@@ -42,13 +44,17 @@
 #
 # - **`pygeohydro`** — part of the [HyRiver](https://docs.hyriver.io/) suite; its `WBD`
 #   tool downloads boundaries from the USGS **W**atershed **B**oundary **D**ataset.
-# - **`geopandas`** — works with *geographic* tables, where each row has a shape
-#   (a "geometry") in addition to ordinary columns. We only import it indirectly here.
+# - **`dataretrieval`** — the USGS package for the new **Water Data** API; its `waterdata`
+#   module lists and downloads monitoring-station data.
+# - **`geopandas`** — works with *geographic* tables, where each row has a shape (a
+#   "geometry"); we use it to keep only the stations that fall inside our watersheds.
 # - **`geoviews`** — makes interactive maps you can pan, zoom, and hover over.
 
 # %%
 from pygeohydro import WBD
+from dataretrieval import waterdata
 
+import geopandas as gpd
 import geoviews as gv
 import geoviews.tile_sources as gvts
 
@@ -159,10 +165,185 @@ watersheds_map = watersheds_map.opts(
 watersheds_map
 
 # %% [markdown]
+# ## Step 5 — Discover monitoring stations
+#
+# With the study area defined, we can ask **what monitoring data exists** there. We use the
+# new USGS **Water Data** API (the modern replacement for the legacy NWIS) through the
+# `dataretrieval.waterdata` module. Its `get_monitoring_locations()` function lists stations
+# — stream gauges, wells, water-quality sites, and more.
+#
+# The API filters by a rectangular **bounding box**, so we do this in two steps:
+#
+# 1. ask for every station in the box around our watersheds, then
+# 2. keep only those that fall **inside** the actual (irregular) watershed boundaries, using
+#    a *spatial join* (`geopandas.sjoin`).
+#
+# (No API key is required; one only raises rate limits — see the README.)
+
+# %%
+# 1. Fetch all monitoring locations in the bounding box of our watersheds.
+#    total_bounds gives [min_lon, min_lat, max_lon, max_lat].
+bbox = list(watersheds_gdf.total_bounds)
+stations_gdf, _metadata = waterdata.get_monitoring_locations(bbox=bbox)
+stations_gdf = stations_gdf.set_crs(4326)  # the API returns longitude/latitude
+
+# 2. Keep only the stations that fall within the three watershed polygons.
+stations_in_area = gpd.sjoin(
+    stations_gdf,
+    watersheds_gdf[["huc8", "name", "geometry"]],
+    predicate="within",
+    how="inner",
+)
+
+print(
+    f"{len(stations_gdf)} stations in the bounding box; "
+    f"{len(stations_in_area)} fall within the watersheds."
+)
+
+# %% [markdown]
+# ### What kinds of stations are there?
+#
+# Each station has a **`site_type`** (Stream, Well, Estuary, …). Here is the mix within our
+# watersheds, and how the stations split across the three subbasins (the `name` column comes
+# from the watershed we joined them to).
+
+# %%
+print("By site type:")
+print(stations_in_area["site_type"].value_counts().to_string())
+print("\nBy watershed:")
+print(stations_in_area["name"].value_counts().to_string())
+
+stations_in_area[
+    ["monitoring_location_id", "monitoring_location_name", "site_type", "name"]
+].head(10)
+
+# %% [markdown]
+# ## Step 6 — Which data endpoints does each station offer?
+#
+# The Water Data API serves several **kinds** of records. The four we care about — each with
+# its own download function for later notebooks — are:
+#
+# | Data type | Endpoint | What it is |
+# |-----------|----------|------------|
+# | **Daily** | `get_daily()` | daily summary values (min / mean / max) |
+# | **Continuous** | `get_continuous()` | high-frequency instantaneous readings |
+# | **Field measurements** | `get_field_measurements()` | manual field readings (e.g. discharge measurements) |
+# | **Samples** | `get_samples()` | discrete water-quality sample results |
+#
+# Before fetching any actual data, it helps to know **which stations have which types**. We
+# read that from the matching *metadata* services:
+#
+# - **Daily** and **Continuous** both come from `get_time_series_metadata()`; its
+#   `computation_period_identifier` column tells them apart (`"Daily"` vs `"Points"`).
+# - **Field measurements** come from `get_field_measurements_metadata()`.
+# - **Samples** are checked per station with `get_samples_summary()` — one quick request each.
+#   (This is the slowest cell, because it loops over every station; the area-wide samples
+#   service times out, so a per-station check is the reliable way.)
+
+# %%
+# Daily & continuous availability — one bounding-box query, split by computation period.
+ts_meta, _ = waterdata.get_time_series_metadata(bbox=bbox, skip_geometry=True)
+daily_ids = set(
+    ts_meta.loc[ts_meta["computation_period_identifier"] == "Daily", "monitoring_location_id"]
+)
+continuous_ids = set(
+    ts_meta.loc[ts_meta["computation_period_identifier"] == "Points", "monitoring_location_id"]
+)
+
+# Field-measurement availability — one bounding-box query.
+fm_meta, _ = waterdata.get_field_measurements_metadata(bbox=bbox, skip_geometry=True)
+field_ids = set(fm_meta["monitoring_location_id"])
+
+# Samples availability — one summary request per station (non-empty summary = has samples).
+samples_ids = set()
+station_ids = stations_in_area["monitoring_location_id"].tolist()
+for i, station_id in enumerate(station_ids, start=1):
+    try:
+        summary, _ = waterdata.get_samples_summary(monitoringLocationIdentifier=station_id)
+        if len(summary) > 0:
+            samples_ids.add(station_id)
+    except Exception:
+        pass  # treat a failed lookup as "no samples"
+    if i % 50 == 0:
+        print(f"  checked samples for {i}/{len(station_ids)} stations…")
+print(f"Done: checked samples for {len(station_ids)} stations.")
+
+# %% [markdown]
+# ### Flag each station with the data types it offers
+#
+# We add four True/False columns to the stations table — one per data type — by testing
+# whether each station's ID appears in the sets we just built.
+
+# %%
+station_id_col = stations_in_area["monitoring_location_id"]
+stations_in_area["daily"] = station_id_col.isin(daily_ids)
+stations_in_area["continuous"] = station_id_col.isin(continuous_ids)
+stations_in_area["field_measurements"] = station_id_col.isin(field_ids)
+stations_in_area["samples"] = station_id_col.isin(samples_ids)
+
+DATA_TYPES = ["daily", "continuous", "field_measurements", "samples"]
+print(f"Stations offering each data type (of {len(stations_in_area)} total):")
+print(stations_in_area[DATA_TYPES].sum().to_string())
+
+stations_in_area[
+    ["monitoring_location_id", "monitoring_location_name", *DATA_TYPES]
+].head(10)
+
+# %% [markdown]
+# ## Step 7 — Map stations by available data type
+#
+# Finally, map the stations as **one colored layer per data type**, over the watershed
+# outlines. A station that offers more than one type appears in more than one layer.
+#
+# > **Interactive selector:** the four data types appear in the **legend** on the right —
+# > **click a legend entry to hide or show** that type, toggling each on and off individually.
+
+# %%
+DATA_TYPE_COLORS = {
+    "daily": "#1b9e77",            # teal-green
+    "continuous": "#d95f02",       # orange
+    "field_measurements": "#7570b3",  # purple
+    "samples": "#e7298a",          # magenta
+}
+
+
+def make_legend_clickable(plot, element):
+    """Bokeh hook: clicking a legend entry hides/shows that data-type layer."""
+    plot.state.legend.click_policy = "hide"
+
+
+# Watershed outlines (no fill) for context.
+watershed_outlines = gv.Path(watersheds_gdf).opts(color="black", line_width=1.5)
+
+# Start from the basemap + outlines, then add one point layer per data type.
+stations_map = gvts.EsriWorldTopo * watershed_outlines
+for data_type, color in DATA_TYPE_COLORS.items():
+    subset = stations_in_area[stations_in_area[data_type]]
+    if len(subset) == 0:
+        continue  # nothing to draw for this type
+    points = gv.Points(
+        subset,
+        vdims=["monitoring_location_name", "monitoring_location_id", "site_type"],
+        label=data_type,
+    ).opts(color=color, size=7, line_color="white", tools=["hover"])
+    stations_map = stations_map * points
+
+stations_map = stations_map.opts(
+    frame_width=850,
+    data_aspect=1,
+    title="Monitoring stations by available data type (click legend to toggle)",
+    legend_position="right",
+    active_tools=["wheel_zoom"],
+    hooks=[make_legend_clickable],
+)
+stations_map
+
+# %% [markdown]
 # ## What's next
 #
-# We now have the three watershed boundaries loaded and mapped. In the next parts of this
-# notebook we will:
+# We now have the three watershed boundaries mapped and the monitoring stations within them
+# discovered. In the next notebooks we will:
 #
-# - **save** the boundaries to `data/spatial/` so the other notebooks can reuse them, then
-# - **discover monitoring stations** using the new USGS `dataretrieval.waterdata` tools.
+# - **save** the boundaries and the station inventory to `data/` for reuse, then
+# - **fetch the actual records** (streamflow, water quality, precipitation) for these
+#   stations using the `dataretrieval.waterdata` data endpoints.
