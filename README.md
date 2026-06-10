@@ -47,11 +47,18 @@ The work is organized as a series of Jupyter notebooks following a **hybrid** st
 
 - **Fetch notebooks (one per source)** — discover what data exists within the three HUC-8 watersheds,
   fetch the 2000–2025 record, and save it to `data/`. The first notebook, `1_usgs_hydrography_waterdata`,
-  also establishes the spatial foundation: HUC-8 watershed boundaries and the stream network (via HyRiver
-  `pynhd`), then begins data discovery with the new USGS `dataretrieval.waterdata` module.
+  establishes the spatial foundation (HUC-8 watershed boundaries via HyRiver `pygeohydro`), discovers the
+  USGS monitoring stations within them (`dataretrieval.waterdata`), and flags which data types — **daily,
+  continuous, field measurements, and water-quality samples** — each station offers.
 - **Display / analyze notebooks (shared)** — read the saved data and work across sources by data type or
   watershed (maps, trend analyses, pre/post-restoration comparisons). A structured deliverable (Excel or
   the format American Forests prefers) is exported from the harmonized data at the end.
+
+> **Binational coverage caveat.** The watersheds straddle the Rio Grande, but the US federal
+> hydrography datasets (USGS NHD / NHDPlus and the WaterData monitoring network) are **US-only** and
+> stop at the international border. Capturing the Mexican side of the basin (stream network and
+> stations) will require Mexico-capable sources (e.g. HydroRIVERS, INEGI, or the IBWC), which is why
+> the stream network is not yet included in Notebook 1.
 
 The notebooks will be published as a static, **fully interactive** website (HoloViews/GeoViews visuals)
 on **GitHub Pages**, built with **[Quarto](https://quarto.org)**.
