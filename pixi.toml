@@ -45,6 +45,7 @@ contextily = "*"
 jupyter_bokeh = "*"
 jupyterlab = "*"
 jupytext = "*"
+python-dotenv = ">=1.2.2,<2"
 
 [pypi-dependencies]
 # Put pip-only requirements here if needed
