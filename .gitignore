@@ -220,3 +220,6 @@ __marimo__/
 
 # Project-specific
 *cache/
+
+# Scratch data downloads (sandbox / raw source archives)
+/data_temp/

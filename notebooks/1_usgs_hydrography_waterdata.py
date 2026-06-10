@@ -111,10 +111,10 @@ watersheds_gdf[["huc8", "name", "areasqkm", "states"]]
 # %% [markdown]
 # ## Step 4 — Map the watersheds
 #
-# Now we draw the three boundaries on a real-world basemap. We build the map in layers:
+# Now we draw the boundaries on a real-world basemap. We build the map in layers:
 #
-# 1. **`gvts.OpenTopoMap`** — a topographic background (terrain shading, contours, roads,
-#    and place names) for geographic context.
+# 1. **`gvts.EsriWorldTopo`** — Esri's World Topographic Map (terrain shading, roads, and
+#    place names) for geographic context.
 # 2. One **`gv.Polygons`** layer per watershed, each in its own color, so we get a legend.
 #
 # The `*` symbol **stacks layers** on top of each other into a single combined map.
@@ -140,29 +140,14 @@ for code, name in HUC8_WATERSHEDS.items():
     )
     watershed_layers.append(layer)
 
-# By default the basemap picks a fairly low zoom level for this wide area and then
-# stretches those tiles to fit, which makes the place-name labels look oversized and soft.
-# The small helper below forces the basemap to fetch a *higher* (more detailed) zoom level,
-# so labels render smaller and sharper. Increase BASEMAP_MIN_ZOOM for smaller labels,
-# decrease it for larger ones.
-BASEMAP_MIN_ZOOM = 9
-
-def sharpen_basemap(plot, element):
-    """Make the basemap load higher-zoom (more detailed) tiles for crisper labels."""
-    for renderer in plot.state.renderers:
-        tile_source = getattr(renderer, "tile_source", None)
-        if tile_source is not None:
-            tile_source.min_zoom = BASEMAP_MIN_ZOOM
-
 # Stack the basemap and all watershed layers into one map.
-watersheds_map = gvts.OpenTopoMap.opts(hooks=[sharpen_basemap])
+watersheds_map = gvts.EsriWorldTopo
 for layer in watershed_layers:
     watersheds_map = watersheds_map * layer
 
 # Final styling. We set the map *width* and lock `data_aspect=1` so that the height is
 # computed automatically to match the watersheds' true geographic proportions. This keeps
-# map pixels square — otherwise the basemap tiles get stretched and look blurry, with
-# oversized labels.
+# map pixels square — otherwise the basemap tiles get stretched and look blurry.
 watersheds_map = watersheds_map.opts(
     frame_width=850,
     data_aspect=1,
@@ -179,6 +164,5 @@ watersheds_map
 # We now have the three watershed boundaries loaded and mapped. In the next parts of this
 # notebook we will:
 #
-# - add the **stream network** inside these watersheds, and
 # - **save** the boundaries to `data/spatial/` so the other notebooks can reuse them, then
 # - **discover monitoring stations** using the new USGS `dataretrieval.waterdata` tools.

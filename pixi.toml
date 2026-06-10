@@ -10,14 +10,12 @@ python = "3.13.*"
 
 # Data processing
 geopandas = "*"
-
 pyarrow = "*"
+python-libarchive-c = ">=5.3,<6"
 rioxarray = "*"
 xarray = "*"
 xvec = "*"
 zarr = ">=3"
-
-cfunits = "*"
 
 # Other Geospatial
 gdal = "*"
@@ -25,8 +23,9 @@ libgdal-arrow-parquet = "*"
 
 # Remote Access
 fsspec = "*"
-universal_pathlib = "*"
+python-dotenv = ">=1.2.2,<2"
 s3fs = "*"
+universal_pathlib = "*"
 
 # USGS packages for data fetching
 dataretrieval = "*"
@@ -40,13 +39,11 @@ pynhd = ">=0.19"
 # Visualization
 hvplot = "*"
 geoviews = "*"
-contextily = "*"
 
 # Interactivity via Jupyter Notebooks
 jupyter_bokeh = "*"
 jupyterlab = "*"
 jupytext = "*"
-python-dotenv = ">=1.2.2,<2"
 
 [pypi-dependencies]
 # Put pip-only requirements here if needed
