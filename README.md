@@ -60,8 +60,11 @@ The work is organized as a series of Jupyter notebooks following a **hybrid** st
 > stations) will require Mexico-capable sources (e.g. HydroRIVERS, INEGI, or the IBWC), which is why
 > the stream network is not yet included in Notebook 1.
 
-The notebooks will be published as a static, **fully interactive** website (HoloViews/GeoViews visuals)
-on **GitHub Pages**, built with **[Quarto](https://quarto.org)**.
+The notebooks render as a static, **fully interactive** website (HoloViews/GeoViews visuals) built
+with **[Quarto](https://quarto.org)** — `pixi run render` builds `_site/`, `pixi run preview` serves a
+live-reload preview. Quarto executes the notebooks (baking the interactive Bokeh maps into the HTML)
+and freezes the results to `_freeze/` (committed). Publishing to GitHub Pages is planned but not yet
+enabled (the repo is private, pending publish permission).
 
 Saved results live in `data/`, each written as **GeoParquet** (compact, typed — what the notebooks
 read) **and** a **CSV** copy (human-readable, geometry as WKT) for transparency: HyRiver geometries

@@ -1,0 +1,51 @@
+project:
+  type: website
+  output-dir: _site
+  # Execute each notebook in its OWN directory (notebooks/) so any relative reads resolve;
+  # the notebooks also self-locate the repo root, so absolute paths (data/, cache/, .env) work.
+  execute-dir: file
+  # Render the landing page and the numbered notebooks (Quarto resolves each paired
+  # .py/.ipynb notebook via its .py source) — but NOT the scratch sandbox/ notebooks.
+  render:
+    - index.qmd
+    - notebooks/*.py
+
+website:
+  title: "Thornforest Hydrology"
+  description: >-
+    Hydrological & water-quality data for three South Texas HUC-8 watersheds —
+    watershed boundaries, USGS monitoring stations, and the data they offer.
+  site-url: "https://limnotech.github.io/Thornforest/"
+  repo-url: "https://github.com/LimnoTech/Thornforest"
+  page-navigation: true
+  back-to-top-navigation: true
+  navbar:
+    background: primary
+    search: true
+    left:
+      - href: index.qmd
+        text: Home
+      - href: notebooks/1_usgs_hydrography_waterdata.html
+        text: "1 · Hydrography & stations"
+    right:
+      - icon: github
+        href: https://github.com/LimnoTech/Thornforest
+        aria-label: GitHub repository
+  page-footer:
+    center: "LimnoTech · American Forests Thornforest project · Built with Quarto"
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+    code-fold: true
+    code-tools: false
+    code-summary: "Show code"
+
+# Quarto EXECUTES the notebooks (that is what preserves the interactive HoloViews/GeoViews
+# Bokeh embeds), but freezes the results: execute locally, commit _freeze/, and CI renders
+# from the cache without re-executing. (On a freeze miss, CI re-executes — see the workflow.)
+execute:
+  enabled: true
+  freeze: auto

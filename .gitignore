@@ -223,3 +223,8 @@ __marimo__/
 
 # Scratch data downloads (sandbox / raw source archives)
 /data_temp/
+
+# Quarto website (rendered output + scratch). NOTE: _freeze/ IS committed — it is the CI render cache.
+/_site/
+/.quarto/
+**/*.quarto_ipynb

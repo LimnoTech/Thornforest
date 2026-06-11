@@ -10,11 +10,10 @@ streamflow, and water-quality data for three South Texas HUC-8 watersheds, then 
 measurable changes in water quantity/quality correlate with the timing and location of restoration
 activity. See [README.md](README.md) for the full scope.
 
-**Publication goal:** the notebooks will be released with **interactive HoloViews/GeoViews visuals**
-as a static **GitHub Pages (`*.github.io`) website built with Quarto** — the same toolchain and
-patterns as the sibling **`soil-health-hydraulics`** repo (Quarto executes/freezes the notebooks to
-preserve the interactive Bokeh embeds in static HTML). That repo is the reference for the eventual
-`_quarto.yml` / freeze / deploy setup.
+**Publication goal:** the notebooks are published with **interactive HoloViews/GeoViews visuals**
+as a static **website built with Quarto** — the same toolchain and patterns as the sibling
+**`soil-health-hydraulics`** repo. The local render is set up (see **Website (Quarto)** below);
+deploying to `*.github.io` is deferred until the (private) repo gets publish permission.
 
 **Current status.** Notebook 1 (`notebooks/1_usgs_hydrography_waterdata`) is built: it fetches the
 three HUC-8 boundaries, maps them, discovers the USGS monitoring stations within them, flags which of
@@ -167,6 +166,29 @@ The pinned deps map to the project's needs:
 - **Visualization & notebooks:** `hvplot`, `geoviews`, `contextily`, JupyterLab, `jupyter_bokeh`,
   and `jupytext` — interactive maps/plots authored in notebooks.
 
+## Website (Quarto) — local render; publishing deferred
+
+The notebooks publish as a static, interactive website built with **Quarto**, modeled on the
+sibling `soil-health-hydraulics` repo.
+
+- **Config:** [`_quarto.yml`](_quarto.yml) (website; `cosmo` theme; `code-fold`; `execute-dir: file`;
+  `execute: { enabled: true, freeze: auto }`) + [`index.qmd`](index.qmd) landing page.
+- **Build:** `pixi run render` → `_site/` (executes notebooks, refreshes `_freeze/`);
+  `pixi run preview` for a live-reload server.
+- **Freeze:** Quarto **executes** the notebooks — that is what bakes the interactive
+  HoloViews/GeoViews **Bokeh embeds** (`holoviews_exec`) into the static HTML — then freezes the
+  results to **`_freeze/` (committed)**. **Re-render and commit `_freeze/` after editing a notebook.**
+- **What renders:** the `render:` list is `index.qmd` + `notebooks/*.py`, so the **`sandbox/` is
+  excluded**. Quarto resolves each paired notebook via its **`.py`** (not the `.ipynb`), so the render
+  list targets `.py`; **navbar `href`s point at the output `.html`**. The `notebooks/*.py` glob is safe
+  even though `notebooks/_helpers.py` matches it — Quarto ignores underscore-prefixed files.
+- **Git:** `_site/`, `.quarto/`, `cache/` are ignored; **`_freeze/` is committed** (the render cache).
+
+**Publishing is deferred** (private repo; needs permission to publish to `*.github.io`). To enable
+later: add `.github/workflows/publish.yml` (same as soil-health), add **`API_USGS_PAT`** as a repo
+**secret** (so a freeze-miss CI re-execution stays authenticated — NB1 hits the USGS APIs), and set
+**Settings → Pages → Source → GitHub Actions**.
+
 ## Notebook & GeoViews gotchas (learned)
 
 - **Tile maps:** set `frame_width=…` + `data_aspect=1` (do *not* fix both width and height) so basemap
@@ -182,6 +204,15 @@ The pinned deps map to the project's needs:
   `FType` is a **numeric code** (460 = StreamRiver), not a string; `StreamOrde` is in a separate
   `PlusFlowlineVAA` table joined by **COMID**; geometries are **3D (measured Z)** → call
   `.geometry.force_2d()` before GeoViews can draw them. (`py7zr` won't solve on conda-forge here.)
+- **Scrollable tables:** display dataframes with **`show(df)`** (from `_helpers`) — a fixed-height,
+  sticky-header scrollable box that emits *every* row and renders the same in JupyterLab and the static
+  site. Don't end a cell on a bare dataframe (truncated, non-scrollable) or on a function that returns
+  one (see the `save_outputs` note in Conventions).
+- **Refreshing a notebook's committed outputs:** `jupytext --sync` only syncs *code/markdown*, and
+  `pixi run render` writes `_site/`/`_freeze/` — **neither updates the `.ipynb`'s stored outputs**
+  (what you view in the IDE / on GitHub). After changing code that affects displayed output, re-run
+  `pixi run jupyter nbconvert --to notebook --execute --inplace <nb>.ipynb` so the committed `.ipynb`
+  matches, then `pixi run render`.
 
 ## Conventions
 
@@ -189,6 +220,13 @@ The pinned deps map to the project's needs:
   verify the file changes; leave staging/committing to the user.
 - **Explore new data sources in a `sandbox/` notebook first**, then port the proven approach into the
   numbered notebooks (mirrors the sibling `data-engine/sandbox/` pattern).
+- **Reusable, project-agnostic helpers live in [`notebooks/_helpers.py`](notebooks/_helpers.py)**
+  (`find_repo_root`, `save_outputs`, `show`); notebooks `from _helpers import …` rather than redefining
+  them. The leading underscore makes Quarto ignore the module when rendering. (Candidate to grow into a
+  shareable cross-project package.)
+- **`save_outputs` returns nothing on purpose** — a save call is often the last line of a cell, and a
+  returned (Geo)DataFrame would auto-render as a stray, non-scrollable table. Display tables explicitly
+  with **`show(df)`** (fixed-height scrollable box; emits every row).
 - **Paired notebooks (jupytext):** commit a diff-friendly `.py` alongside each `.ipynb`; keep them in
   sync with `pixi run jupytext --sync <name>.py`. The `.py` is the source to review/commit.
 - **Saved data** goes in `data/` as **GeoParquet + a CSV copy** (via the `save_outputs` helper);

@@ -78,25 +78,20 @@ gv.extension("bokeh")
 #   **GeoParquet** file (compact, typed — what the other notebooks read) *and* a **CSV** copy
 #   (human-readable, with geometry as WKT) for transparency. These committed files are the
 #   shareable products of this notebook.
+#
+# Reusable utilities (`find_repo_root`, `save_outputs`, `show`) live in **`notebooks/_helpers.py`**
+# so they can be shared across notebooks; the rest of this cell is the project-specific config.
 
 # %%
 import os
 from io import StringIO
-from pathlib import Path
 from urllib.parse import quote
 
 import pandas as pd
 import async_retriever as ar
 from dotenv import load_dotenv
 
-
-def find_repo_root(marker="pixi.toml"):
-    """Walk up from the working directory to the repo root (which holds pixi.toml)."""
-    for folder in [Path.cwd(), *Path.cwd().parents]:
-        if (folder / marker).exists():
-            return folder
-    return Path.cwd()
-
+from _helpers import find_repo_root, save_outputs, show
 
 REPO_ROOT = find_repo_root()
 
@@ -114,23 +109,6 @@ os.environ.setdefault("HYRIVER_CACHE_EXPIRE", str(CACHE_EXPIRE_SECONDS))
 
 # 3. Curated, shareable outputs (committed to the repo) — later notebooks read these.
 DATA_DIR = REPO_ROOT / "data"
-
-
-def save_outputs(gdf, parquet_path):
-    """Save a GeoDataFrame two ways: as GeoParquet (compact, typed) and as a CSV copy
-    (human-readable, geometry written as WKT) for transparency. The (often long) geometry
-    column is moved to the **end** so the table is easier to read in any software. Returns
-    the reordered GeoDataFrame."""
-    geometry_col = gdf.geometry.name
-    ordered_cols = [c for c in gdf.columns if c != geometry_col] + [geometry_col]
-    gdf = gdf[ordered_cols]
-
-    parquet_path = Path(parquet_path)
-    parquet_path.parent.mkdir(parents=True, exist_ok=True)
-    gdf.to_parquet(parquet_path)
-    gdf.to_csv(parquet_path.with_suffix(".csv"), index=False)  # geometry -> WKT
-    print(f"saved {len(gdf)} rows → {parquet_path.relative_to(REPO_ROOT)} (+ .csv)")
-    return gdf
 
 # %% [markdown]
 # ## Step 2 — Name our three watersheds
@@ -183,7 +161,7 @@ print(f"{len(watersheds_gdf)} watershed boundaries.")
 print("Coordinate system:", watersheds_gdf.crs)
 
 # Show just the human-readable columns (not the long geometry shapes).
-watersheds_gdf[["huc8", "name", "areasqkm", "states"]]
+show(watersheds_gdf[["huc8", "name", "areasqkm", "states"]])
 
 # %% [markdown]
 # ## Step 4 — Map the watersheds
@@ -287,9 +265,7 @@ print(stations_in_area["site_type"].value_counts().to_string())
 print("\nBy watershed:")
 print(stations_in_area["name"].value_counts().to_string())
 
-stations_in_area[
-    ["monitoring_location_id", "monitoring_location_name", "site_type", "name"]
-].head(10)
+show(stations_in_area[["monitoring_location_id", "monitoring_location_name", "site_type", "name"]])
 
 # %% [markdown]
 # ## Step 6 — Which data endpoints does each station offer?
@@ -369,9 +345,7 @@ DATA_TYPES = ["daily", "continuous", "field_measurements", "samples"]
 print(f"Stations offering each data type (of {len(stations_in_area)} total):")
 print(stations_in_area[DATA_TYPES].sum().to_string())
 
-stations_in_area[
-    ["monitoring_location_id", "monitoring_location_name", *DATA_TYPES]
-].head(10)
+show(stations_in_area[["monitoring_location_id", "monitoring_location_name", *DATA_TYPES]])
 
 # %% [markdown]
 # ## Step 7 — Map stations by available data type

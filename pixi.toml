@@ -5,6 +5,12 @@ name = "Thornforest"
 platforms = ["osx-arm64", "win-64", "linux-64"]
 version = "0.1.0"
 
+[tasks]
+# Render the Quarto website into _site/. Executes notebooks as needed and refreshes the
+# _freeze/ cache (commit it); CI then renders from that cache without re-executing.
+render = "quarto render"
+preview = "quarto preview"
+
 [dependencies]
 python = "3.13.*"
 
@@ -44,6 +50,9 @@ geoviews = "*"
 jupyter_bokeh = "*"
 jupyterlab = "*"
 jupytext = "*"
+
+# Website rendering
+quarto = ">=1.9.38,<2"
 
 [pypi-dependencies]
 # Put pip-only requirements here if needed

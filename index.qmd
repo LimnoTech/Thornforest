@@ -1,0 +1,45 @@
+---
+title: "Thornforest Hydrology & Water Quality"
+toc: false
+---
+
+How have **water quantity and quality** changed across the lower Rio Grande region over the last
+25 years — and do those changes line up with **thornscrub restoration**? These pages compile and
+explore publicly available hydrological and water-quality data for three South Texas HUC-8
+watersheds, as part of the [American Forests](https://www.americanforests.org/) **Thornforest**
+project.
+
+::: {.callout-note}
+## The study area
+Three HUC-8 subbasins: **South Laguna Madre** (12110208), **Los Olmos** (13090001), and the
+**Lower Rio Grande** (13090002). Federal hydrography and monitoring data are **US-only** and stop
+at the international border; capturing the Mexican side of the basin is planned future work.
+:::
+
+::: {.callout-tip}
+## How to explore
+Every map is live — **hover** for details, use the toolbar to **zoom and pan**, and **click legend
+entries to toggle layers** on and off. Long data tables **scroll** within a fixed-height box (the
+header stays pinned). Code is hidden by default; click **"Show code"** to reveal it.
+:::
+
+## The notebooks
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-6}
+### [1 · USGS Hydrography & WaterData](notebooks/1_usgs_hydrography_waterdata.ipynb)
+Fetches the three HUC-8 **watershed boundaries**, discovers the **USGS monitoring stations** within
+them via the new USGS Water Data API, and flags which **data types** (daily, continuous, field
+measurements, and water-quality samples) each station offers — mapped on an interactive topographic
+basemap.
+:::
+
+:::
+
+---
+
+Built with [Quarto](https://quarto.org); data from the USGS
+[Water Data APIs](https://api.waterdata.usgs.gov) and the
+[HyRiver](https://docs.hyriver.io/) toolset. Source on
+[GitHub](https://github.com/LimnoTech/Thornforest).
