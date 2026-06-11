@@ -62,6 +62,77 @@ import geoviews.tile_sources as gvts
 gv.extension("bokeh")
 
 # %% [markdown]
+# ## Step 1b — API key, request caching, and saved outputs
+#
+# Three setup pieces keep the downloads fast and reproducible:
+#
+# - **Optional API key.** `load_dotenv()` reads an `API_USGS_PAT` key from a local `.env` file
+#   if you created one (see the README); it raises the USGS rate limits. Everything still runs
+#   without a key, just under stricter anonymous limits.
+# - **A persistent request cache.** Web requests are cached on disk in a **git-ignored
+#   `cache/`** folder (shared by HyRiver and [`async-retriever`](https://docs.hyriver.io/readme/async-retriever.html))
+#   and reused for a week, so re-running doesn't re-download. Delete `cache/` to force fresh
+#   requests. `async-retriever` also lets us fire the many per-station requests in Step 6
+#   **concurrently** rather than one at a time.
+# - **Saved outputs.** Each section also writes its result to **`data/`** in two formats: a
+#   **GeoParquet** file (compact, typed — what the other notebooks read) *and* a **CSV** copy
+#   (human-readable, with geometry as WKT) for transparency. These committed files are the
+#   shareable products of this notebook.
+
+# %%
+import os
+from io import StringIO
+from pathlib import Path
+from urllib.parse import quote
+
+import pandas as pd
+import async_retriever as ar
+from dotenv import load_dotenv
+
+
+def find_repo_root(marker="pixi.toml"):
+    """Walk up from the working directory to the repo root (which holds pixi.toml)."""
+    for folder in [Path.cwd(), *Path.cwd().parents]:
+        if (folder / marker).exists():
+            return folder
+    return Path.cwd()
+
+
+REPO_ROOT = find_repo_root()
+
+# 1. Optional USGS API key — loaded from .env if present (raises rate limits); runs fine without.
+load_dotenv(REPO_ROOT / ".env")
+API_KEY = os.getenv("API_USGS_PAT")
+API_HEADERS = {"X-Api-Key": API_KEY} if API_KEY else {}
+print("USGS API key loaded." if API_KEY else "No API key — using anonymous (lower) rate limits.")
+
+# 2. Persistent HTTP request cache (git-ignored), shared by HyRiver + async-retriever; 1-week expiry.
+CACHE_FILE = str(REPO_ROOT / "cache" / "aiohttp_cache.sqlite")
+CACHE_EXPIRE_SECONDS = 7 * 24 * 3600
+os.environ.setdefault("HYRIVER_CACHE_NAME", CACHE_FILE)
+os.environ.setdefault("HYRIVER_CACHE_EXPIRE", str(CACHE_EXPIRE_SECONDS))
+
+# 3. Curated, shareable outputs (committed to the repo) — later notebooks read these.
+DATA_DIR = REPO_ROOT / "data"
+
+
+def save_outputs(gdf, parquet_path):
+    """Save a GeoDataFrame two ways: as GeoParquet (compact, typed) and as a CSV copy
+    (human-readable, geometry written as WKT) for transparency. The (often long) geometry
+    column is moved to the **end** so the table is easier to read in any software. Returns
+    the reordered GeoDataFrame."""
+    geometry_col = gdf.geometry.name
+    ordered_cols = [c for c in gdf.columns if c != geometry_col] + [geometry_col]
+    gdf = gdf[ordered_cols]
+
+    parquet_path = Path(parquet_path)
+    parquet_path.parent.mkdir(parents=True, exist_ok=True)
+    gdf.to_parquet(parquet_path)
+    gdf.to_csv(parquet_path.with_suffix(".csv"), index=False)  # geometry -> WKT
+    print(f"saved {len(gdf)} rows → {parquet_path.relative_to(REPO_ROOT)} (+ .csv)")
+    return gdf
+
+# %% [markdown]
 # ## Step 2 — Name our three watersheds
 #
 # We store the three HUC-8 codes and their names in a **dictionary** — a lookup table that
@@ -90,13 +161,13 @@ HUC8_COLORS = {
 # Its `.byids()` method fetches specific watersheds **by their ID codes** — here, the three
 # codes from our dictionary (`list(HUC8_WATERSHEDS)` gives just the codes).
 #
-# This makes a live request over the internet, so it may take a few seconds.
+# The request is cached on disk (see Step 1b), so re-runs are fast; the result is also saved
+# to `data/spatial/` as a shareable output.
 
 # %%
-wbd = WBD("huc8")
-watersheds_gdf = wbd.byids("huc8", list(HUC8_WATERSHEDS))
-
-print(f"Downloaded {len(watersheds_gdf)} watershed boundaries.")
+watersheds_gdf = WBD("huc8").byids("huc8", list(HUC8_WATERSHEDS))
+save_outputs(watersheds_gdf, DATA_DIR / "spatial" / "huc8_watersheds.parquet")
+print(f"{len(watersheds_gdf)} watershed boundaries.")
 
 # %% [markdown]
 # ### What did we get back?
@@ -181,23 +252,26 @@ watersheds_map
 # (No API key is required; one only raises rate limits — see the README.)
 
 # %%
-# 1. Fetch all monitoring locations in the bounding box of our watersheds.
-#    total_bounds gives [min_lon, min_lat, max_lon, max_lat].
+# total_bounds gives [min_lon, min_lat, max_lon, max_lat]; we reuse bbox again in Step 6.
 bbox = list(watersheds_gdf.total_bounds)
-stations_gdf, _metadata = waterdata.get_monitoring_locations(bbox=bbox)
+
+# 1. Fetch all monitoring locations in the bounding box.
+stations_gdf, _ = waterdata.get_monitoring_locations(bbox=bbox)
 stations_gdf = stations_gdf.set_crs(4326)  # the API returns longitude/latitude
 
-# 2. Keep only the stations that fall within the three watershed polygons.
+# 2. Keep only those that fall within the three watershed polygons.
 stations_in_area = gpd.sjoin(
     stations_gdf,
     watersheds_gdf[["huc8", "name", "geometry"]],
     predicate="within",
     how="inner",
 )
-
 print(
     f"{len(stations_gdf)} stations in the bounding box; "
-    f"{len(stations_in_area)} fall within the watersheds."
+    f"{len(stations_in_area)} within the watersheds."
+)
+save_outputs(
+    stations_in_area, DATA_DIR / "usgs_waterdata" / "usgs_monitoring_locations.parquet"
 )
 
 # %% [markdown]
@@ -236,51 +310,61 @@ stations_in_area[
 # - **Daily** and **Continuous** both come from `get_time_series_metadata()`; its
 #   `computation_period_identifier` column tells them apart (`"Daily"` vs `"Points"`).
 # - **Field measurements** come from `get_field_measurements_metadata()`.
-# - **Samples** are checked per station with `get_samples_summary()` — one quick request each.
-#   (This is the slowest cell, because it loops over every station; the area-wide samples
-#   service times out, so a per-station check is the reliable way.)
+# - **Samples** must be checked **per station** against the samples *summary* endpoint (the
+#   area-wide samples service times out). We fire those requests **concurrently** with
+#   `async-retriever` so it stays fast, and a station counts as having samples if its summary
+#   response contains any rows.
 
 # %%
-# Daily & continuous availability — one bounding-box query, split by computation period.
-ts_meta, _ = waterdata.get_time_series_metadata(bbox=bbox, skip_geometry=True)
-daily_ids = set(
-    ts_meta.loc[ts_meta["computation_period_identifier"] == "Daily", "monitoring_location_id"]
-)
-continuous_ids = set(
-    ts_meta.loc[ts_meta["computation_period_identifier"] == "Points", "monitoring_location_id"]
-)
+# The Samples "summary" endpoint (one site per request); see
+# https://api.waterdata.usgs.gov/samples-data/docs
+SAMPLES_SUMMARY_URL = "https://api.waterdata.usgs.gov/samples-data/summary"
 
-# Field-measurement availability — one bounding-box query.
+# Daily & continuous — one bounding-box query, split by computation period.
+ts_meta, _ = waterdata.get_time_series_metadata(bbox=bbox, skip_geometry=True)
+period = ts_meta["computation_period_identifier"]
+daily_ids = set(ts_meta.loc[period == "Daily", "monitoring_location_id"])
+continuous_ids = set(ts_meta.loc[period == "Points", "monitoring_location_id"])
+
+# Field measurements — one bounding-box query.
 fm_meta, _ = waterdata.get_field_measurements_metadata(bbox=bbox, skip_geometry=True)
 field_ids = set(fm_meta["monitoring_location_id"])
 
-# Samples availability — one summary request per station (non-empty summary = has samples).
-samples_ids = set()
+# Samples — one summary request per station, fired CONCURRENTLY (and cached) with
+# async-retriever. A station "has samples" if its summary response contains any rows.
 station_ids = stations_in_area["monitoring_location_id"].tolist()
-for i, station_id in enumerate(station_ids, start=1):
-    try:
-        summary, _ = waterdata.get_samples_summary(monitoringLocationIdentifier=station_id)
-        if len(summary) > 0:
-            samples_ids.add(station_id)
-    except Exception:
-        pass  # treat a failed lookup as "no samples"
-    if i % 50 == 0:
-        print(f"  checked samples for {i}/{len(station_ids)} stations…")
-print(f"Done: checked samples for {len(station_ids)} stations.")
+summary_urls = [
+    f"{SAMPLES_SUMMARY_URL}/{quote(sid, safe='')}?mimeType=text/csv" for sid in station_ids
+]
+summaries = ar.retrieve_text(
+    summary_urls,
+    request_kwds=[{"headers": API_HEADERS}] * len(summary_urls) if API_HEADERS else None,
+    cache_name=CACHE_FILE,
+    expire_after=CACHE_EXPIRE_SECONDS,
+    limit_per_host=8,
+)
+samples_ids = {
+    sid
+    for sid, csv_text in zip(station_ids, summaries)
+    if csv_text and len(pd.read_csv(StringIO(csv_text))) > 0
+}
+
+# Add one True/False column per data type.
+sid_col = stations_in_area["monitoring_location_id"]
+stations_in_area["daily"] = sid_col.isin(daily_ids)
+stations_in_area["continuous"] = sid_col.isin(continuous_ids)
+stations_in_area["field_measurements"] = sid_col.isin(field_ids)
+stations_in_area["samples"] = sid_col.isin(samples_ids)
+
+save_outputs(
+    stations_in_area,
+    DATA_DIR / "usgs_waterdata" / "usgs_monitoring_locations_data_types.parquet",
+)
 
 # %% [markdown]
-# ### Flag each station with the data types it offers
-#
-# We add four True/False columns to the stations table — one per data type — by testing
-# whether each station's ID appears in the sets we just built.
+# ### How many stations offer each type?
 
 # %%
-station_id_col = stations_in_area["monitoring_location_id"]
-stations_in_area["daily"] = station_id_col.isin(daily_ids)
-stations_in_area["continuous"] = station_id_col.isin(continuous_ids)
-stations_in_area["field_measurements"] = station_id_col.isin(field_ids)
-stations_in_area["samples"] = station_id_col.isin(samples_ids)
-
 DATA_TYPES = ["daily", "continuous", "field_measurements", "samples"]
 print(f"Stations offering each data type (of {len(stations_in_area)} total):")
 print(stations_in_area[DATA_TYPES].sum().to_string())
@@ -329,21 +413,23 @@ for data_type, color in DATA_TYPE_COLORS.items():
     stations_map = stations_map * points
 
 stations_map = stations_map.opts(
-    frame_width=850,
+    frame_width=800,
     data_aspect=1,
     title="Monitoring stations by available data type (click legend to toggle)",
-    legend_position="right",
+    legend_position="bottom_left",
     active_tools=["wheel_zoom"],
     hooks=[make_legend_clickable],
 )
 stations_map
 
 # %% [markdown]
+#
+
+# %% [markdown]
 # ## What's next
 #
-# We now have the three watershed boundaries mapped and the monitoring stations within them
-# discovered. In the next notebooks we will:
-#
-# - **save** the boundaries and the station inventory to `data/` for reuse, then
-# - **fetch the actual records** (streamflow, water quality, precipitation) for these
-#   stations using the `dataretrieval.waterdata` data endpoints.
+# We now have the three watershed boundaries and the monitoring-station inventory (with the
+# data types each station offers) mapped — and **cached to `data/spatial/`** for reuse. In the
+# next notebooks we will **fetch the actual records** (streamflow, water quality, precipitation)
+# for these stations using the `dataretrieval.waterdata` data endpoints (`get_daily`,
+# `get_continuous`, `get_field_measurements`, `get_samples`).

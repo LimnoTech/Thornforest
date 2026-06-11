@@ -63,9 +63,13 @@ The work is organized as a series of Jupyter notebooks following a **hybrid** st
 The notebooks will be published as a static, **fully interactive** website (HoloViews/GeoViews visuals)
 on **GitHub Pages**, built with **[Quarto](https://quarto.org)**.
 
-Saved data lives in `data/`: tabular timeseries as **Parquet** under a per-source subdirectory
-(`data/<source>/`), and station locations / watershed & stream geometries as **GeoParquet** under
-`data/spatial/`.
+Saved results live in `data/`, each written as **GeoParquet** (compact, typed — what the notebooks
+read) **and** a **CSV** copy (human-readable, geometry as WKT) for transparency: HyRiver geometries
+(e.g. watershed boundaries) under `data/spatial/`, and USGS WaterData products (monitoring locations
+and the data types they offer) under `data/usgs_waterdata/`. To keep downloads fast, web requests are
+cached on disk in a git-ignored `cache/` folder (reused for a week), so re-running a notebook doesn't
+re-download. A free [USGS API key](https://api.waterdata.usgs.gov/signup/) in `.env` raises the rate
+limits (see below).
 
 ## Environment
 

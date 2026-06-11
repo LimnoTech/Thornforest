@@ -17,10 +17,11 @@ preserve the interactive Bokeh embeds in static HTML). That repo is the referenc
 `_quarto.yml` / freeze / deploy setup.
 
 **Current status.** Notebook 1 (`notebooks/1_usgs_hydrography_waterdata`) is built: it fetches the
-three HUC-8 boundaries, maps them, discovers the USGS monitoring stations within them, and flags which
-of four data types each station offers. Data-source exploration that doesn't belong in the polished
-notebooks lives in `sandbox/` (e.g. `sandbox/explore_nhdplus_vpu13`). Nothing is saved to `data/` yet,
-and the **stream network is deferred** (see the coverage note below).
+three HUC-8 boundaries, maps them, discovers the USGS monitoring stations within them, flags which of
+four data types each station offers, and **saves each result to `data/` (GeoParquet + CSV)** with
+on-disk request caching. Data-source exploration that doesn't belong in the polished notebooks lives in
+`sandbox/` (e.g. `sandbox/explore_nhdplus_vpu13`). The **stream network is deferred** (see the coverage
+note below).
 
 ## Planned structure (agreed approach)
 
@@ -33,18 +34,35 @@ A series of Jupyter notebooks in a **hybrid** organization:
   watershed (maps, trends, pre/post-restoration comparisons). The Excel/structured deliverable is
   exported from the harmonized data at the end.
 
-**Data directory layout:**
+**Data directory layout** — each saved dataframe is written in **two formats**: GeoParquet
+(compact, typed — what notebooks read) **and** a CSV copy (geometry as WKT) for transparency.
 
-- `data/spatial/` — **GeoParquet**: HUC-8 watershed boundaries, stream network, station locations.
-- `data/<source>/` — **Parquet**: tabular timeseries per source (e.g. `data/usgs/streamflow.parquet`).
+- `data/spatial/` — geometries from **HyRiver/`pygeohydro`** (e.g. `huc8_watersheds`).
+- `data/usgs_waterdata/` — products from **`dataretrieval.waterdata`** (e.g.
+  `usgs_monitoring_locations`, `usgs_monitoring_locations_data_types`).
+- `data/<source>/` — one folder per other source as they're added (TCEQ, NCEI, …).
 
-**Notebook 1 (`notebooks/1_usgs_hydrography_waterdata`)** — built. Steps: (1–4) fetch the three HUC-8
-boundaries with `pygeohydro.WBD` and map them on an Esri World Topo basemap; (5) discover monitoring
-stations via `dataretrieval.waterdata.get_monitoring_locations(bbox=…)`, then clip to the watershed
-polygons with `geopandas.sjoin`; (6) determine which of four data endpoints each station offers;
-(7) map stations by data type with a click-to-toggle legend. **The stream network was removed** from
-NB1 and is deferred pending a Mexico-capable source (see coverage note). Saving to `data/spatial/` is
-still TODO.
+**Caching (two distinct layers — keep them separate):**
+
+- **`cache/` (git-ignored)** — persistent **HTTP request cache** (sqlite). HyRiver caches its
+  requests here by default (set `HYRIVER_CACHE_NAME`); the per-station samples requests are
+  cached here too via `async_retriever` (`cache_name=`, `expire_after=` 1 week). This is what
+  makes re-runs fast — it is *not* committed.
+- **`data/` (committed)** — curated GeoParquet/CSV **outputs**, the shareable products other
+  notebooks read. Written every run; not a freshness-gated cache.
+- The plain `dataretrieval.waterdata` discovery calls (stations, time-series/field metadata) use
+  their own client and are **not** in the HTTP cache, but they're few and cheap (and the API key
+  removes the rate limit). Only HyRiver + `async_retriever` requests are cached in `cache/`.
+
+**Notebook 1 (`notebooks/1_usgs_hydrography_waterdata`)** — built. Steps: (1) imports; (1b) setup —
+`load_dotenv()` for the API key, the `cache/` HTTP cache, and a `save_outputs(gdf, path)` helper that
+writes GeoParquet **+** CSV; (3) fetch the three HUC-8 boundaries with `pygeohydro.WBD` → save to
+`data/spatial/`; (4) map them on an Esri World Topo basemap; (5) discover monitoring stations via
+`dataretrieval.waterdata.get_monitoring_locations(bbox=…)`, clip to the polygons with `geopandas.sjoin`
+→ save to `data/usgs_waterdata/`; (6) flag which of four data endpoints each station offers (samples
+fetched concurrently via `async_retriever`) → save to `data/usgs_waterdata/`; (7) map stations by data
+type with a click-to-toggle legend. **The stream network was removed** from NB1 and is deferred pending
+a Mexico-capable source (see coverage note).
 
 **Audience:** notebooks are written for readers **new to Python/Jupyter** — explain each step in
 markdown, and keep code cells small and commented.
@@ -137,8 +155,10 @@ render, lint), define them under `[tasks]` in `pixi.toml` so they're discoverabl
 The pinned deps map to the project's needs:
 
 - **Water-data retrieval:** `dataretrieval` — use its **`waterdata`** module (new USGS Water Data APIs;
-  see the warning above), **not** the legacy `nwis` module. Plus the **HyRiver** suite (`pynhd`,
-  `pygeoogc`, `hydrosignatures`) for NHD/watershed boundaries and stream networks by HUC.
+  see the warning above), **not** the legacy `nwis` module. Plus the **HyRiver** suite (`pygeohydro`
+  for WBD boundaries; `pynhd`, `pygeoogc`, `hydrosignatures`). **`async_retriever`** (HyRiver's async
+  HTTP layer) fires many small requests concurrently and caches them — used for the per-station samples
+  lookups in NB1.
 - **Geospatial:** `geopandas`, `gdal` + `libgdal-arrow-parquet`, `rioxarray`, `xarray`, `xvec`,
   `cfunits` — for station locations, raster/precip data, and unit handling. Station-to-restoration-
   site mapping (spatial relevance) is an explicit project goal.
@@ -171,11 +191,15 @@ The pinned deps map to the project's needs:
   numbered notebooks (mirrors the sibling `data-engine/sandbox/` pattern).
 - **Paired notebooks (jupytext):** commit a diff-friendly `.py` alongside each `.ipynb`; keep them in
   sync with `pixi run jupytext --sync <name>.py`. The `.py` is the source to review/commit.
-- **Saved data** goes in `data/` (Parquet timeseries per source; GeoParquet in `data/spatial/`) — see
-  Planned structure above.
+- **Saved data** goes in `data/` as **GeoParquet + a CSV copy** (via the `save_outputs` helper);
+  HyRiver geometries in `data/spatial/`, `dataretrieval` products in `data/usgs_waterdata/` — see the
+  data layout & caching notes above.
+- **API key:** `load_dotenv()` reads `API_USGS_PAT` from the repo-root `.env`; it's attached as the
+  `X-Api-Key` header (and to `async_retriever` requests via `request_kwds`). Without it, calls fall back
+  to anonymous limits and **will hit HTTP 429** under repeated use.
 - `.pixi/` is git-ignored; commit `pixi.lock` so the environment is reproducible.
-- **Scratch/raw downloads** go in git-ignored **`data_temp/`** (e.g. the EPA NHDPlus `.7z` archives);
-  curated outputs go in **`data/`**. Decide per-file whether large `data/` outputs are committed before
-  pulling 25 years of records into the repo.
+- **Git-ignored, never committed:** `cache/` (HTTP request cache) and `data_temp/` (scratch/raw
+  downloads, e.g. the EPA NHDPlus `.7z` archives). **Committed:** `data/` outputs (the shareable
+  GeoParquet/CSV products).
 - **Dependencies added beyond the original manifest:** `pygeohydro` (WBD boundaries), `python-dotenv`
   (API key), and `python-libarchive-c` (`.7z` extraction in the sandbox).
