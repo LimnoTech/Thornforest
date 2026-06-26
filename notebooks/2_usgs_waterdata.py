@@ -91,36 +91,45 @@ show(stations_in_area[["monitoring_location_id", "monitoring_location_name", "si
 # %% [markdown]
 # ## Step 6 — Which priority parameters does each station measure?
 #
-# The README prioritizes these water-quality parameters. For each we list the USGS parameter
-# codes (`pcodes`, used by the time-series & field-measurement services) and the Water Quality
-# characteristic-name patterns (used by the discrete-samples service). `classify_parameter`
-# maps any measured pcode/characteristic to its priority group (or `None`).
+# The README prioritizes these water-quality parameters, plus water-quantity (flow & level). For
+# each we list the USGS `parameter_code`s (used by the time-series & field-measurement services) and
+# the Water Quality characteristic-name patterns (used by the discrete-samples service).
+# `classify_parameter` maps any measured parameter code / characteristic to its priority group (or `None`).
 
 # %%
-# group -> {"pcodes": set[str], "characteristics": list[str] (lowercase substrings)}
+# group -> {"parameter_codes": set[str], "characteristics": list[str] (lowercase substrings)}
 PRIORITY_GROUPS = {
-    "conductivity": {"pcodes": {"00095", "90095"}, "characteristics": ["specific conductance", "conductivity"]},
-    "temperature": {"pcodes": {"00010"}, "characteristics": ["temperature, water"]},
-    "dissolved_oxygen": {"pcodes": {"00300", "00301"}, "characteristics": ["dissolved oxygen"]},
-    "dissolved_solids": {"pcodes": {"70300", "00515"}, "characteristics": ["total dissolved solids"]},
-    "chlorophyll": {"pcodes": {"32209", "32210", "32211", "70953"}, "characteristics": ["chlorophyll", "algae"]},
-    "pH": {"pcodes": {"00400"}, "characteristics": ["ph"]},  # pH matched EXACTLY (see classifier)
+    "conductivity": {"parameter_codes": {"00095", "90095"}, "characteristics": ["specific conductance", "conductivity"]},
+    "temperature": {"parameter_codes": {"00010"}, "characteristics": ["temperature, water"]},
+    "dissolved_oxygen": {"parameter_codes": {"00300", "00301"}, "characteristics": ["dissolved oxygen"]},
+    "dissolved_solids": {"parameter_codes": {"70300", "00515"}, "characteristics": ["total dissolved solids"]},
+    "chlorophyll": {"parameter_codes": {"32209", "32210", "32211", "70953"}, "characteristics": ["chlorophyll", "algae"]},
+    "pH": {"parameter_codes": {"00400"}, "characteristics": ["ph"]},  # pH matched EXACTLY (see classifier)
     "nitrogen": {
-        "pcodes": {"00600", "00605", "00608", "00613", "00615", "00618", "00620", "00625", "00630"},
+        "parameter_codes": {"00600", "00605", "00608", "00613", "00615", "00618", "00620", "00625", "00630"},
         "characteristics": ["nitrogen", "nitrate", "nitrite", "ammonia", "kjeldahl"],
     },
-    "phosphorus": {"pcodes": {"00650", "00665", "00666", "00671"}, "characteristics": ["phosphorus", "orthophosphate"]},
-    "turbidity": {"pcodes": {"00076", "63675", "63676", "63680"}, "characteristics": ["turbidity"]},
+    "phosphorus": {"parameter_codes": {"00650", "00665", "00666", "00671"}, "characteristics": ["phosphorus", "orthophosphate"]},
+    "turbidity": {"parameter_codes": {"00076", "63675", "63676", "63680"}, "characteristics": ["turbidity"]},
+    # Water quantity (flow & level), added Round 1.1
+    "discharge": {
+        "parameter_codes": {"00060", "00061", "00055", "70232", "30208", "30209"},  # discharge + velocity
+        "characteristics": ["discharge", "stream flow", "streamflow"],
+    },
+    "water_level": {
+        "parameter_codes": {"00065", "00062", "00054", "62611", "62614", "62615", "63160", "72019", "72020", "72148", "72150", "72170"},  # gage height / stage / depth / elevation
+        "characteristics": ["gage height", "stream stage", "water level", "water-surface elevation"],
+    },
 }
 PRIORITY_NAMES = list(PRIORITY_GROUPS)
 
 
-def classify_parameter(pcode=None, characteristic=None):
-    """Return the priority group for a USGS pcode or a WQ characteristic name, else None."""
-    if pcode is not None:
-        code = str(pcode).strip().zfill(5)
+def classify_parameter(parameter_code=None, characteristic=None):
+    """Return the priority group for a USGS parameter_code or a WQ characteristic name, else None."""
+    if parameter_code is not None:
+        parameter_code = str(parameter_code).strip().zfill(5)
         for group, spec in PRIORITY_GROUPS.items():
-            if code in spec["pcodes"]:
+            if parameter_code in spec["parameter_codes"]:
                 return group
     if characteristic is not None:
         name = str(characteristic).strip().lower()
@@ -136,13 +145,13 @@ def classify_parameter(pcode=None, characteristic=None):
 # %%
 SAMPLES_SUMMARY_URL = "https://api.waterdata.usgs.gov/samples-data/summary"
 
-# Time-series metadata (daily & continuous), split by computation period; carries pcodes.
+# Time-series metadata (daily & continuous), split by computation period; carries parameter_codes.
 ts_meta, _ = waterdata.get_time_series_metadata(bbox=bbox, skip_geometry=True)
 period = ts_meta["computation_period_identifier"]
 daily_ids = set(ts_meta.loc[period == "Daily", "monitoring_location_id"])
 continuous_ids = set(ts_meta.loc[period == "Points", "monitoring_location_id"])
 
-# Field-measurement metadata; carries pcodes.
+# Field-measurement metadata; carries parameter_codes.
 fm_meta, _ = waterdata.get_field_measurements_metadata(bbox=bbox, skip_geometry=True)
 field_ids = set(fm_meta["monitoring_location_id"])
 
@@ -162,23 +171,29 @@ samples_summaries = {  # station_id -> summary DataFrame (may be empty)
 samples_ids = {sid for sid, df in samples_summaries.items() if len(df) > 0}
 
 # %%
-# Pcode -> readable name, from the USGS reference table (for the human-readable `parameters` list).
-param_codes, _ = waterdata.get_reference_table("parameter-codes")
-pcode_name = dict(zip(param_codes["parameter_code"].astype(str), param_codes["parameter_name"]))
+# parameter_code -> readable name, from the USGS reference table (for the `parameters` list).
+parameter_codes_table, _ = waterdata.get_reference_table("parameter-codes")
+parameter_name_by_code = dict(
+    zip(parameter_codes_table["parameter_code"].astype(str), parameter_codes_table["parameter_name"])
+)
 
-# Build, per station: the set of measured pcodes/characteristics, the priority groups they hit,
-# and a sorted human-readable parameter list.
-ts_codes_by_site = ts_meta.groupby("monitoring_location_id")["parameter_code"].agg(set).to_dict()
-fm_codes_by_site = fm_meta.groupby("monitoring_location_id")["parameter_code"].agg(set).to_dict()
+# Build, per station: the set of measured parameter_codes/characteristics, the priority groups they
+# hit, and a sorted human-readable parameter list.
+ts_parameter_codes_by_site = ts_meta.groupby("monitoring_location_id")["parameter_code"].agg(set).to_dict()
+fm_parameter_codes_by_site = fm_meta.groupby("monitoring_location_id")["parameter_code"].agg(set).to_dict()
 
 
 def station_parameters(sid):
     """Return (priority_groups: set[str], parameter_names: sorted list[str]) for one station."""
     groups, names = set(), set()
-    for code in ts_codes_by_site.get(sid, set()) | fm_codes_by_site.get(sid, set()):
-        code = str(code)
-        names.add(pcode_name.get(code.zfill(5), pcode_name.get(code, code)))
-        g = classify_parameter(pcode=code)
+    for parameter_code in ts_parameter_codes_by_site.get(sid, set()) | fm_parameter_codes_by_site.get(sid, set()):
+        parameter_code = str(parameter_code)
+        names.add(
+            parameter_name_by_code.get(
+                parameter_code.zfill(5), parameter_name_by_code.get(parameter_code, parameter_code)
+            )
+        )
+        g = classify_parameter(parameter_code=parameter_code)
         if g:
             groups.add(g)
     summary = samples_summaries.get(sid)
@@ -215,7 +230,7 @@ save_outputs(
 # %% [markdown]
 # ### How many stations measure each priority parameter?
 #
-# The audit below lists any measured pcodes/characteristics that did NOT map to a priority
+# The audit below lists any measured parameter codes / characteristics that did NOT map to a priority
 # group — useful for sanity-checking and refining `PRIORITY_GROUPS`.
 
 # %%

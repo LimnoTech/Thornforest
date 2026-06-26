@@ -61,9 +61,10 @@ map them on an Esri World Topo basemap (watershed colors via `categorical_colors
 **Notebook 2 (`notebooks/2_usgs_waterdata`)** — reads `data/spatial/huc8_watersheds.parquet`; discovers
 stations via `dataretrieval.waterdata.get_monitoring_locations(bbox=…)` clipped with `geopandas.sjoin`;
 then records, per station, the four **data-type flags** (daily/continuous/field/samples) **and** which of
-nine **priority parameters** (conductivity, temperature, dissolved oxygen, dissolved solids, chlorophyll,
-pH, nitrogen, phosphorus, turbidity) it measured — gathered from `get_time_series_metadata` +
-`get_field_measurements_metadata` (pcodes) and the per-station samples summary (characteristics, fetched
+eleven **priority parameters** — nine water-quality (conductivity, temperature, dissolved oxygen,
+dissolved solids, chlorophyll, pH, nitrogen, phosphorus, turbidity) plus two water-quantity
+(**discharge** and **water level**) — it measured — gathered from `get_time_series_metadata` +
+`get_field_measurements_metadata` (parameter codes) and the per-station samples summary (characteristics, fetched
 concurrently via `async_retriever`), enriched via `get_reference_table("parameter-codes")`, using
 `PRIORITY_GROUPS`/`classify_parameter` defined in NB2. Saves the inventory (+ a `parameters` list column)
 to `data/usgs_waterdata/usgs_monitoring_locations_parameters.{parquet,csv}` and maps stations by
@@ -109,7 +110,7 @@ WaterData APIs).
 - **Fetch:** `get_daily()` (daily min/max/mean), `get_continuous()` (instantaneous),
   `get_samples()` (water-quality samples), `get_field_measurements()`, and the `get_latest_*` helpers.
 - Each function returns a `(dataframe, metadata)` tuple — a **GeoDataFrame** when geopandas is installed
-  (pass `skip_geometry=True` to drop coordinates). Parameter codes are USGS pcodes (e.g. discharge
+  (pass `skip_geometry=True` to drop coordinates). Parameter codes are USGS `parameter_code`s (e.g. discharge
   `00060`, mean-daily statistic `00003`); query by `monitoring_location_id`, geography, parameter, and
   date range. Specify *just enough* inputs — redundant geographic/parameter filters slow queries and can error.
 - **API key (optional):** access works unauthenticated; a free key at

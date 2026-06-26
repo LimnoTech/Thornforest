@@ -36,8 +36,9 @@ interactive topographic basemap.
 ::: {.g-col-12 .g-col-md-6}
 ### [2 · USGS WaterData stations](notebooks/2_usgs_waterdata.ipynb)
 Discovers the **USGS monitoring stations** within the watersheds via the new USGS Water Data API and
-records **which priority parameters** each measured (conductivity, temperature, dissolved oxygen,
-nutrients, pH, turbidity, …) — mapped with a click-to-toggle legend.
+records **which priority parameters** each measured — water quantity (**discharge**, **water level**)
+and water quality (conductivity, temperature, dissolved oxygen, nutrients, pH, turbidity, …) — mapped
+with a click-to-toggle legend.
 :::
 
 :::

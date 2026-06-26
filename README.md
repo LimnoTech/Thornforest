@@ -52,8 +52,9 @@ The work is organized as a series of Jupyter notebooks following a **hybrid** st
   - **`2_usgs_waterdata`** — discovers the USGS monitoring stations within the watersheds
     (`dataretrieval.waterdata`) and records, per station, both the available **data types** (daily,
     continuous, field measurements, water-quality samples) and **which priority parameters** it
-    measured (conductivity, temperature, dissolved oxygen, dissolved solids, chlorophyll, pH, nitrogen,
-    phosphorus, turbidity).
+    measured — water quality (conductivity, temperature, dissolved oxygen, dissolved solids,
+    chlorophyll, pH, nitrogen, phosphorus, turbidity) and water quantity (**discharge** and **water
+    level**).
 - **Display / analyze notebooks (shared)** — read the saved data and work across sources by data type or
   watershed (maps, trend analyses, pre/post-restoration comparisons). A structured deliverable (Excel or
   the format American Forests prefers) is exported from the harmonized data at the end.
