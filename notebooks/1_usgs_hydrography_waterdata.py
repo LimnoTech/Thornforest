@@ -14,7 +14,7 @@
 # ---
 
 # %% [markdown]
-# # 1 · USGS Hydrography & WaterData — Watershed Boundaries
+# # 1 · USGS Hydrography & WaterData
 #
 # This is the **first notebook** in the Thornforest hydrology series. It builds the
 # *spatial foundation* that every later notebook relies on, and then begins discovering

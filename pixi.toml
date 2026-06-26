@@ -17,7 +17,6 @@ python = "3.13.*"
 # Data processing
 geopandas = "*"
 pyarrow = "*"
-python-libarchive-c = ">=5.3,<6"
 rioxarray = "*"
 xarray = "*"
 xvec = "*"
@@ -26,6 +25,8 @@ zarr = ">=3"
 # Other Geospatial
 gdal = "*"
 libgdal-arrow-parquet = "*"
+libgdal-xls = "*"
+python-libarchive-c = "*"
 
 # Remote Access
 fsspec = "*"
