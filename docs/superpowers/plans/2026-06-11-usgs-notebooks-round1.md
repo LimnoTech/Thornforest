@@ -144,7 +144,7 @@ def init_session(cache_expire_seconds: int = 7 * 24 * 3600) -> Session:
 
 # --- Colors for *data* in figures (colorcet, NOT the LimnoTech brand) ----------
 
-CATEGORICAL = cc.glasbey_category10  # distinct, colorblind-aware categorical hex list
+CATEGORICAL = cc.b_glasbey_category10  # distinct, colorblind-aware categorical hex strings (Bokeh-ready)
 
 
 def categorical_colors(keys, palette=CATEGORICAL):

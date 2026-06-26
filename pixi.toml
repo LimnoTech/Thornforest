@@ -44,6 +44,7 @@ pygeoogc = ">=0.19"
 pynhd = ">=0.19"
 
 # Visualization
+colorcet = ">=3.2.1,<4"
 hvplot = "*"
 geoviews = "*"
 

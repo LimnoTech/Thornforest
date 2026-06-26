@@ -9,8 +9,12 @@ Usage in a notebook (run with the kernel's working directory at ``notebooks/``):
     from _helpers import find_repo_root, save_outputs, show
 """
 
+import os
+from dataclasses import dataclass
 from pathlib import Path
 
+import colorcet as cc
+from dotenv import load_dotenv
 from IPython.display import HTML
 
 
@@ -56,3 +60,61 @@ def show(df, height=360):
         'border:1px solid #ddd;border-radius:4px;">'
         f"{df.to_html()}</div>"
     )
+
+
+# --- Session setup (shared by every notebook) ---------------------------------
+
+@dataclass(frozen=True)
+class Session:
+    """Resolved per-notebook configuration returned by init_session()."""
+    repo_root: Path
+    data_dir: Path
+    cache_file: str
+    cache_expire_seconds: int
+    api_key: str | None
+    api_headers: dict
+
+
+def init_session(cache_expire_seconds: int = 7 * 24 * 3600) -> Session:
+    """Load the optional USGS API key from .env, point HyRiver's request cache at the
+    git-ignored cache/ folder, and return the resolved paths/headers as a Session.
+    Safe to call without a .env (falls back to anonymous rate limits)."""
+    repo_root = find_repo_root()
+    load_dotenv(repo_root / ".env")
+    api_key = os.getenv("API_USGS_PAT")
+    api_headers = {"X-Api-Key": api_key} if api_key else {}
+    cache_file = str(repo_root / "cache" / "aiohttp_cache.sqlite")
+    os.environ.setdefault("HYRIVER_CACHE_NAME", cache_file)
+    os.environ.setdefault("HYRIVER_CACHE_EXPIRE", str(cache_expire_seconds))
+    print(
+        "USGS API key loaded."
+        if api_key
+        else "No API key — using anonymous (lower) rate limits."
+    )
+    return Session(
+        repo_root=repo_root,
+        data_dir=repo_root / "data",
+        cache_file=cache_file,
+        cache_expire_seconds=cache_expire_seconds,
+        api_key=api_key,
+        api_headers=api_headers,
+    )
+
+
+# --- Colors for *data* in figures (colorcet, NOT the LimnoTech brand) ----------
+
+CATEGORICAL = cc.b_glasbey_category10  # distinct, colorblind-aware categorical hex list (Bokeh hex strings)
+
+
+def categorical_colors(keys, palette=CATEGORICAL):
+    """Map an ordered list of category keys -> hex colors, cycling the palette.
+    Returns a dict {key: hex} for use as per-category colors in GeoViews layers."""
+    keys = list(keys)
+    return {key: palette[i % len(palette)] for i, key in enumerate(keys)}
+
+
+# --- GeoViews/Bokeh helpers ---------------------------------------------------
+
+def make_legend_clickable(plot, element):
+    """Bokeh hook: clicking a legend entry hides/shows that layer (click_policy='hide')."""
+    plot.state.legend.click_policy = "hide"
