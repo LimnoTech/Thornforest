@@ -28,11 +28,16 @@ header stays pinned). Code is hidden by default; click **"Show code"** to reveal
 ::: {.grid}
 
 ::: {.g-col-12 .g-col-md-6}
-### [1 · USGS Hydrography & WaterData](notebooks/1_usgs_hydrography_waterdata.ipynb)
-Fetches the three HUC-8 **watershed boundaries**, discovers the **USGS monitoring stations** within
-them via the new USGS Water Data API, and flags which **data types** (daily, continuous, field
-measurements, and water-quality samples) each station offers — mapped on an interactive topographic
-basemap.
+### [1 · USGS Hydrofabric](notebooks/1_usgs_hydrofabric.ipynb)
+The **spatial foundation**: fetches the three HUC-8 **watershed boundaries** and maps them on an
+interactive topographic basemap.
+:::
+
+::: {.g-col-12 .g-col-md-6}
+### [2 · USGS WaterData stations](notebooks/2_usgs_waterdata.ipynb)
+Discovers the **USGS monitoring stations** within the watersheds via the new USGS Water Data API and
+records **which priority parameters** each measured (conductivity, temperature, dissolved oxygen,
+nutrients, pH, turbidity, …) — mapped with a click-to-toggle legend.
 :::
 
 :::

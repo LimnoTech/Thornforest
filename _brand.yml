@@ -1,0 +1,23 @@
+color:
+  palette:
+    limno-navy: "#174A7C"
+    limno-blue: "#56A0D3"
+    limno-lime: "#8DC63F"
+    limno-aqua: "#5B9B98"
+    limno-sky: "#88CBDF"
+    limno-yellow: "#F2D17E"
+    almost-black: "#313131"
+  foreground: almost-black
+  primary: limno-navy
+  secondary: limno-blue
+  tertiary: limno-lime
+
+typography:
+  fonts:
+    - family: Roboto
+      source: google
+  base: Roboto
+  headings:
+    family: Roboto
+    weight: 600
+    color: limno-navy

@@ -1,0 +1,59 @@
+name: Publish site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up pixi
+        uses: prefix-dev/setup-pixi@v0.9.6
+        with:
+          environments: default
+          cache: true
+
+      - name: Render site (Quarto)
+        # Renders from committed _freeze/; on a freeze miss it re-executes the notebooks,
+        # which hit the USGS APIs — the key avoids the anonymous-rate-limit (HTTP 429).
+        env:
+          API_USGS_PAT: ${{ secrets.API_USGS_PAT }}
+        run: pixi run render
+
+      - name: Warn if _freeze/ was stale (non-blocking)
+        run: |
+          if [ -n "$(git status --porcelain -- _freeze/)" ]; then
+            echo "::warning::_freeze/ was out of date — CI re-executed the notebooks. Run 'pixi run render' locally and commit _freeze/ to keep CI fast."
+            git --no-pager diff --stat -- _freeze/
+          else
+            echo "_freeze/ is up to date."
+          fi
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
