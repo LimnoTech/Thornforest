@@ -216,8 +216,24 @@ later: add `.github/workflows/publish.yml` (same as soil-health), add **`API_USG
 
 ## Conventions
 
-- **Commits are made manually by the user in GitHub Desktop — do not run `git commit`.** Make and
-  verify the file changes; leave staging/committing to the user.
+### Development workflow (branches, commits, reviews)
+
+- **Only the user commits and merges — never the agent.** Do **not** run `git commit` or `git merge`
+  (or push). Make and verify the file changes and leave them staged/on-disk; the user reviews, commits,
+  and merges in GitHub Desktop. (Creating a branch with `git checkout -b` / `git branch` is fine — that
+  is not a commit.)
+- **Feature work happens on a branch per coupled task-group, branched off `main` by the agent.** Group
+  tightly-coupled tasks onto one branch (don't make a branch per micro-step). The user reviews the whole
+  branch, commits, and merges it to `main` before the next group's branch is created off the updated
+  `main`. Task-groups are dependent, so the agent **pauses after each group** for the user's
+  review/commit/merge gate.
+- **Multi-step plans run via subagent-driven development:** a fresh implementer subagent per task-group,
+  a task review (spec compliance + code quality) before handing the group to the user. Because the agent
+  doesn't commit, per-group review runs on the **working-tree diff** (`git add -N` untracked, then
+  `git diff`), not on commit ranges.
+- **Verification (no formal test suite):** the deliverable is executed notebooks + the rendered site.
+  Verify by executing notebooks headlessly (`pixi run jupyter nbconvert --to notebook --execute
+  --inplace <nb>.ipynb`), running small assertion snippets, and `pixi run render` + grep — not pytest.
 - **Explore new data sources in a `sandbox/` notebook first**, then port the proven approach into the
   numbered notebooks (mirrors the sibling `data-engine/sandbox/` pattern).
 - **Reusable, project-agnostic helpers live in [`notebooks/_helpers.py`](notebooks/_helpers.py)**
