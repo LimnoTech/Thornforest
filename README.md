@@ -46,10 +46,14 @@ trend analysis), box and whisker plots of data collected pre- and post-restorati
 The work is organized as a series of Jupyter notebooks following a **hybrid** structure:
 
 - **Fetch notebooks (one per source)** — discover what data exists within the three HUC-8 watersheds,
-  fetch the 2000–2025 record, and save it to `data/`. The first notebook, `1_usgs_hydrography_waterdata`,
-  establishes the spatial foundation (HUC-8 watershed boundaries via HyRiver `pygeohydro`), discovers the
-  USGS monitoring stations within them (`dataretrieval.waterdata`), and flags which data types — **daily,
-  continuous, field measurements, and water-quality samples** — each station offers.
+  fetch the 2000–2025 record, and save it to `data/`. So far:
+  - **`1_usgs_hydrofabric`** — the spatial foundation: HUC-8 watershed boundaries via HyRiver
+    `pygeohydro`, mapped on an interactive topographic basemap.
+  - **`2_usgs_waterdata`** — discovers the USGS monitoring stations within the watersheds
+    (`dataretrieval.waterdata`) and records, per station, both the available **data types** (daily,
+    continuous, field measurements, water-quality samples) and **which priority parameters** it
+    measured (conductivity, temperature, dissolved oxygen, dissolved solids, chlorophyll, pH, nitrogen,
+    phosphorus, turbidity).
 - **Display / analyze notebooks (shared)** — read the saved data and work across sources by data type or
   watershed (maps, trend analyses, pre/post-restoration comparisons). A structured deliverable (Excel or
   the format American Forests prefers) is exported from the harmonized data at the end.
@@ -58,18 +62,18 @@ The work is organized as a series of Jupyter notebooks following a **hybrid** st
 > hydrography datasets (USGS NHD / NHDPlus and the WaterData monitoring network) are **US-only** and
 > stop at the international border. Capturing the Mexican side of the basin (stream network and
 > stations) will require Mexico-capable sources (e.g. HydroRIVERS, INEGI, or the IBWC), which is why
-> the stream network is not yet included in Notebook 1.
+> the stream network is deferred to a later round.
 
 The notebooks render as a static, **fully interactive** website (HoloViews/GeoViews visuals) built
 with **[Quarto](https://quarto.org)** — `pixi run render` builds `_site/`, `pixi run preview` serves a
 live-reload preview. Quarto executes the notebooks (baking the interactive Bokeh maps into the HTML)
-and freezes the results to `_freeze/` (committed). Publishing to GitHub Pages is planned but not yet
-enabled (the repo is private, pending publish permission).
+and freezes the results to `_freeze/` (committed). The site is **published to GitHub Pages** via GitHub
+Actions on every push to `main`: **<https://limnotech.github.io/Thornforest/>**.
 
 Saved results live in `data/`, each written as **GeoParquet** (compact, typed — what the notebooks
 read) **and** a **CSV** copy (human-readable, geometry as WKT) for transparency: HyRiver geometries
 (e.g. watershed boundaries) under `data/spatial/`, and USGS WaterData products (monitoring locations
-and the data types they offer) under `data/usgs_waterdata/`. To keep downloads fast, web requests are
+and the parameters they measured) under `data/usgs_waterdata/`. To keep downloads fast, web requests are
 cached on disk in a git-ignored `cache/` folder (reused for a week), so re-running a notebook doesn't
 re-download. A free [USGS API key](https://api.waterdata.usgs.gov/signup/) in `.env` raises the rate
 limits (see below).

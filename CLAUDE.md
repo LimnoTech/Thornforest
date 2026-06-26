@@ -11,16 +11,17 @@ measurable changes in water quantity/quality correlate with the timing and locat
 activity. See [README.md](README.md) for the full scope.
 
 **Publication goal:** the notebooks are published with **interactive HoloViews/GeoViews visuals**
-as a static **website built with Quarto** — the same toolchain and patterns as the sibling
-**`soil-health-hydraulics`** repo. The local render is set up (see **Website (Quarto)** below);
-deploying to `*.github.io` is deferred until the (private) repo gets publish permission.
+as a static **website built with Quarto**, deployed to **GitHub Pages** via GitHub Actions — the same
+toolchain and patterns as the sibling **`soil-health-hydraulics`** repo. **Live at
+<https://limnotech.github.io/Thornforest/>** (see **Website (Quarto)** below).
 
-**Current status.** Notebook 1 (`notebooks/1_usgs_hydrography_waterdata`) is built: it fetches the
-three HUC-8 boundaries, maps them, discovers the USGS monitoring stations within them, flags which of
-four data types each station offers, and **saves each result to `data/` (GeoParquet + CSV)** with
-on-disk request caching. Data-source exploration that doesn't belong in the polished notebooks lives in
-`sandbox/` (e.g. `sandbox/explore_nhdplus_vpu13`). The **stream network is deferred** (see the coverage
-note below).
+**Current status (Round 1 complete, site live).** The work is split into two notebooks:
+**`1_usgs_hydrofabric`** (HUC-8 boundaries → map) and **`2_usgs_waterdata`** (discover monitoring
+stations → record which priority parameters each measured → maps). Shared setup/colors/utilities live in
+`notebooks/_helpers.py`. Each result is saved to `data/` as **GeoParquet + CSV** with on-disk request
+caching, and the site is **published to GitHub Pages** (LimnoTech-branded via `_brand.yml`).
+Data-source exploration lives in `sandbox/` (e.g. `sandbox/explore_nhdplus_vpu13`). The **stream
+network is deferred** (see the coverage note below).
 
 ## Planned structure (agreed approach)
 
@@ -28,7 +29,7 @@ A series of Jupyter notebooks in a **hybrid** organization:
 
 - **Fetch notebooks, one per source** — each discovers what data exists within the three watersheds,
   fetches the 2000–2025 record, and saves it under `data/`. Source-prefixed, numbered names
-  (e.g. `1_usgs_hydrography_waterdata`, then further `waterdata`-based notebooks).
+  (e.g. `1_usgs_hydrofabric`, `2_usgs_waterdata`, then further source notebooks).
 - **Display / analyze notebooks, shared** — read the saved data and work across sources by data type or
   watershed (maps, trends, pre/post-restoration comparisons). The Excel/structured deliverable is
   exported from the harmonized data at the end.
@@ -38,7 +39,7 @@ A series of Jupyter notebooks in a **hybrid** organization:
 
 - `data/spatial/` — geometries from **HyRiver/`pygeohydro`** (e.g. `huc8_watersheds`).
 - `data/usgs_waterdata/` — products from **`dataretrieval.waterdata`** (e.g.
-  `usgs_monitoring_locations`, `usgs_monitoring_locations_data_types`).
+  `usgs_monitoring_locations`, `usgs_monitoring_locations_parameters`).
 - `data/<source>/` — one folder per other source as they're added (TCEQ, NCEI, …).
 
 **Caching (two distinct layers — keep them separate):**
@@ -53,15 +54,21 @@ A series of Jupyter notebooks in a **hybrid** organization:
   their own client and are **not** in the HTTP cache, but they're few and cheap (and the API key
   removes the rate limit). Only HyRiver + `async_retriever` requests are cached in `cache/`.
 
-**Notebook 1 (`notebooks/1_usgs_hydrography_waterdata`)** — built. Steps: (1) imports; (1b) setup —
-`load_dotenv()` for the API key, the `cache/` HTTP cache, and a `save_outputs(gdf, path)` helper that
-writes GeoParquet **+** CSV; (3) fetch the three HUC-8 boundaries with `pygeohydro.WBD` → save to
-`data/spatial/`; (4) map them on an Esri World Topo basemap; (5) discover monitoring stations via
-`dataretrieval.waterdata.get_monitoring_locations(bbox=…)`, clip to the polygons with `geopandas.sjoin`
-→ save to `data/usgs_waterdata/`; (6) flag which of four data endpoints each station offers (samples
-fetched concurrently via `async_retriever`) → save to `data/usgs_waterdata/`; (7) map stations by data
-type with a click-to-toggle legend. **The stream network was removed** from NB1 and is deferred pending
-a Mexico-capable source (see coverage note).
+**Notebook 1 (`notebooks/1_usgs_hydrofabric`)** — imports at top + `S = init_session()` (from
+`_helpers`); fetch the three HUC-8 boundaries with `pygeohydro.WBD` → `save_outputs` to `data/spatial/`;
+map them on an Esri World Topo basemap (watershed colors via `categorical_colors`).
+
+**Notebook 2 (`notebooks/2_usgs_waterdata`)** — reads `data/spatial/huc8_watersheds.parquet`; discovers
+stations via `dataretrieval.waterdata.get_monitoring_locations(bbox=…)` clipped with `geopandas.sjoin`;
+then records, per station, the four **data-type flags** (daily/continuous/field/samples) **and** which of
+nine **priority parameters** (conductivity, temperature, dissolved oxygen, dissolved solids, chlorophyll,
+pH, nitrogen, phosphorus, turbidity) it measured — gathered from `get_time_series_metadata` +
+`get_field_measurements_metadata` (pcodes) and the per-station samples summary (characteristics, fetched
+concurrently via `async_retriever`), enriched via `get_reference_table("parameter-codes")`, using
+`PRIORITY_GROUPS`/`classify_parameter` defined in NB2. Saves the inventory (+ a `parameters` list column)
+to `data/usgs_waterdata/usgs_monitoring_locations_parameters.{parquet,csv}` and maps stations by
+parameter (click-legend toggle). **The stream network is deferred** pending a Mexico-capable source
+(see coverage note).
 
 **Audience:** notebooks are written for readers **new to Python/Jupyter** — explain each step in
 markdown, and keep code cells small and commented.
@@ -111,7 +118,7 @@ WaterData APIs).
   the template (`cp .env.example .env`), and notebooks call `load_dotenv()` (**`python-dotenv`** is in
   `pixi.toml`) to load it. Never hardcode the key or commit `.env`. Everything still runs with no key.
 
-### Discovering data availability (the NB1 pattern)
+### Discovering data availability (the NB2 pattern)
 
 - **Stations:** `get_monitoring_locations(bbox=[minlon,minlat,maxlon,maxlat])` → GeoDataFrame; call
   `.set_crs(4326)` (it comes back without a CRS), then `geopandas.sjoin(..., predicate="within")` to the
@@ -166,7 +173,7 @@ The pinned deps map to the project's needs:
 - **Visualization & notebooks:** `hvplot`, `geoviews`, `contextily`, JupyterLab, `jupyter_bokeh`,
   and `jupytext` — interactive maps/plots authored in notebooks.
 
-## Website (Quarto) — local render; publishing deferred
+## Website (Quarto) — published to GitHub Pages
 
 The notebooks publish as a static, interactive website built with **Quarto**, modeled on the
 sibling `soil-health-hydraulics` repo.
@@ -184,10 +191,12 @@ sibling `soil-health-hydraulics` repo.
   even though `notebooks/_helpers.py` matches it — Quarto ignores underscore-prefixed files.
 - **Git:** `_site/`, `.quarto/`, `cache/` are ignored; **`_freeze/` is committed** (the render cache).
 
-**Publishing is deferred** (private repo; needs permission to publish to `*.github.io`). To enable
-later: add `.github/workflows/publish.yml` (same as soil-health), add **`API_USGS_PAT`** as a repo
-**secret** (so a freeze-miss CI re-execution stays authenticated — NB1 hits the USGS APIs), and set
-**Settings → Pages → Source → GitHub Actions**.
+**Publishing (live):** [`.github/workflows/publish.yml`](.github/workflows/publish.yml) renders and
+deploys to **GitHub Pages** on every push to `main` (and on `workflow_dispatch`). The render step is
+given the **`API_USGS_PAT`** repo **secret** so a freeze-miss CI re-execution stays authenticated (the
+notebooks hit the USGS APIs); Pages Source is set to **GitHub Actions**. Live at
+<https://limnotech.github.io/Thornforest/>. After editing a notebook, re-run `pixi run render` locally
+and commit `_freeze/` to keep CI fast.
 
 ## Notebook & GeoViews gotchas (learned)
 
@@ -237,9 +246,16 @@ later: add `.github/workflows/publish.yml` (same as soil-health), add **`API_USG
 - **Explore new data sources in a `sandbox/` notebook first**, then port the proven approach into the
   numbered notebooks (mirrors the sibling `data-engine/sandbox/` pattern).
 - **Reusable, project-agnostic helpers live in [`notebooks/_helpers.py`](notebooks/_helpers.py)**
-  (`find_repo_root`, `save_outputs`, `show`); notebooks `from _helpers import …` rather than redefining
-  them. The leading underscore makes Quarto ignore the module when rendering. (Candidate to grow into a
-  shareable cross-project package.)
+  (`find_repo_root`, `init_session`/`Session`, `save_outputs`, `show`, `categorical_colors`/`CATEGORICAL`,
+  `make_legend_clickable`); notebooks `from _helpers import …` rather than redefining them. The leading
+  underscore makes Quarto ignore the module when rendering. (Candidate to grow into a shareable
+  cross-project package.)
+- **Session setup via `init_session()`** — call once near the top of each notebook (`S = init_session()`);
+  it loads `.env`, configures the `cache/` HTTP cache, and returns paths/headers (`S.data_dir`,
+  `S.cache_file`, `S.api_headers`, …). Avoid scattering that config across cells.
+- **Data colors come from colorcet, never the LimnoTech brand.** Color figure *data* with
+  `categorical_colors(keys)` (colorcet `b_glasbey_category10`); the brand palette + Roboto (`_brand.yml`)
+  are for the *site chrome* only.
 - **`save_outputs` returns nothing on purpose** — a save call is often the last line of a cell, and a
   returned (Geo)DataFrame would auto-render as a stray, non-scrollable table. Display tables explicitly
   with **`show(df)`** (fixed-height scrollable box; emits every row).
@@ -256,4 +272,5 @@ later: add `.github/workflows/publish.yml` (same as soil-health), add **`API_USG
   downloads, e.g. the EPA NHDPlus `.7z` archives). **Committed:** `data/` outputs (the shareable
   GeoParquet/CSV products).
 - **Dependencies added beyond the original manifest:** `pygeohydro` (WBD boundaries), `python-dotenv`
-  (API key), and `python-libarchive-c` (`.7z` extraction in the sandbox).
+  (API key), `python-libarchive-c` (`.7z` extraction in the sandbox), `colorcet` (data color palettes),
+  and `quarto` (site rendering).
