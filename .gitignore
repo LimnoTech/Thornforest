@@ -218,7 +218,8 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# Project-specific
+## Project-specific ##
+.claude/
 *cache/
 
 # Scratch data downloads (sandbox / raw source archives)
