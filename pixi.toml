@@ -55,6 +55,8 @@ jupytext = "*"
 
 # Website rendering
 quarto = ">=1.9.38,<2"
+exactextract = ">=0.3.0,<0.4"
+pymannkendall = ">=1.4.3,<2"
 
 [pypi-dependencies]
 # Put pip-only requirements here if needed

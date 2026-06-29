@@ -34,12 +34,21 @@ A series of Jupyter notebooks in a **hybrid** organization:
   watershed (maps, trends, pre/post-restoration comparisons). The Excel/structured deliverable is
   exported from the harmonized data at the end.
 
-**Data directory layout** — each saved dataframe is written in **two formats**: GeoParquet
-(compact, typed — what notebooks read) **and** a CSV copy (geometry as WKT) for transparency.
+**Storage-format convention (firm).** **Tabular** DataFrames/GeoDataFrames → **parquet** (compact,
+typed — what notebooks read) **plus a CSV copy** (geometry as WKT) for transparency. **Datacubes**
+(anything read natively with xarray — raster/gridded data) → **zarr, never parquet**. Write zarr as
+**v3 with an explicit `ZstdCodec`** (Icechunk-ready) via the `save_datacube` helper. Parquet flattens
+away dims/coords/CRS/chunking that make a cube useful; zarr preserves them.
 
-- `data/spatial/` — geometries from **HyRiver/`pygeohydro`** (e.g. `huc8_watersheds`).
+**Data directory layout:**
+
+- `data/spatial/` — geometries from **HyRiver/`pygeohydro`** (e.g. `huc8_watersheds`). (parquet+CSV)
 - `data/usgs_waterdata/` — products from **`dataretrieval.waterdata`** (e.g.
-  `usgs_monitoring_locations`, `usgs_monitoring_locations_parameters`).
+  `usgs_monitoring_locations`, `usgs_monitoring_locations_parameters`). (parquet+CSV)
+- `data/conus404/` — CONUS404 climate products (NB3): the gridded monthly **datacube**
+  `conus404_monthly_grid.zarr` (**git-ignored**, ~57 MB — regenerated from the cloud), the small
+  **committed** derived datacubes `conus404_climatology_grid.zarr` / `conus404_trends_grid.zarr`,
+  and the tabular `conus404_wateryear_by_huc8.{parquet,csv}` / `conus404_trends_by_huc8.{parquet,csv}`.
 - `data/<source>/` — one folder per other source as they're added (TCEQ, NCEI, …).
 
 **Caching (two distinct layers — keep them separate):**
@@ -70,6 +79,20 @@ concurrently via `async_retriever`), enriched via `get_reference_table("paramete
 to `data/usgs_waterdata/usgs_monitoring_locations_parameters.{parquet,csv}` and maps stations by
 parameter (click-legend toggle). **The stream network is deferred** pending a Mexico-capable source
 (see coverage note).
+
+**Notebook 3 (`notebooks/3_usgs_conus404_climate`)** — reads `data/spatial/huc8_watersheds.parquet`;
+opens **CONUS404** monthly output (`s3://hytest/conus404/conus404_monthly.zarr` on the USGS OSN pod,
+anonymous; grid CRS via `pyproj.CRS.from_cf(ds['crs'].attrs)`), clips the 11 water-balance variables
+to the bbox, and **saves the gridded monthly datacube to zarr** (`conus404_monthly_grid`, via the
+`conus404_monthly_grid` helper, load-if-exists). From the cube it derives, **per watershed**, an
+area-weighted zonal mean (`zonal_by_huc8` → `xvec`/`exactextract`) aggregated to water-year totals/means
+with a simple water balance `P − ET − Q` and **Mann–Kendall/Sen's-slope** trends (`mk_sen_trend`,
+tabular → parquet+CSV); and, **per grid cell**, a climatology and per-cell trends (`pixel_trend`,
+datacubes → zarr) for spatial-pattern + change-over-time maps. Maps reproject the small cube to
+EPSG:4326 (`rioxarray`) for tiled GeoViews quadmeshes; charts show water-year P/ET/Q, temperature, and
+Sen's-slope bars. **Monthly** (not daily) keeps the gridded cube small (~57 MB vs ~2.4 GB) — the size
+that makes keeping the spatial grid practical. Monthly `AC*` values are **monthly accumulations** (sum
+12 → water-year total).
 
 **Audience:** notebooks are written for readers **new to Python/Jupyter** — explain each step in
 markdown, and keep code cells small and commented.
@@ -167,10 +190,12 @@ The pinned deps map to the project's needs:
   HTTP layer) fires many small requests concurrently and caches them — used for the per-station samples
   lookups in NB1.
 - **Geospatial:** `geopandas`, `gdal` + `libgdal-arrow-parquet`, `rioxarray`, `xarray`, `xvec`,
-  `cfunits` — for station locations, raster/precip data, and unit handling. Station-to-restoration-
-  site mapping (spatial relevance) is an explicit project goal.
-- **Storage / remote access:** `pyarrow`, `zarr>=3`, `fsspec`/`s3fs`/`universal_pathlib` — Parquet/
-  Zarr outputs and cloud-path access.
+  `exactextract`, `cfunits` — for station locations, raster/climate datacubes, area-weighted zonal
+  stats (`xvec` + `exactextract`), and unit handling. Station-to-restoration-site mapping (spatial
+  relevance) is an explicit project goal.
+- **Analysis:** `pymannkendall` — Mann–Kendall trend test + Sen's-slope estimate (NB3 trends).
+- **Storage / remote access:** `pyarrow`, `zarr>=3`, `fsspec`/`s3fs`/`universal_pathlib` — Parquet
+  (tabular) / **Zarr v3** (datacubes) outputs and anonymous cloud-path access (CONUS404 on the OSN pod).
 - **Visualization & notebooks:** `hvplot`, `geoviews`, `contextily`, JupyterLab, `jupyter_bokeh`,
   and `jupytext` — interactive maps/plots authored in notebooks.
 
@@ -247,10 +272,13 @@ and commit `_freeze/` to keep CI fast.
 - **Explore new data sources in a `sandbox/` notebook first**, then port the proven approach into the
   numbered notebooks (mirrors the sibling `data-engine/sandbox/` pattern).
 - **Reusable, project-agnostic helpers live in [`notebooks/_helpers.py`](notebooks/_helpers.py)**
-  (`find_repo_root`, `init_session`/`Session`, `save_outputs`, `show`, `categorical_colors`/`CATEGORICAL`,
-  `make_legend_clickable`); notebooks `from _helpers import …` rather than redefining them. The leading
-  underscore makes Quarto ignore the module when rendering. (Candidate to grow into a shareable
-  cross-project package.)
+  (`find_repo_root`, `init_session`/`Session`, `save_outputs`, `save_datacube`, `show`,
+  `categorical_colors`/`CATEGORICAL`, `make_legend_clickable`; plus the CONUS404 set
+  `conus404_monthly_grid`, `zonal_by_huc8`, `water_year`, `mk_sen_trend`, `pixel_trend`); notebooks
+  `from _helpers import …` rather than redefining them. The leading underscore makes Quarto ignore the
+  module when rendering. Heavy imports (xarray/pyproj/xvec/pymannkendall) in the CONUS404 helpers are
+  **lazy** (inside the functions) so NB1/NB2 don't pay their import cost. (Candidate to grow into a
+  shareable cross-project package.)
 - **Session setup via `init_session()`** — call once near the top of each notebook (`S = init_session()`);
   it loads `.env`, configures the `cache/` HTTP cache, and returns paths/headers (`S.data_dir`,
   `S.cache_file`, `S.api_headers`, …). Avoid scattering that config across cells.
@@ -262,9 +290,11 @@ and commit `_freeze/` to keep CI fast.
   with **`show(df)`** (fixed-height scrollable box; emits every row).
 - **Paired notebooks (jupytext):** commit a diff-friendly `.py` alongside each `.ipynb`; keep them in
   sync with `pixi run jupytext --sync <name>.py`. The `.py` is the source to review/commit.
-- **Saved data** goes in `data/` as **GeoParquet + a CSV copy** (via the `save_outputs` helper);
-  HyRiver geometries in `data/spatial/`, `dataretrieval` products in `data/usgs_waterdata/` — see the
-  data layout & caching notes above.
+- **Saved data** follows the storage-format convention above: **tabular** → GeoParquet + a CSV copy
+  (via `save_outputs`); **datacubes** → zarr v3 (via `save_datacube`). HyRiver geometries in
+  `data/spatial/`, `dataretrieval` products in `data/usgs_waterdata/`, CONUS404 climate in
+  `data/conus404/` (raw monthly cube git-ignored; derived products committed) — see the data layout
+  & caching notes above.
 - **API key:** `load_dotenv()` reads `API_USGS_PAT` from the repo-root `.env`; it's attached as the
   `X-Api-Key` header (and to `async_retriever` requests via `request_kwds`). Without it, calls fall back
   to anonymous limits and **will hit HTTP 429** under repeated use.

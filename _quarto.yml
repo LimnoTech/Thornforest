@@ -29,6 +29,8 @@ website:
         text: "1 · Hydrofabric"
       - href: notebooks/2_usgs_waterdata.html
         text: "2 · WaterData stations"
+      - href: notebooks/3_usgs_conus404_climate.html
+        text: "3 · CONUS404 climate"
     right:
       - icon: github
         href: https://github.com/LimnoTech/Thornforest
