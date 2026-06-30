@@ -53,6 +53,9 @@ jupyter_bokeh = "*"
 jupyterlab = "*"
 jupytext = "*"
 
+# Testing
+pytest = "*"
+
 # Website rendering
 quarto = ">=1.9.38,<2"
 exactextract = ">=0.3.0,<0.4"

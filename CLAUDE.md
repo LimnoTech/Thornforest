@@ -2,6 +2,35 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ Read this first — critical guardrails
+
+**These are the rules most easily missed and most costly to get wrong. Read this whole section — and
+the [Conventions](#conventions) section near the bottom — _before_ doing any work, not just the
+overview above it.**
+
+- **Only the user commits and merges — never the agent.** Do **not** run `git commit`, `git merge`, or
+  `git push`. Make and verify the file changes, leave them **staged / on-disk**, and let the user review,
+  commit, and merge in GitHub Desktop. Creating a branch (`git checkout -b` / `git branch`) is fine — that
+  is not a commit. _A local `.claude/` PreToolUse hook also blocks these commands, but `.claude/` is
+  git-ignored, so this written rule — not the hook — is the durable, cross-machine contract._
+- **Edit the notebook `.py`, never the `.ipynb` directly.** Notebooks are jupytext-paired and the `.py`
+  is the source of truth; after editing run `pixi run jupytext --sync <name>.py`. The `.py` is what you
+  review.
+- **Storage formats are fixed:** tabular DataFrames → **GeoParquet + a CSV copy** (via `save_outputs`);
+  raster / xarray datacubes → **zarr v3** (via `save_datacube`), **never parquet**.
+- **USGS data comes from the new WaterData APIs — NOT the legacy NWIS / Water Quality Portal.** See
+  _Use the new USGS WaterData APIs_ below.
+- **Federal hydrography & monitoring data is US-only** — it stops at the Rio Grande border; capturing
+  the Mexican side needs other sources. See _Stream-network data is US-only — the Mexico gap_ below.
+- **Multi-step work pauses for the user at each task-group gate** (branch off `main`, agent does not
+  commit, user reviews the working-tree diff and commits). See _Development workflow_ under Conventions.
+- **No formal test suite:** verify by executing notebooks headlessly (`pixi run jupyter nbconvert
+  --to notebook --execute --inplace <nb>.ipynb`) + `pixi run render` + small assertion snippets — not pytest.
+- **A USGS API key in `.env`** (`API_USGS_PAT`) raises rate limits; without it, repeated calls **hit HTTP 429**.
+
+Everything below expands on these. When a detail here and a detail below ever disagree, the more specific
+section below wins — but the bullets above are the ones you must not skip.
+
 ## What this is
 
 A data-compilation and analysis project for **American Forests' Thornforest project, Task 2**:
@@ -16,7 +45,7 @@ toolchain and patterns as the sibling **`soil-health-hydraulics`** repo. **Live 
 <https://limnotech.github.io/Thornforest/>** (see **Website (Quarto)** below).
 
 **Current status (Round 1 complete, site live).** The work is split into two notebooks:
-**`1_usgs_hydrofabric`** (HUC-8 boundaries → map) and **`2_usgs_waterdata`** (discover monitoring
+**`1_usgs_hydrography`** (HUC-8 boundaries → map) and **`3_usgs_waterdata`** (discover monitoring
 stations → record which priority parameters each measured → maps). Shared setup/colors/utilities live in
 `notebooks/_helpers.py`. Each result is saved to `data/` as **GeoParquet + CSV** with on-disk request
 caching, and the site is **published to GitHub Pages** (LimnoTech-branded via `_brand.yml`).
@@ -29,7 +58,7 @@ A series of Jupyter notebooks in a **hybrid** organization:
 
 - **Fetch notebooks, one per source** — each discovers what data exists within the three watersheds,
   fetches the 2000–2025 record, and saves it under `data/`. Source-prefixed, numbered names
-  (e.g. `1_usgs_hydrofabric`, `2_usgs_waterdata`, then further source notebooks).
+  (e.g. `1_usgs_hydrography`, `2_usgs_climate`, `3_usgs_waterdata`, then further source notebooks).
 - **Display / analyze notebooks, shared** — read the saved data and work across sources by data type or
   watershed (maps, trends, pre/post-restoration comparisons). The Excel/structured deliverable is
   exported from the harmonized data at the end.
@@ -42,10 +71,10 @@ away dims/coords/CRS/chunking that make a cube useful; zarr preserves them.
 
 **Data directory layout:**
 
-- `data/spatial/` — geometries from **HyRiver/`pygeohydro`** (e.g. `huc8_watersheds`). (parquet+CSV)
+- `data/hydrography/` — geometries from **HyRiver/`pygeohydro`** (e.g. `huc8_watersheds`). (parquet+CSV)
 - `data/usgs_waterdata/` — products from **`dataretrieval.waterdata`** (e.g.
   `usgs_monitoring_locations`, `usgs_monitoring_locations_parameters`). (parquet+CSV)
-- `data/conus404/` — CONUS404 climate products (NB3): the gridded monthly **datacube**
+- `data/climate/` — CONUS404 climate products (NB2): the gridded monthly **datacube**
   `conus404_monthly_grid.zarr` (**git-ignored**, ~57 MB — regenerated from the cloud), the small
   **committed** derived datacubes `conus404_climatology_grid.zarr` / `conus404_trends_grid.zarr`,
   and the tabular `conus404_wateryear_by_huc8.{parquet,csv}` / `conus404_trends_by_huc8.{parquet,csv}`.
@@ -63,11 +92,11 @@ away dims/coords/CRS/chunking that make a cube useful; zarr preserves them.
   their own client and are **not** in the HTTP cache, but they're few and cheap (and the API key
   removes the rate limit). Only HyRiver + `async_retriever` requests are cached in `cache/`.
 
-**Notebook 1 (`notebooks/1_usgs_hydrofabric`)** — imports at top + `S = init_session()` (from
-`_helpers`); fetch the three HUC-8 boundaries with `pygeohydro.WBD` → `save_outputs` to `data/spatial/`;
+**Notebook 1 (`notebooks/1_usgs_hydrography`)** — imports at top + `S = init_session()` (from
+`_helpers`); fetch the three HUC-8 boundaries with `pygeohydro.WBD` → `save_outputs` to `data/hydrography/`;
 map them on an Esri World Topo basemap (watershed colors via `categorical_colors`).
 
-**Notebook 2 (`notebooks/2_usgs_waterdata`)** — reads `data/spatial/huc8_watersheds.parquet`; discovers
+**Notebook 3 (`notebooks/3_usgs_waterdata`)** — reads `data/hydrography/huc8_watersheds.parquet`; discovers
 stations via `dataretrieval.waterdata.get_monitoring_locations(bbox=…)` clipped with `geopandas.sjoin`;
 then records, per station, the four **data-type flags** (daily/continuous/field/samples) **and** which of
 eleven **priority parameters** — nine water-quality (conductivity, temperature, dissolved oxygen,
@@ -75,12 +104,12 @@ dissolved solids, chlorophyll, pH, nitrogen, phosphorus, turbidity) plus two wat
 (**discharge** and **water level**) — it measured — gathered from `get_time_series_metadata` +
 `get_field_measurements_metadata` (parameter codes) and the per-station samples summary (characteristics, fetched
 concurrently via `async_retriever`), enriched via `get_reference_table("parameter-codes")`, using
-`PRIORITY_GROUPS`/`classify_parameter` defined in NB2. Saves the inventory (+ a `parameters` list column)
+`PRIORITY_GROUPS`/`classify_parameter` defined in NB3. Saves the inventory (+ a `parameters` list column)
 to `data/usgs_waterdata/usgs_monitoring_locations_parameters.{parquet,csv}` and maps stations by
 parameter (click-legend toggle). **The stream network is deferred** pending a Mexico-capable source
 (see coverage note).
 
-**Notebook 3 (`notebooks/3_usgs_conus404_climate`)** — reads `data/spatial/huc8_watersheds.parquet`;
+**Notebook 2 (`notebooks/2_usgs_climate`)** — reads `data/hydrography/huc8_watersheds.parquet`;
 opens **CONUS404** monthly output (`s3://hytest/conus404/conus404_monthly.zarr` on the USGS OSN pod,
 anonymous; grid CRS via `pyproj.CRS.from_cf(ds['crs'].attrs)`), clips the 11 water-balance variables
 to the bbox, and **saves the gridded monthly datacube to zarr** (`conus404_monthly_grid`, via the
@@ -142,7 +171,7 @@ WaterData APIs).
   the template (`cp .env.example .env`), and notebooks call `load_dotenv()` (**`python-dotenv`** is in
   `pixi.toml`) to load it. Never hardcode the key or commit `.env`. Everything still runs with no key.
 
-### Discovering data availability (the NB2 pattern)
+### Discovering data availability (the NB3 pattern)
 
 - **Stations:** `get_monitoring_locations(bbox=[minlon,minlat,maxlon,maxlat])` → GeoDataFrame; call
   `.set_crs(4326)` (it comes back without a CRS), then `geopandas.sjoin(..., predicate="within")` to the
@@ -188,12 +217,12 @@ The pinned deps map to the project's needs:
   see the warning above), **not** the legacy `nwis` module. Plus the **HyRiver** suite (`pygeohydro`
   for WBD boundaries; `pynhd`, `pygeoogc`, `hydrosignatures`). **`async_retriever`** (HyRiver's async
   HTTP layer) fires many small requests concurrently and caches them — used for the per-station samples
-  lookups in NB1.
+  lookups in NB3.
 - **Geospatial:** `geopandas`, `gdal` + `libgdal-arrow-parquet`, `rioxarray`, `xarray`, `xvec`,
   `exactextract`, `cfunits` — for station locations, raster/climate datacubes, area-weighted zonal
   stats (`xvec` + `exactextract`), and unit handling. Station-to-restoration-site mapping (spatial
   relevance) is an explicit project goal.
-- **Analysis:** `pymannkendall` — Mann–Kendall trend test + Sen's-slope estimate (NB3 trends).
+- **Analysis:** `pymannkendall` — Mann–Kendall trend test + Sen's-slope estimate (NB2 trends).
 - **Storage / remote access:** `pyarrow`, `zarr>=3`, `fsspec`/`s3fs`/`universal_pathlib` — Parquet
   (tabular) / **Zarr v3** (datacubes) outputs and anonymous cloud-path access (CONUS404 on the OSN pod).
 - **Visualization & notebooks:** `hvplot`, `geoviews`, `contextily`, JupyterLab, `jupyter_bokeh`,
@@ -253,10 +282,9 @@ and commit `_freeze/` to keep CI fast.
 
 ### Development workflow (branches, commits, reviews)
 
-- **Only the user commits and merges — never the agent.** Do **not** run `git commit` or `git merge`
-  (or push). Make and verify the file changes and leave them staged/on-disk; the user reviews, commits,
-  and merges in GitHub Desktop. (Creating a branch with `git checkout -b` / `git branch` is fine — that
-  is not a commit.)
+- **Only the user commits and merges — never the agent.** This is the keystone rule — its full text
+  lives in [⚠️ Read this first](#️-read-this-first--critical-guardrails) at the top of this file.
+  (Creating a branch with `git checkout -b` / `git branch` is fine — that is not a commit.)
 - **Feature work happens on a branch per coupled task-group, branched off `main` by the agent.** Group
   tightly-coupled tasks onto one branch (don't make a branch per micro-step). The user reviews the whole
   branch, commits, and merges it to `main` before the next group's branch is created off the updated
@@ -277,7 +305,7 @@ and commit `_freeze/` to keep CI fast.
   `conus404_monthly_grid`, `zonal_by_huc8`, `water_year`, `mk_sen_trend`, `pixel_trend`); notebooks
   `from _helpers import …` rather than redefining them. The leading underscore makes Quarto ignore the
   module when rendering. Heavy imports (xarray/pyproj/xvec/pymannkendall) in the CONUS404 helpers are
-  **lazy** (inside the functions) so NB1/NB2 don't pay their import cost. (Candidate to grow into a
+  **lazy** (inside the functions) so NB1/NB3 don't pay their import cost. (Candidate to grow into a
   shareable cross-project package.)
 - **Session setup via `init_session()`** — call once near the top of each notebook (`S = init_session()`);
   it loads `.env`, configures the `cache/` HTTP cache, and returns paths/headers (`S.data_dir`,
@@ -292,8 +320,8 @@ and commit `_freeze/` to keep CI fast.
   sync with `pixi run jupytext --sync <name>.py`. The `.py` is the source to review/commit.
 - **Saved data** follows the storage-format convention above: **tabular** → GeoParquet + a CSV copy
   (via `save_outputs`); **datacubes** → zarr v3 (via `save_datacube`). HyRiver geometries in
-  `data/spatial/`, `dataretrieval` products in `data/usgs_waterdata/`, CONUS404 climate in
-  `data/conus404/` (raw monthly cube git-ignored; derived products committed) — see the data layout
+  `data/hydrography/`, `dataretrieval` products in `data/usgs_waterdata/`, CONUS404 climate in
+  `data/climate/` (raw monthly cube git-ignored; derived products committed) — see the data layout
   & caching notes above.
 - **API key:** `load_dotenv()` reads `API_USGS_PAT` from the repo-root `.env`; it's attached as the
   `X-Api-Key` header (and to `async_retriever` requests via `request_kwds`). Without it, calls fall back

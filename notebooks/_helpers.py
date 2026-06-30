@@ -29,19 +29,26 @@ def find_repo_root(marker="pixi.toml", start=None):
     return start
 
 
-def save_outputs(gdf, parquet_path):
-    """Save a GeoDataFrame two ways: as GeoParquet (compact, typed) and as a CSV copy
-    (human-readable, geometry written as WKT) for transparency. The (often long) geometry
-    column is moved to the **end** so the table is easier to read in any software. This is a
-    side-effect helper — it prints a confirmation and returns nothing (so it never accidentally
+def save_outputs(df, parquet_path):
+    """Save a (Geo)DataFrame two ways for transparency: parquet (compact, typed) + a CSV copy.
+
+    - GeoDataFrame: GeoParquet + CSV with geometry written as WKT, geometry column moved to the
+      end so the table reads cleanly in any software.
+    - Plain pandas DataFrame (no geometry): a standard (non-Geo) parquet + CSV, columns unchanged.
+
+    Side-effect helper — prints a confirmation and returns nothing (so it never accidentally
     renders a table when it is the last line of a notebook cell)."""
-    geometry_col = gdf.geometry.name
-    ordered = gdf[[c for c in gdf.columns if c != geometry_col] + [geometry_col]]
+    has_geometry = getattr(df, "_geometry_column_name", None) is not None
+    if has_geometry:
+        name = df.geometry.name
+        ordered = df[[c for c in df.columns if c != name] + [name]]
+    else:
+        ordered = df
 
     parquet_path = Path(parquet_path)
     parquet_path.parent.mkdir(parents=True, exist_ok=True)
     ordered.to_parquet(parquet_path)
-    ordered.to_csv(parquet_path.with_suffix(".csv"), index=False)  # geometry -> WKT
+    ordered.to_csv(parquet_path.with_suffix(".csv"), index=False)  # geometry -> WKT when GeoDataFrame
 
     try:
         shown = parquet_path.relative_to(find_repo_root())
@@ -75,6 +82,31 @@ class Session:
     api_headers: dict
 
 
+# --- Plot display defaults (shared by every notebook) -------------------------
+
+PLOT_WIDTH = 600  # frame width (px) tuned to fit the Quarto cosmo content column incl. toolbar;
+                  # see Task 3 verification — lower it (or widen body-width) if any page side-scrolls.
+
+
+def set_plot_defaults(width=PLOT_WIDTH):
+    """Project-wide HoloViews/Bokeh display defaults: a content-fitting frame width (so pages do
+    not scroll sideways) and **scroll-zoom OFF by default** — pan is the active drag tool and
+    wheel_zoom stays in the toolbar but inactive. Call AFTER the bokeh extension is loaded
+    (e.g. gv.extension('bokeh'))."""
+    import holoviews as hv
+
+    hv.opts.defaults(
+        hv.opts.Overlay(frame_width=width, active_tools=["pan"]),
+        hv.opts.Points(frame_width=width, active_tools=["pan"]),
+        hv.opts.Path(frame_width=width, active_tools=["pan"]),
+        hv.opts.Polygons(frame_width=width, active_tools=["pan"]),
+        hv.opts.Curve(frame_width=width, active_tools=["pan"]),
+        hv.opts.QuadMesh(frame_width=width, active_tools=["pan"]),
+        hv.opts.Image(frame_width=width, active_tools=["pan"]),
+        hv.opts.HeatMap(frame_width=width, active_tools=["pan"]),
+    )
+
+
 def init_session(cache_expire_seconds: int = 7 * 24 * 3600) -> Session:
     """Load the optional USGS API key from .env, point HyRiver's request cache at the
     git-ignored cache/ folder, and return the resolved paths/headers as a Session.
@@ -91,6 +123,7 @@ def init_session(cache_expire_seconds: int = 7 * 24 * 3600) -> Session:
         if api_key
         else "No API key — using anonymous (lower) rate limits."
     )
+    set_plot_defaults()
     return Session(
         repo_root=repo_root,
         data_dir=repo_root / "data",

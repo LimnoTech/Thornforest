@@ -227,7 +227,7 @@ __marimo__/
 
 # Raw CONUS404 monthly gridded datacube (~80 MB) — regenerated from OSN by NB3.
 # Small DERIVED products (climatology/trend zarrs, per-HUC-8 parquet/CSV) ARE committed.
-/data/conus404/conus404_monthly_grid.zarr/
+/data/climate/conus404_monthly_grid.zarr/
 
 # Quarto website (rendered output + scratch). NOTE: _freeze/ IS committed — it is the CI render cache.
 /_site/

@@ -47,20 +47,20 @@ The work is organized as a series of Jupyter notebooks following a **hybrid** st
 
 - **Fetch notebooks (one per source)** — discover what data exists within the three HUC-8 watersheds,
   fetch the 2000–2025 record, and save it to `data/`. So far:
-  - **`1_usgs_hydrofabric`** — the spatial foundation: HUC-8 watershed boundaries via HyRiver
+  - **`1_usgs_hydrography`** — the spatial foundation: HUC-8 watershed boundaries via HyRiver
     `pygeohydro`, mapped on an interactive topographic basemap.
-  - **`2_usgs_waterdata`** — discovers the USGS monitoring stations within the watersheds
-    (`dataretrieval.waterdata`) and records, per station, both the available **data types** (daily,
-    continuous, field measurements, water-quality samples) and **which priority parameters** it
-    measured — water quality (conductivity, temperature, dissolved oxygen, dissolved solids,
-    chlorophyll, pH, nitrogen, phosphorus, turbidity) and water quantity (**discharge** and **water
-    level**).
-  - **`3_usgs_conus404_climate`** — fetches **CONUS404** monthly climate output (a 4-km reanalysis,
+  - **`2_usgs_climate`** — fetches **CONUS404** monthly climate output (a 4-km reanalysis,
     cloud-hosted) for the area as a gridded datacube, then derives a long-term water balance
     (precipitation, evapotranspiration, runoff, recharge) and **trends** — both **per watershed**
     (water-year time series + Mann–Kendall/Sen's-slope) and **per grid cell** (climatology and trend
     maps showing spatial patterns and how they change over 1980–2024). This reaches the **whole
     area, including the Mexican side**, since it is gridded model output rather than US-only gauges.
+  - **`3_usgs_waterdata`** — discovers the USGS monitoring stations within the watersheds
+    (`dataretrieval.waterdata`) and records, per station, both the available **data types** (daily,
+    continuous, field measurements, water-quality samples) and **which priority parameters** it
+    measured — water quality (conductivity, temperature, dissolved oxygen, dissolved solids,
+    chlorophyll, pH, nitrogen, phosphorus, turbidity) and water quantity (**discharge** and **water
+    level**).
 - **Display / analyze notebooks (shared)** — read the saved data and work across sources by data type or
   watershed (maps, trend analyses, pre/post-restoration comparisons). A structured deliverable (Excel or
   the format American Forests prefers) is exported from the harmonized data at the end.
@@ -79,10 +79,10 @@ Actions on every push to `main`: **<https://limnotech.github.io/Thornforest/>**.
 
 Saved results live in `data/`. **Tabular** results are written as **GeoParquet** (compact, typed —
 what the notebooks read) **and** a **CSV** copy (human-readable, geometry as WKT) for transparency:
-HyRiver geometries (e.g. watershed boundaries) under `data/spatial/`, USGS WaterData products under
+HyRiver geometries (e.g. watershed boundaries) under `data/hydrography/`, USGS WaterData products under
 `data/usgs_waterdata/`, and the CONUS404 per-watershed water-balance/trend tables under
-`data/conus404/`. **Gridded datacubes** (climate rasters) are written as **Zarr** instead — the
-CONUS404 climatology and trend grids under `data/conus404/` (the larger raw monthly cube is
+`data/climate/`. **Gridded datacubes** (climate rasters) are written as **Zarr** instead — the
+CONUS404 climatology and trend grids under `data/climate/` (the larger raw monthly cube is
 regenerated on demand rather than committed). To keep downloads fast, web requests are
 cached on disk in a git-ignored `cache/` folder (reused for a week), so re-running a notebook doesn't
 re-download. A free [USGS API key](https://api.waterdata.usgs.gov/signup/) in `.env` raises the rate
