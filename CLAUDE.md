@@ -21,7 +21,7 @@ two disagree, this file wins on process, README wins on scope.
   source of truth and what you review. After editing: `pixi run jupytext --sync <name>.py`.
 - **No formal test suite** — verify by executing notebooks headlessly + rendering, not pytest. See
   [Commands](#commands) and [Workflow](#workflow).
-- **Storage formats are fixed** — tabular → GeoParquet **+ CSV** (`save_outputs`); raster/xarray
+- **Storage formats are fixed** — tabular → GeoParquet **+ CSV** (`save_dataframe`); raster/xarray
   datacubes → **zarr v3** (`save_datacube`), never parquet. See [Storage & data](#storage--data).
 - **Preserve original source terminology in the data.** Carry each source's own parameter/variable
   names, descriptions, and units **verbatim** in datasets and saved outputs; introduce new names only
@@ -84,7 +84,7 @@ Define any new reusable task under `[tasks]` in `pixi.toml` so it's discoverable
 - **Set up each notebook with `S = init_session()`** once near the top — it loads `.env`, configures
   the HTTP cache, and returns paths/headers (`S.data_dir`, `S.cache_file`, `S.api_headers`, …). Don't
   scatter that config across cells.
-- **`save_outputs` returns nothing on purpose** (a save is often a cell's last line; a returned frame
+- **`save_dataframe` returns nothing on purpose** (a save is often a cell's last line; a returned frame
   would auto-render as a stray, non-scrollable table). Display tables with **`show(df)`** — a
   fixed-height, sticky-header scrollable box that emits every row.
 - **Color data with colorcet, never the brand palette** — `categorical_colors(keys)` (colorcet
@@ -92,7 +92,7 @@ Define any new reusable task under `[tasks]` in `pixi.toml` so it's discoverable
 
 **This repo:**
 
-- Helper inventory: `find_repo_root`, `init_session`/`Session`, `save_outputs`, `save_datacube`,
+- Helper inventory: `find_repo_root`, `init_session`/`Session`, `save_dataframe`, `save_datacube`,
   `show`, `categorical_colors`/`CATEGORICAL`, `make_legend_clickable`, plus the CONUS404 set
   (`conus404_monthly_grid`, `zonal_by_huc8`, `water_year`, `mk_sen_trend`, `pixel_trend`). Candidate
   to grow into a shareable cross-project package.
@@ -100,7 +100,7 @@ Define any new reusable task under `[tasks]` in `pixi.toml` so it's discoverable
 
 ## Storage & data
 
-- **Tabular** (Geo)DataFrames → **GeoParquet + a CSV copy** via `save_outputs` (parquet is compact and
+- **Tabular** (Geo)DataFrames → **GeoParquet + a CSV copy** via `save_dataframe` (parquet is compact and
   typed — what notebooks read; the CSV, geometry as WKT, is for transparency).
 - **Datacubes** (anything read natively with xarray) → **zarr v3 with an explicit `ZstdCodec`**
   (Icechunk-ready) via `save_datacube`, **never parquet** (parquet flattens away dims/coords/CRS/chunking).

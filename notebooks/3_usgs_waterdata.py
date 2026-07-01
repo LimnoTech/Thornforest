@@ -38,7 +38,7 @@ import geoviews.tile_sources as gvts
 
 from _helpers import (
     init_session,
-    save_outputs,
+    save_dataframe,
     show,
     categorical_colors,
     make_legend_clickable,
@@ -75,7 +75,7 @@ print(
     f"{len(stations_gdf)} stations in the bounding box; "
     f"{len(stations_in_area)} within the watersheds."
 )
-save_outputs(
+save_dataframe(
     stations_in_area, S.data_dir / "usgs_waterdata" / "usgs_monitoring_locations.parquet"
 )
 
@@ -223,7 +223,7 @@ for group in PRIORITY_NAMES:
     stations_in_area[group] = sid_col.map(lambda s, g=group: g in groups_by_site.get(s, set()))
 stations_in_area["parameters"] = sid_col.map(lambda s: params_by_site.get(s, []))
 
-save_outputs(
+save_dataframe(
     stations_in_area,
     S.data_dir / "usgs_waterdata" / "usgs_monitoring_locations_parameters.parquet",
 )
@@ -300,7 +300,7 @@ daily = (
     .sort_values(["monitoring_location_id", "parameter_code", "date"])
     .reset_index(drop=True)
 )
-save_outputs(daily, S.data_dir / "usgs_waterdata" / "usgs_daily_values.parquet")
+save_dataframe(daily, S.data_dir / "usgs_waterdata" / "usgs_daily_values.parquet")
 
 # %% [markdown]
 # ### Discrete water-quality samples
@@ -337,7 +337,7 @@ samples = (
     .sort_values(["monitoring_location_id", "characteristic", "datetime"])
     .reset_index(drop=True)
 )
-save_outputs(samples, S.data_dir / "usgs_waterdata" / "usgs_samples.parquet")
+save_dataframe(samples, S.data_dir / "usgs_waterdata" / "usgs_samples.parquet")
 
 # %% [markdown]
 # ### Field measurements
@@ -365,7 +365,7 @@ field = (
     .sort_values(["monitoring_location_id", "parameter_code", "datetime"])
     .reset_index(drop=True)
 )
-save_outputs(field, S.data_dir / "usgs_waterdata" / "usgs_field_measurements.parquet")
+save_dataframe(field, S.data_dir / "usgs_waterdata" / "usgs_field_measurements.parquet")
 
 # %% [markdown]
 # ## Step 8 — Map stations by priority parameter

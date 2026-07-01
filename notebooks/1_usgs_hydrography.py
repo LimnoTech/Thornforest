@@ -37,7 +37,7 @@ from pygeohydro import WBD
 import geoviews as gv
 import geoviews.tile_sources as gvts
 
-from _helpers import init_session, save_outputs, show, categorical_colors
+from _helpers import init_session, save_dataframe, show, categorical_colors
 
 gv.extension("bokeh")
 S = init_session()
@@ -65,7 +65,7 @@ HUC8_COLORS = categorical_colors(HUC8_WATERSHEDS)  # huc8 code -> hex
 
 # %%
 watersheds_gdf = WBD("huc8").byids("huc8", list(HUC8_WATERSHEDS))
-save_outputs(watersheds_gdf, S.data_dir / "hydrography" / "huc8_watersheds.parquet")
+save_dataframe(watersheds_gdf, S.data_dir / "hydrography" / "huc8_watersheds.parquet")
 print(f"{len(watersheds_gdf)} watershed boundaries.")
 
 # %% [markdown]
