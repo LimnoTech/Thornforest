@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 from IPython.display import HTML
 
 
-def find_repo_root(marker="pixi.toml", start=None):
+def find_repo_root(marker="pyproject.toml", start=None):
     """Walk up from `start` (default: the working directory) to the repo root, i.e. the first
     parent directory that contains `marker`. Lets notebooks build absolute paths to repo-level
     folders (data/, cache/, .env) regardless of where the kernel's working directory is."""

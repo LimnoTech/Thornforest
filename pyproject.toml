@@ -1,17 +1,11 @@
-[workspace]
-authors = ["Anthony Aufdenkampe <aaufdenkampe@limno.com>"]
-channels = ["conda-forge"]
+[tool.pixi.workspace]
 name = "Thornforest"
-platforms = ["osx-arm64", "win-64", "linux-64"]
+authors = ["Anthony Aufdenkampe <aaufdenkampe@limno.com>"]
 version = "0.1.0"
+channels = ["conda-forge"]
+platforms = ["osx-arm64", "win-64", "linux-64"]
 
-[tasks]
-# Render the Quarto website into _site/. Executes notebooks as needed and refreshes the
-# _freeze/ cache (commit it); CI then renders from that cache without re-executing.
-render = "quarto render"
-preview = "quarto preview"
-
-[dependencies]
+[tool.pixi.dependencies]
 python = "3.13.*"
 
 # Data processing
@@ -53,13 +47,27 @@ jupyter_bokeh = "*"
 jupyterlab = "*"
 jupytext = "*"
 
-# Testing
+# Testing & linting
 pytest = "*"
+ruff = "*"
 
-# Website rendering
+# Website rendering & analysis
 quarto = ">=1.9.38,<2"
 exactextract = ">=0.3.0,<0.4"
 pymannkendall = ">=1.4.3,<2"
 
-[pypi-dependencies]
+[tool.pixi.pypi-dependencies]
 # Put pip-only requirements here if needed
+
+[tool.pixi.tasks]
+# Render the Quarto website into _site/ (executes notebooks as needed, refreshes _freeze/).
+render = "quarto render"
+preview = "quarto preview"
+# Run the unit test suite.
+test = "pytest"
+
+[tool.pytest.ini_options]
+testpaths = ["notebooks/tests"]
+
+[tool.ruff]
+line-length = 100
