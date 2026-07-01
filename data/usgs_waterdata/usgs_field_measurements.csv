@@ -1,0 +1,629 @@
+monitoring_location_id,datetime,parameter_code,parameter_name,value,unit,qualifier,approval_status,priority_group,huc8
+USGS-08470500,2005-04-26 18:00:00+00:00,00060,Discharge,120.0,ft^3/s,,Approved,discharge,12110208
+USGS-08470500,2005-04-26 18:00:00+00:00,00065,Gage height,1.14,ft,,Approved,water_level,12110208
+USGS-08471000,2005-04-28 14:00:00+00:00,00060,Discharge,193.0,ft^3/s,,Approved,discharge,12110208
+USGS-08474095,2022-04-27 15:41:45+00:00,00060,Discharge,5.73,ft^3/s,,Approved,discharge,12110208
+USGS-08474095,2022-07-27 18:31:54+00:00,00060,Discharge,0.03,ft^3/s,,Approved,discharge,12110208
+USGS-08474095,2023-02-15 18:48:22+00:00,00060,Discharge,0.37,ft^3/s,,Approved,discharge,12110208
+USGS-08474095,2023-04-12 19:08:50+00:00,00060,Discharge,0.44,ft^3/s,,Approved,discharge,12110208
+USGS-08474095,2023-06-07 20:29:07+00:00,00060,Discharge,2.25,ft^3/s,,Approved,discharge,12110208
+USGS-08474095,2024-02-14 19:14:49+00:00,00060,Discharge,0.18,ft^3/s,,Approved,discharge,12110208
+USGS-08474095,2024-04-17 14:54:07+00:00,00060,Discharge,0.17,ft^3/s,,Approved,discharge,12110208
+USGS-08474095,2024-06-20 19:22:05+00:00,00060,Discharge,15.6,ft^3/s,,Approved,discharge,12110208
+USGS-08474095,2024-06-26 14:57:43+00:00,00060,Discharge,0.46,ft^3/s,,Approved,discharge,12110208
+USGS-08474095,2024-08-28 14:42:00+00:00,00060,Discharge,1.81,ft^3/s,,Approved,discharge,12110208
+USGS-08474095,2024-11-20 16:56:40+00:00,00060,Discharge,0.29,ft^3/s,,Approved,discharge,12110208
+USGS-08474095,2025-01-07 21:58:00+00:00,00060,Discharge,0.28,ft^3/s,,Approved,discharge,12110208
+USGS-08474095,2025-02-26 22:14:05+00:00,00060,Discharge,0.37,ft^3/s,,Approved,discharge,12110208
+USGS-08474095,2025-03-29 13:55:48+00:00,00060,Discharge,5.67,ft^3/s,,Approved,discharge,12110208
+USGS-08474095,2025-04-23 20:29:30+00:00,00060,Discharge,1.35,ft^3/s,,Approved,discharge,12110208
+USGS-08474095,2025-06-26 17:30:00+00:00,00060,Discharge,0.24,ft^3/s,,Approved,discharge,12110208
+USGS-08474095,2025-08-27 19:41:07+00:00,00060,Discharge,2.01,ft^3/s,,Approved,discharge,12110208
+USGS-08474095,2025-12-18 20:07:43+00:00,00060,Discharge,1.29,ft^3/s,,Approved,discharge,12110208
+USGS-08474095,2026-01-29 19:36:09+00:00,00060,Discharge,0.18,ft^3/s,,Provisional,discharge,12110208
+USGS-08474095,2026-04-16 20:00:41+00:00,00060,Discharge,0.1,ft^3/s,,Provisional,discharge,12110208
+USGS-08474095,2026-06-16 18:35:56+00:00,00060,Discharge,17.3,ft^3/s,,Provisional,discharge,12110208
+USGS-08474095,2022-04-27 15:41:45+00:00,00065,Gage height,16.7,ft,,Approved,water_level,12110208
+USGS-08474095,2022-07-27 18:31:54+00:00,00065,Gage height,16.11,ft,,Approved,water_level,12110208
+USGS-08474095,2023-02-15 18:48:22+00:00,00065,Gage height,16.13,ft,,Approved,water_level,12110208
+USGS-08474095,2023-04-12 19:08:50+00:00,00065,Gage height,16.13,ft,,Approved,water_level,12110208
+USGS-08474095,2023-06-07 20:29:07+00:00,00065,Gage height,16.45,ft,,Approved,water_level,12110208
+USGS-08474095,2024-02-14 19:14:49+00:00,00065,Gage height,16.12,ft,,Approved,water_level,12110208
+USGS-08474095,2024-04-17 14:54:07+00:00,00065,Gage height,16.1,ft,,Approved,water_level,12110208
+USGS-08474095,2024-06-20 19:22:05+00:00,00065,Gage height,17.08,ft,,Approved,water_level,12110208
+USGS-08474095,2024-06-26 14:57:43+00:00,00065,Gage height,16.16,ft,,Approved,water_level,12110208
+USGS-08474095,2024-08-28 14:42:00+00:00,00065,Gage height,16.54,ft,,Approved,water_level,12110208
+USGS-08474095,2024-11-20 16:56:40+00:00,00065,Gage height,16.11,ft,,Approved,water_level,12110208
+USGS-08474095,2025-01-07 21:58:00+00:00,00065,Gage height,16.13,ft,,Approved,water_level,12110208
+USGS-08474095,2025-02-26 22:14:05+00:00,00065,Gage height,16.18,ft,,Approved,water_level,12110208
+USGS-08474095,2025-03-29 13:55:48+00:00,00065,Gage height,16.85,ft,,Approved,water_level,12110208
+USGS-08474095,2025-04-23 20:29:30+00:00,00065,Gage height,16.99,ft,,Approved,water_level,12110208
+USGS-08474095,2025-06-26 17:30:00+00:00,00065,Gage height,16.28,ft,,Approved,water_level,12110208
+USGS-08474095,2025-08-27 19:41:07+00:00,00065,Gage height,16.66,ft,,Approved,water_level,12110208
+USGS-08474095,2025-12-18 20:07:43+00:00,00065,Gage height,16.56,ft,,Approved,water_level,12110208
+USGS-08474095,2026-01-29 19:36:09+00:00,00065,Gage height,16.3,ft,,Provisional,water_level,12110208
+USGS-08474095,2026-04-16 20:00:41+00:00,00065,Gage height,16.04,ft,,Provisional,water_level,12110208
+USGS-08474095,2026-06-16 18:35:56+00:00,00065,Gage height,17.37,ft,,Provisional,water_level,12110208
+USGS-08474107,2022-04-27 14:19:24+00:00,00060,Discharge,17.1,ft^3/s,,Approved,discharge,12110208
+USGS-08474107,2022-06-14 16:22:30+00:00,00060,Discharge,0.39,ft^3/s,,Approved,discharge,12110208
+USGS-08474107,2022-12-08 17:32:30+00:00,00060,Discharge,1.28,ft^3/s,,Approved,discharge,12110208
+USGS-08474107,2023-04-12 19:54:56+00:00,00060,Discharge,2.72,ft^3/s,,Approved,discharge,12110208
+USGS-08474107,2023-06-07 21:15:50+00:00,00060,Discharge,8.38,ft^3/s,,Approved,discharge,12110208
+USGS-08474107,2024-04-17 13:35:00+00:00,00060,Discharge,0.48,ft^3/s,,Approved,discharge,12110208
+USGS-08474107,2024-06-20 17:49:35+00:00,00060,Discharge,30.9,ft^3/s,,Approved,discharge,12110208
+USGS-08474107,2024-06-26 13:53:29+00:00,00060,Discharge,3.19,ft^3/s,,Approved,discharge,12110208
+USGS-08474107,2024-08-28 14:13:27+00:00,00060,Discharge,0.72,ft^3/s,,Approved,discharge,12110208
+USGS-08474107,2024-11-20 15:05:00+00:00,00060,Discharge,1.3,ft^3/s,,Approved,discharge,12110208
+USGS-08474107,2025-01-07 19:47:13+00:00,00060,Discharge,2.92,ft^3/s,,Approved,discharge,12110208
+USGS-08474107,2025-02-26 21:34:23+00:00,00060,Discharge,1.44,ft^3/s,,Approved,discharge,12110208
+USGS-08474107,2025-03-29 14:59:24+00:00,00060,Discharge,17.1,ft^3/s,,Approved,discharge,12110208
+USGS-08474107,2025-04-23 20:39:22+00:00,00060,Discharge,5.64,ft^3/s,,Approved,discharge,12110208
+USGS-08474107,2025-06-26 16:47:00+00:00,00060,Discharge,0.64,ft^3/s,,Approved,discharge,12110208
+USGS-08474107,2025-08-27 21:29:55+00:00,00060,Discharge,4.89,ft^3/s,,Approved,discharge,12110208
+USGS-08474107,2025-12-18 19:11:59+00:00,00060,Discharge,3.75,ft^3/s,,Approved,discharge,12110208
+USGS-08474107,2026-01-29 18:44:20+00:00,00060,Discharge,2.2,ft^3/s,,Provisional,discharge,12110208
+USGS-08474107,2026-04-16 20:56:02+00:00,00060,Discharge,3.15,ft^3/s,,Provisional,discharge,12110208
+USGS-08474107,2026-06-16 17:22:48+00:00,00060,Discharge,2.94,ft^3/s,,Provisional,discharge,12110208
+USGS-08474107,2022-04-27 14:19:24+00:00,00065,Gage height,21.08,ft,,Approved,water_level,12110208
+USGS-08474107,2022-06-14 16:22:30+00:00,00065,Gage height,20.12,ft,,Approved,water_level,12110208
+USGS-08474107,2022-12-08 17:32:30+00:00,00065,Gage height,20.23,ft,,Approved,water_level,12110208
+USGS-08474107,2023-04-12 19:54:56+00:00,00065,Gage height,20.26,ft,,Approved,water_level,12110208
+USGS-08474107,2023-06-07 21:15:50+00:00,00065,Gage height,20.61,ft,,Approved,water_level,12110208
+USGS-08474107,2024-04-17 13:35:00+00:00,00065,Gage height,20.13,ft,,Approved,water_level,12110208
+USGS-08474107,2024-06-20 17:49:35+00:00,00065,Gage height,21.68,ft,,Approved,water_level,12110208
+USGS-08474107,2024-06-26 13:53:29+00:00,00065,Gage height,20.3,ft,,Approved,water_level,12110208
+USGS-08474107,2024-08-28 14:13:27+00:00,00065,Gage height,20.14,ft,,Approved,water_level,12110208
+USGS-08474107,2024-11-20 15:05:00+00:00,00065,Gage height,20.17,ft,,Approved,water_level,12110208
+USGS-08474107,2025-01-07 19:47:13+00:00,00065,Gage height,20.22,ft,,Approved,water_level,12110208
+USGS-08474107,2025-02-26 21:34:23+00:00,00065,Gage height,20.24,ft,,Approved,water_level,12110208
+USGS-08474107,2025-03-29 14:59:24+00:00,00065,Gage height,21.2,ft,,Approved,water_level,12110208
+USGS-08474107,2025-04-23 20:39:22+00:00,00065,Gage height,20.46,ft,,Approved,water_level,12110208
+USGS-08474107,2025-06-26 16:47:00+00:00,00065,Gage height,20.12,ft,,Approved,water_level,12110208
+USGS-08474107,2025-08-27 21:29:55+00:00,00065,Gage height,21.0,ft,,Approved,water_level,12110208
+USGS-08474107,2025-12-18 19:11:59+00:00,00065,Gage height,20.51,ft,,Approved,water_level,12110208
+USGS-08474107,2026-01-29 18:44:20+00:00,00065,Gage height,20.41,ft,,Provisional,water_level,12110208
+USGS-08474107,2026-04-16 20:56:02+00:00,00065,Gage height,20.31,ft,,Provisional,water_level,12110208
+USGS-08474107,2026-06-16 17:22:48+00:00,00065,Gage height,20.89,ft,,Provisional,water_level,12110208
+USGS-08474108,2022-07-26 18:02:55+00:00,00060,Discharge,0.8,ft^3/s,,Approved,discharge,12110208
+USGS-08474108,2023-02-15 15:49:47+00:00,00060,Discharge,1.42,ft^3/s,,Approved,discharge,12110208
+USGS-08474108,2023-04-11 17:13:40+00:00,00060,Discharge,4.19,ft^3/s,,Approved,discharge,12110208
+USGS-08474108,2023-06-06 17:31:39+00:00,00060,Discharge,19.6,ft^3/s,,Approved,discharge,12110208
+USGS-08474108,2024-02-13 18:58:53+00:00,00060,Discharge,1.1,ft^3/s,,Approved,discharge,12110208
+USGS-08474108,2024-04-17 15:52:12+00:00,00060,Discharge,1.0,ft^3/s,,Approved,discharge,12110208
+USGS-08474108,2024-06-20 20:51:53+00:00,00060,Discharge,22.6,ft^3/s,,Approved,discharge,12110208
+USGS-08474108,2024-06-25 17:16:30+00:00,00060,Discharge,14.3,ft^3/s,,Approved,discharge,12110208
+USGS-08474108,2024-08-27 17:18:31+00:00,00060,Discharge,2.83,ft^3/s,,Approved,discharge,12110208
+USGS-08474108,2024-11-20 19:56:26+00:00,00060,Discharge,2.28,ft^3/s,,Approved,discharge,12110208
+USGS-08474108,2025-01-07 23:50:48+00:00,00060,Discharge,0.48,ft^3/s,,Approved,discharge,12110208
+USGS-08474108,2025-02-26 20:33:15+00:00,00060,Discharge,2.47,ft^3/s,,Approved,discharge,12110208
+USGS-08474108,2025-03-29 16:04:38+00:00,00060,Discharge,15.3,ft^3/s,,Approved,discharge,12110208
+USGS-08474108,2025-04-23 19:43:23+00:00,00060,Discharge,13.1,ft^3/s,,Approved,discharge,12110208
+USGS-08474108,2025-06-26 15:57:00+00:00,00060,Discharge,1.78,ft^3/s,,Approved,discharge,12110208
+USGS-08474108,2025-08-27 18:30:57+00:00,00060,Discharge,17.1,ft^3/s,,Approved,discharge,12110208
+USGS-08474108,2025-12-18 17:52:28+00:00,00060,Discharge,7.75,ft^3/s,,Approved,discharge,12110208
+USGS-08474108,2026-01-29 17:42:53+00:00,00060,Discharge,1.11,ft^3/s,,Approved,discharge,12110208
+USGS-08474108,2026-04-16 16:45:37+00:00,00060,Discharge,1.78,ft^3/s,,Approved,discharge,12110208
+USGS-08474108,2026-06-17 18:52:50+00:00,00060,Discharge,27.5,ft^3/s,,Provisional,discharge,12110208
+USGS-08474108,2022-07-26 17:48:00+00:00,00065,Gage height,13.48,ft,,Approved,water_level,12110208
+USGS-08474108,2022-07-26 18:02:55+00:00,00065,Gage height,13.48,ft,,Approved,water_level,12110208
+USGS-08474108,2023-02-15 14:48:00+00:00,00065,Gage height,13.65,ft,,Approved,water_level,12110208
+USGS-08474108,2023-02-15 15:49:47+00:00,00065,Gage height,13.64,ft,,Approved,water_level,12110208
+USGS-08474108,2023-02-15 16:12:00+00:00,00065,Gage height,13.64,ft,,Approved,water_level,12110208
+USGS-08474108,2023-04-11 16:49:00+00:00,00065,Gage height,13.84,ft,,Approved,water_level,12110208
+USGS-08474108,2023-04-11 17:13:40+00:00,00065,Gage height,13.83,ft,,Approved,water_level,12110208
+USGS-08474108,2023-06-06 17:03:00+00:00,00065,Gage height,14.96,ft,,Approved,water_level,12110208
+USGS-08474108,2023-06-06 17:31:39+00:00,00065,Gage height,14.94,ft,,Approved,water_level,12110208
+USGS-08474108,2023-06-06 17:46:00+00:00,00065,Gage height,14.94,ft,,Approved,water_level,12110208
+USGS-08474108,2023-12-12 17:45:00+00:00,00065,Gage height,13.38,ft,,Approved,water_level,12110208
+USGS-08474108,2024-02-13 18:20:00+00:00,00065,Gage height,13.22,ft,,Approved,water_level,12110208
+USGS-08474108,2024-02-13 18:58:53+00:00,00065,Gage height,13.23,ft,,Approved,water_level,12110208
+USGS-08474108,2024-02-13 19:14:00+00:00,00065,Gage height,13.23,ft,,Approved,water_level,12110208
+USGS-08474108,2024-03-20 16:20:00+00:00,00065,Gage height,13.61,ft,,Approved,water_level,12110208
+USGS-08474108,2024-04-17 15:22:00+00:00,00065,Gage height,13.31,ft,,Approved,water_level,12110208
+USGS-08474108,2024-04-17 15:52:12+00:00,00065,Gage height,13.31,ft,,Approved,water_level,12110208
+USGS-08474108,2024-04-17 16:09:00+00:00,00065,Gage height,13.31,ft,,Approved,water_level,12110208
+USGS-08474108,2024-06-20 20:51:53+00:00,00065,Gage height,14.66,ft,,Approved,water_level,12110208
+USGS-08474108,2024-06-25 17:16:30+00:00,00065,Gage height,14.14,ft,,Approved,water_level,12110208
+USGS-08474108,2024-08-27 17:18:31+00:00,00065,Gage height,13.31,ft,,Approved,water_level,12110208
+USGS-08474108,2024-11-20 19:56:26+00:00,00065,Gage height,13.62,ft,,Approved,water_level,12110208
+USGS-08474108,2025-01-07 23:50:48+00:00,00065,Gage height,13.8,ft,,Approved,water_level,12110208
+USGS-08474108,2025-02-26 19:50:00+00:00,00065,Gage height,13.89,ft,,Approved,water_level,12110208
+USGS-08474108,2025-02-26 20:33:15+00:00,00065,Gage height,13.89,ft,,Approved,water_level,12110208
+USGS-08474108,2025-02-26 20:44:00+00:00,00065,Gage height,13.89,ft,,Approved,water_level,12110208
+USGS-08474108,2025-03-29 15:45:00+00:00,00065,Gage height,14.49,ft,,Approved,water_level,12110208
+USGS-08474108,2025-03-29 16:04:38+00:00,00065,Gage height,14.58,ft,,Approved,water_level,12110208
+USGS-08474108,2025-03-29 16:12:00+00:00,00065,Gage height,14.65,ft,,Approved,water_level,12110208
+USGS-08474108,2025-03-29 16:28:00+00:00,00065,Gage height,14.73,ft,,Approved,water_level,12110208
+USGS-08474108,2025-04-23 19:15:00+00:00,00065,Gage height,14.64,ft,,Approved,water_level,12110208
+USGS-08474108,2025-04-23 19:43:23+00:00,00065,Gage height,14.64,ft,,Approved,water_level,12110208
+USGS-08474108,2025-04-23 19:52:00+00:00,00065,Gage height,14.64,ft,,Approved,water_level,12110208
+USGS-08474108,2025-06-26 15:30:00+00:00,00065,Gage height,13.67,ft,,Approved,water_level,12110208
+USGS-08474108,2025-06-26 15:57:00+00:00,00065,Gage height,13.67,ft,,Approved,water_level,12110208
+USGS-08474108,2025-06-26 16:15:00+00:00,00065,Gage height,13.67,ft,,Approved,water_level,12110208
+USGS-08474108,2025-08-27 18:09:00+00:00,00065,Gage height,14.71,ft,,Approved,water_level,12110208
+USGS-08474108,2025-08-27 18:30:57+00:00,00065,Gage height,14.7,ft,,Approved,water_level,12110208
+USGS-08474108,2025-08-27 18:41:00+00:00,00065,Gage height,14.69,ft,,Approved,water_level,12110208
+USGS-08474108,2025-12-18 17:18:00+00:00,00065,Gage height,14.09,ft,,Approved,water_level,12110208
+USGS-08474108,2025-12-18 17:52:28+00:00,00065,Gage height,14.08,ft,,Approved,water_level,12110208
+USGS-08474108,2025-12-18 18:03:00+00:00,00065,Gage height,14.08,ft,,Approved,water_level,12110208
+USGS-08474108,2026-01-29 17:13:00+00:00,00065,Gage height,13.55,ft,,Provisional,water_level,12110208
+USGS-08474108,2026-01-29 17:42:53+00:00,00065,Gage height,13.55,ft,,Approved,water_level,12110208
+USGS-08474108,2026-01-29 17:55:00+00:00,00065,Gage height,13.55,ft,,Provisional,water_level,12110208
+USGS-08474108,2026-04-16 16:13:00+00:00,00065,Gage height,13.68,ft,,Provisional,water_level,12110208
+USGS-08474108,2026-04-16 16:45:37+00:00,00065,Gage height,13.67,ft,,Approved,water_level,12110208
+USGS-08474108,2026-04-16 17:00:00+00:00,00065,Gage height,13.67,ft,,Provisional,water_level,12110208
+USGS-08474108,2026-06-17 18:28:00+00:00,00065,Gage height,15.18,ft,,Provisional,water_level,12110208
+USGS-08474108,2026-06-17 18:52:50+00:00,00065,Gage height,15.15,ft,,Provisional,water_level,12110208
+USGS-08474108,2026-06-17 19:05:00+00:00,00065,Gage height,15.13,ft,,Provisional,water_level,12110208
+USGS-08474110,2022-01-25 19:21:32+00:00,00060,Discharge,36.3,ft^3/s,,Approved,discharge,12110208
+USGS-08474110,2022-01-26 17:10:28+00:00,00060,Discharge,24.4,ft^3/s,,Approved,discharge,12110208
+USGS-08474110,2022-01-26 17:16:48+00:00,00060,Discharge,23.9,ft^3/s,,Approved,discharge,12110208
+USGS-08474110,2022-07-27 16:17:02+00:00,00060,Discharge,7.91,ft^3/s,,Approved,discharge,12110208
+USGS-08474110,2023-02-15 20:12:12+00:00,00060,Discharge,13.4,ft^3/s,,Approved,discharge,12110208
+USGS-08474110,2023-04-12 18:01:27+00:00,00060,Discharge,12.0,ft^3/s,,Approved,discharge,12110208
+USGS-08474110,2023-06-07 16:33:01+00:00,00060,Discharge,33.1,ft^3/s,,Approved,discharge,12110208
+USGS-08474110,2024-02-14 17:24:09+00:00,00060,Discharge,12.2,ft^3/s,,Approved,discharge,12110208
+USGS-08474110,2024-04-17 18:26:43+00:00,00060,Discharge,8.96,ft^3/s,,Approved,discharge,12110208
+USGS-08474110,2024-06-20 23:32:26+00:00,00060,Discharge,32.6,ft^3/s,,Approved,discharge,12110208
+USGS-08474110,2024-06-26 16:38:59+00:00,00060,Discharge,13.6,ft^3/s,,Provisional,discharge,12110208
+USGS-08474110,2024-08-28 15:37:36+00:00,00060,Discharge,16.3,ft^3/s,,Approved,discharge,12110208
+USGS-08474110,2025-02-26 17:02:55+00:00,00060,Discharge,13.7,ft^3/s,,Provisional,discharge,12110208
+USGS-08474110,2025-03-29 20:03:35+00:00,00060,Discharge,79.8,ft^3/s,,Provisional,discharge,12110208
+USGS-08474110,2025-04-23 18:18:51+00:00,00060,Discharge,20.2,ft^3/s,,Provisional,discharge,12110208
+USGS-08474110,2025-06-26 14:39:55+00:00,00060,Discharge,9.27,ft^3/s,,Provisional,discharge,12110208
+USGS-08474110,2025-08-27 16:47:13+00:00,00060,Discharge,15.9,ft^3/s,,Provisional,discharge,12110208
+USGS-08474110,2025-12-17 23:23:11+00:00,00060,Discharge,35.9,ft^3/s,,Provisional,discharge,12110208
+USGS-08474110,2026-01-28 22:11:23+00:00,00060,Discharge,12.6,ft^3/s,,Provisional,discharge,12110208
+USGS-08474110,2026-04-16 18:58:08+00:00,00060,Discharge,11.3,ft^3/s,,Provisional,discharge,12110208
+USGS-08474110,2026-05-27 21:44:27+00:00,00060,Discharge,512.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474110,2026-06-17 17:23:06+00:00,00060,Discharge,54.3,ft^3/s,,Provisional,discharge,12110208
+USGS-08474110,2022-01-25 19:00:00+00:00,00065,Gage height,1.61,ft,,Approved,water_level,12110208
+USGS-08474110,2022-01-25 19:21:32+00:00,00065,Gage height,1.62,ft,,Approved,water_level,12110208
+USGS-08474110,2022-01-25 19:32:00+00:00,00065,Gage height,1.62,ft,,Approved,water_level,12110208
+USGS-08474110,2022-01-26 16:58:00+00:00,00065,Gage height,1.29,ft,,Approved,water_level,12110208
+USGS-08474110,2022-01-26 17:10:28+00:00,00065,Gage height,1.29,ft,,Approved,water_level,12110208
+USGS-08474110,2022-01-26 17:16:48+00:00,00065,Gage height,1.29,ft,,Approved,water_level,12110208
+USGS-08474110,2022-01-26 17:19:00+00:00,00065,Gage height,1.29,ft,,Approved,water_level,12110208
+USGS-08474110,2022-07-27 15:59:00+00:00,00065,Gage height,0.9,ft,,Approved,water_level,12110208
+USGS-08474110,2022-07-27 16:17:02+00:00,00065,Gage height,0.93,ft,,Approved,water_level,12110208
+USGS-08474110,2022-07-27 16:32:00+00:00,00065,Gage height,0.96,ft,,Approved,water_level,12110208
+USGS-08474110,2022-12-08 15:33:00+00:00,00065,Gage height,1.06,ft,,Approved,water_level,12110208
+USGS-08474110,2023-02-15 19:51:00+00:00,00065,Gage height,1.0,ft,,Approved,water_level,12110208
+USGS-08474110,2023-02-15 20:12:12+00:00,00065,Gage height,1.0,ft,,Approved,water_level,12110208
+USGS-08474110,2023-02-15 20:30:00+00:00,00065,Gage height,1.0,ft,,Approved,water_level,12110208
+USGS-08474110,2023-04-12 17:48:00+00:00,00065,Gage height,1.22,ft,,Approved,water_level,12110208
+USGS-08474110,2023-04-12 18:01:27+00:00,00065,Gage height,1.24,ft,,Approved,water_level,12110208
+USGS-08474110,2023-04-12 18:18:00+00:00,00065,Gage height,1.27,ft,,Approved,water_level,12110208
+USGS-08474110,2023-06-07 16:33:01+00:00,00065,Gage height,1.78,ft,,Approved,water_level,12110208
+USGS-08474110,2023-06-07 16:46:00+00:00,00065,Gage height,1.78,ft,,Approved,water_level,12110208
+USGS-08474110,2023-12-12 16:13:00+00:00,00065,Gage height,0.97,ft,,Approved,water_level,12110208
+USGS-08474110,2024-02-14 16:56:00+00:00,00065,Gage height,0.96,ft,,Approved,water_level,12110208
+USGS-08474110,2024-02-14 17:24:09+00:00,00065,Gage height,0.96,ft,,Approved,water_level,12110208
+USGS-08474110,2024-02-14 17:38:00+00:00,00065,Gage height,0.96,ft,,Approved,water_level,12110208
+USGS-08474110,2024-03-20 21:00:00+00:00,00065,Gage height,1.25,ft,,Approved,water_level,12110208
+USGS-08474110,2024-04-17 18:02:00+00:00,00065,Gage height,0.94,ft,,Approved,water_level,12110208
+USGS-08474110,2024-04-17 18:26:43+00:00,00065,Gage height,0.94,ft,,Approved,water_level,12110208
+USGS-08474110,2024-04-17 18:41:00+00:00,00065,Gage height,0.94,ft,,Approved,water_level,12110208
+USGS-08474110,2024-06-20 22:58:00+00:00,00065,Gage height,3.4,ft,,Approved,water_level,12110208
+USGS-08474110,2024-06-20 23:32:26+00:00,00065,Gage height,3.37,ft,,Approved,water_level,12110208
+USGS-08474110,2024-06-20 23:46:00+00:00,00065,Gage height,3.33,ft,,Approved,water_level,12110208
+USGS-08474110,2024-06-26 16:38:59+00:00,00065,Gage height,1.36,ft,,Provisional,water_level,12110208
+USGS-08474110,2024-08-28 15:37:36+00:00,00065,Gage height,1.32,ft,,Approved,water_level,12110208
+USGS-08474110,2025-01-08 18:00:00+00:00,00065,Gage height,1.03,ft,,Provisional,water_level,12110208
+USGS-08474110,2025-02-26 16:35:00+00:00,00065,Gage height,0.98,ft,,Provisional,water_level,12110208
+USGS-08474110,2025-02-26 17:02:55+00:00,00065,Gage height,0.99,ft,,Provisional,water_level,12110208
+USGS-08474110,2025-02-26 17:21:00+00:00,00065,Gage height,1.0,ft,,Provisional,water_level,12110208
+USGS-08474110,2025-03-11 14:31:00+00:00,00065,Gage height,0.91,ft,,Provisional,water_level,12110208
+USGS-08474110,2025-03-29 19:19:00+00:00,00065,Gage height,4.31,ft,,Provisional,water_level,12110208
+USGS-08474110,2025-03-29 20:03:35+00:00,00065,Gage height,4.29,ft,,Provisional,water_level,12110208
+USGS-08474110,2025-03-29 20:15:00+00:00,00065,Gage height,4.27,ft,,Provisional,water_level,12110208
+USGS-08474110,2025-04-23 17:30:00+00:00,00065,Gage height,1.28,ft,,Provisional,water_level,12110208
+USGS-08474110,2025-04-23 18:18:51+00:00,00065,Gage height,1.28,ft,,Provisional,water_level,12110208
+USGS-08474110,2025-04-23 18:32:00+00:00,00065,Gage height,1.28,ft,,Provisional,water_level,12110208
+USGS-08474110,2025-06-26 14:28:00+00:00,00065,Gage height,0.95,ft,,Provisional,water_level,12110208
+USGS-08474110,2025-06-26 14:39:55+00:00,00065,Gage height,0.95,ft,,Provisional,water_level,12110208
+USGS-08474110,2025-06-26 14:57:00+00:00,00065,Gage height,0.95,ft,,Provisional,water_level,12110208
+USGS-08474110,2025-08-27 16:20:00+00:00,00065,Gage height,1.1,ft,,Provisional,water_level,12110208
+USGS-08474110,2025-08-27 16:47:13+00:00,00065,Gage height,1.1,ft,,Provisional,water_level,12110208
+USGS-08474110,2025-08-27 17:01:00+00:00,00065,Gage height,1.1,ft,,Provisional,water_level,12110208
+USGS-08474110,2025-12-17 22:40:00+00:00,00065,Gage height,1.71,ft,,Provisional,water_level,12110208
+USGS-08474110,2025-12-17 23:23:11+00:00,00065,Gage height,1.7,ft,,Provisional,water_level,12110208
+USGS-08474110,2025-12-17 23:41:00+00:00,00065,Gage height,1.68,ft,,Provisional,water_level,12110208
+USGS-08474110,2026-01-28 21:13:00+00:00,00065,Gage height,1.05,ft,,Provisional,water_level,12110208
+USGS-08474110,2026-01-28 22:11:23+00:00,00065,Gage height,1.05,ft,,Provisional,water_level,12110208
+USGS-08474110,2026-01-28 22:28:00+00:00,00065,Gage height,1.05,ft,,Provisional,water_level,12110208
+USGS-08474110,2026-04-16 18:09:00+00:00,00065,Gage height,1.18,ft,,Provisional,water_level,12110208
+USGS-08474110,2026-04-16 18:58:08+00:00,00065,Gage height,1.18,ft,,Provisional,water_level,12110208
+USGS-08474110,2026-04-16 19:19:00+00:00,00065,Gage height,1.18,ft,,Provisional,water_level,12110208
+USGS-08474110,2026-05-27 21:15:00+00:00,00065,Gage height,7.7,ft,,Provisional,water_level,12110208
+USGS-08474110,2026-05-27 21:44:27+00:00,00065,Gage height,7.65,ft,,Provisional,water_level,12110208
+USGS-08474110,2026-05-27 21:59:00+00:00,00065,Gage height,7.58,ft,,Provisional,water_level,12110208
+USGS-08474110,2026-06-17 16:45:00+00:00,00065,Gage height,2.19,ft,,Provisional,water_level,12110208
+USGS-08474110,2026-06-17 17:23:06+00:00,00065,Gage height,2.21,ft,,Provisional,water_level,12110208
+USGS-08474110,2026-06-17 17:45:00+00:00,00065,Gage height,2.23,ft,,Provisional,water_level,12110208
+USGS-08474115,2022-07-12 18:45:46+00:00,00060,Discharge,0.01,ft^3/s,,Approved,discharge,12110208
+USGS-08474115,2023-02-15 21:48:39+00:00,00060,Discharge,0.46,ft^3/s,,Approved,discharge,12110208
+USGS-08474115,2023-04-12 16:21:37+00:00,00060,Discharge,2.21,ft^3/s,,Approved,discharge,12110208
+USGS-08474115,2023-06-07 15:18:49+00:00,00060,Discharge,2.18,ft^3/s,,Approved,discharge,12110208
+USGS-08474115,2024-02-14 16:34:00+00:00,00060,Discharge,0.4,ft^3/s,,Approved,discharge,12110208
+USGS-08474115,2024-04-17 19:11:44+00:00,00060,Discharge,0.27,ft^3/s,,Approved,discharge,12110208
+USGS-08474115,2024-06-26 17:23:45+00:00,00060,Discharge,4.45,ft^3/s,,Approved,discharge,12110208
+USGS-08474115,2024-08-28 16:30:13+00:00,00060,Discharge,0.7,ft^3/s,,Approved,discharge,12110208
+USGS-08474115,2025-02-26 15:46:08+00:00,00060,Discharge,0.48,ft^3/s,,Approved,discharge,12110208
+USGS-08474115,2025-03-29 21:22:30+00:00,00060,Discharge,46.0,ft^3/s,,Approved,discharge,12110208
+USGS-08474115,2025-04-23 22:30:00+00:00,00060,Discharge,0.88,ft^3/s,,Approved,discharge,12110208
+USGS-08474115,2022-07-12 18:32:00+00:00,00065,Gage height,16.21,ft,,Approved,water_level,12110208
+USGS-08474115,2022-07-12 18:45:46+00:00,00065,Gage height,16.21,ft,,Approved,water_level,12110208
+USGS-08474115,2022-11-09 18:40:00+00:00,00065,Gage height,17.0,ft,,Approved,water_level,12110208
+USGS-08474115,2023-01-30 20:47:00+00:00,00065,Gage height,16.88,ft,,Approved,water_level,12110208
+USGS-08474115,2023-01-30 21:48:00+00:00,00065,Gage height,16.84,ft,,Approved,water_level,12110208
+USGS-08474115,2023-02-15 21:48:39+00:00,00065,Gage height,16.81,ft,,Approved,water_level,12110208
+USGS-08474115,2023-02-15 21:56:00+00:00,00065,Gage height,16.81,ft,,Approved,water_level,12110208
+USGS-08474115,2023-04-12 16:15:00+00:00,00065,Gage height,16.97,ft,,Approved,water_level,12110208
+USGS-08474115,2023-04-12 16:21:37+00:00,00065,Gage height,16.97,ft,,Approved,water_level,12110208
+USGS-08474115,2023-04-12 16:56:00+00:00,00065,Gage height,16.97,ft,,Approved,water_level,12110208
+USGS-08474115,2023-06-07 15:04:00+00:00,00065,Gage height,17.17,ft,,Approved,water_level,12110208
+USGS-08474115,2023-06-07 15:18:49+00:00,00065,Gage height,17.17,ft,,Approved,water_level,12110208
+USGS-08474115,2023-06-07 15:38:00+00:00,00065,Gage height,17.17,ft,,Approved,water_level,12110208
+USGS-08474115,2023-12-12 15:54:00+00:00,00065,Gage height,16.74,ft,,Approved,water_level,12110208
+USGS-08474115,2024-02-14 16:22:00+00:00,00065,Gage height,16.92,ft,,Approved,water_level,12110208
+USGS-08474115,2024-02-14 16:34:00+00:00,00065,Gage height,16.92,ft,,Approved,water_level,12110208
+USGS-08474115,2024-02-14 16:44:00+00:00,00065,Gage height,16.92,ft,,Approved,water_level,12110208
+USGS-08474115,2024-03-21 13:08:00+00:00,00065,Gage height,16.94,ft,,Approved,water_level,12110208
+USGS-08474115,2024-03-21 13:53:00+00:00,00065,Gage height,16.92,ft,,Approved,water_level,12110208
+USGS-08474115,2024-04-17 19:05:00+00:00,00065,Gage height,16.66,ft,,Approved,water_level,12110208
+USGS-08474115,2024-04-17 19:11:44+00:00,00065,Gage height,16.66,ft,,Approved,water_level,12110208
+USGS-08474115,2024-04-17 19:17:00+00:00,00065,Gage height,16.66,ft,,Approved,water_level,12110208
+USGS-08474115,2024-05-23 13:52:00+00:00,00065,Gage height,16.85,ft,,Approved,water_level,12110208
+USGS-08474115,2024-05-23 14:44:00+00:00,00065,Gage height,16.85,ft,,Approved,water_level,12110208
+USGS-08474115,2024-05-23 15:18:00+00:00,00065,Gage height,16.84,ft,,Approved,water_level,12110208
+USGS-08474115,2024-06-26 17:23:45+00:00,00065,Gage height,17.2,ft,,Approved,water_level,12110208
+USGS-08474115,2024-08-28 16:30:13+00:00,00065,Gage height,16.86,ft,,Approved,water_level,12110208
+USGS-08474115,2025-02-26 15:21:00+00:00,00065,Gage height,16.82,ft,,Approved,water_level,12110208
+USGS-08474115,2025-02-26 15:46:08+00:00,00065,Gage height,16.82,ft,,Approved,water_level,12110208
+USGS-08474115,2025-03-29 21:15:00+00:00,00065,Gage height,16.88,ft,,Approved,water_level,12110208
+USGS-08474115,2025-03-29 21:22:30+00:00,00065,Gage height,16.88,ft,,Approved,water_level,12110208
+USGS-08474115,2025-03-29 21:30:00+00:00,00065,Gage height,16.88,ft,,Approved,water_level,12110208
+USGS-08474115,2025-04-23 22:21:00+00:00,00065,Gage height,16.99,ft,,Approved,water_level,12110208
+USGS-08474115,2025-04-23 22:27:00+00:00,00065,Gage height,16.99,ft,,Approved,water_level,12110208
+USGS-08474115,2025-04-23 22:30:00+00:00,00065,Gage height,16.99,ft,,Approved,water_level,12110208
+USGS-08474115,2025-06-25 23:00:00+00:00,00065,Gage height,16.96,ft,,Approved,water_level,12110208
+USGS-08474115,2025-08-27 13:52:00+00:00,00065,Gage height,16.96,ft,,Approved,water_level,12110208
+USGS-08474115,2025-12-18 15:13:00+00:00,00065,Gage height,16.96,ft,,Approved,water_level,12110208
+USGS-08474115,2026-01-29 14:38:00+00:00,00065,Gage height,16.95,ft,,Provisional,water_level,12110208
+USGS-08474115,2026-04-16 13:31:00+00:00,00065,Gage height,16.92,ft,,Provisional,water_level,12110208
+USGS-08474115,2026-06-17 13:25:00+00:00,00065,Gage height,16.8,ft,,Provisional,water_level,12110208
+USGS-08474118,2022-01-25 21:34:29+00:00,00060,Discharge,20.5,ft^3/s,,Approved,discharge,12110208
+USGS-08474118,2022-01-26 18:32:20+00:00,00060,Discharge,15.0,ft^3/s,,Approved,discharge,12110208
+USGS-08474118,2022-07-27 14:59:50+00:00,00060,Discharge,7.07,ft^3/s,,Approved,discharge,12110208
+USGS-08474118,2022-12-09 16:43:44+00:00,00060,Discharge,8.02,ft^3/s,,Approved,discharge,12110208
+USGS-08474118,2023-04-12 21:09:04+00:00,00060,Discharge,10.3,ft^3/s,,Approved,discharge,12110208
+USGS-08474118,2023-06-07 14:18:47+00:00,00060,Discharge,26.1,ft^3/s,,Approved,discharge,12110208
+USGS-08474118,2024-02-14 15:33:25+00:00,00060,Discharge,6.54,ft^3/s,,Approved,discharge,12110208
+USGS-08474118,2024-04-17 20:26:45+00:00,00060,Discharge,6.01,ft^3/s,,Approved,discharge,12110208
+USGS-08474118,2024-06-26 20:20:55+00:00,00060,Discharge,10.2,ft^3/s,,Approved,discharge,12110208
+USGS-08474118,2024-11-20 21:37:48+00:00,00060,Discharge,9.26,ft^3/s,,Approved,discharge,12110208
+USGS-08474118,2025-01-07 17:10:39+00:00,00060,Discharge,15.4,ft^3/s,,Approved,discharge,12110208
+USGS-08474118,2025-02-25 21:42:46+00:00,00060,Discharge,6.62,ft^3/s,,Approved,discharge,12110208
+USGS-08474118,2025-03-29 22:48:29+00:00,00060,Discharge,451.0,ft^3/s,,Approved,discharge,12110208
+USGS-08474118,2025-03-30 13:48:11+00:00,00060,Discharge,317.0,ft^3/s,,Approved,discharge,12110208
+USGS-08474118,2025-04-22 21:16:31+00:00,00060,Discharge,21.2,ft^3/s,,Approved,discharge,12110208
+USGS-08474118,2025-12-18 21:44:23+00:00,00060,Discharge,13.3,ft^3/s,,Approved,discharge,12110208
+USGS-08474118,2026-01-30 15:29:22+00:00,00060,Discharge,7.9,ft^3/s,,Approved,discharge,12110208
+USGS-08474118,2026-04-16 22:32:11+00:00,00060,Discharge,6.12,ft^3/s,,Approved,discharge,12110208
+USGS-08474118,2026-06-16 15:54:42+00:00,00060,Discharge,22.6,ft^3/s,,Provisional,discharge,12110208
+USGS-08474118,2022-01-25 21:22:00+00:00,00065,Gage height,1.97,ft,,Approved,water_level,12110208
+USGS-08474118,2022-01-25 21:34:29+00:00,00065,Gage height,2.0,ft,,Approved,water_level,12110208
+USGS-08474118,2022-01-25 21:47:00+00:00,00065,Gage height,2.02,ft,,Approved,water_level,12110208
+USGS-08474118,2022-01-26 18:09:00+00:00,00065,Gage height,1.8,ft,,Approved,water_level,12110208
+USGS-08474118,2022-01-26 18:19:00+00:00,00065,Gage height,1.82,ft,,Approved,water_level,12110208
+USGS-08474118,2022-01-26 18:32:20+00:00,00065,Gage height,1.81,ft,,Approved,water_level,12110208
+USGS-08474118,2022-01-26 18:43:00+00:00,00065,Gage height,1.81,ft,,Approved,water_level,12110208
+USGS-08474118,2022-07-27 14:22:00+00:00,00065,Gage height,1.39,ft,,Approved,water_level,12110208
+USGS-08474118,2022-07-27 14:59:50+00:00,00065,Gage height,1.39,ft,,Approved,water_level,12110208
+USGS-08474118,2022-07-27 15:10:00+00:00,00065,Gage height,1.39,ft,,Approved,water_level,12110208
+USGS-08474118,2022-12-09 15:33:00+00:00,00065,Gage height,1.45,ft,,Approved,water_level,12110208
+USGS-08474118,2022-12-09 15:52:00+00:00,00065,Gage height,1.45,ft,,Approved,water_level,12110208
+USGS-08474118,2022-12-09 15:59:00+00:00,00065,Gage height,1.45,ft,,Approved,water_level,12110208
+USGS-08474118,2022-12-09 16:20:00+00:00,00065,Gage height,1.44,ft,,Approved,water_level,12110208
+USGS-08474118,2022-12-09 16:25:00+00:00,00065,Gage height,1.44,ft,,Approved,water_level,12110208
+USGS-08474118,2022-12-09 16:43:44+00:00,00065,Gage height,1.44,ft,,Approved,water_level,12110208
+USGS-08474118,2022-12-09 16:54:00+00:00,00065,Gage height,1.44,ft,,Approved,water_level,12110208
+USGS-08474118,2023-04-12 20:52:00+00:00,00065,Gage height,1.5,ft,,Approved,water_level,12110208
+USGS-08474118,2023-04-12 21:09:04+00:00,00065,Gage height,1.5,ft,,Approved,water_level,12110208
+USGS-08474118,2023-04-12 21:23:00+00:00,00065,Gage height,1.5,ft,,Approved,water_level,12110208
+USGS-08474118,2023-06-07 13:59:00+00:00,00065,Gage height,2.22,ft,,Approved,water_level,12110208
+USGS-08474118,2023-06-07 14:18:47+00:00,00065,Gage height,2.21,ft,,Approved,water_level,12110208
+USGS-08474118,2023-06-07 14:28:00+00:00,00065,Gage height,2.21,ft,,Approved,water_level,12110208
+USGS-08474118,2023-12-12 15:29:00+00:00,00065,Gage height,1.28,ft,,Approved,water_level,12110208
+USGS-08474118,2024-02-14 14:42:00+00:00,00065,Gage height,1.24,ft,,Approved,water_level,12110208
+USGS-08474118,2024-02-14 15:33:25+00:00,00065,Gage height,1.25,ft,,Approved,water_level,12110208
+USGS-08474118,2024-02-14 15:43:00+00:00,00065,Gage height,1.25,ft,,Approved,water_level,12110208
+USGS-08474118,2024-03-19 19:52:00+00:00,00065,Gage height,1.49,ft,,Approved,water_level,12110208
+USGS-08474118,2024-03-19 20:00:00+00:00,00065,Gage height,1.49,ft,,Approved,water_level,12110208
+USGS-08474118,2024-04-17 20:05:00+00:00,00065,Gage height,1.35,ft,,Approved,water_level,12110208
+USGS-08474118,2024-04-17 20:26:45+00:00,00065,Gage height,1.34,ft,,Approved,water_level,12110208
+USGS-08474118,2024-04-17 20:36:00+00:00,00065,Gage height,1.35,ft,,Approved,water_level,12110208
+USGS-08474118,2024-06-26 20:20:55+00:00,00065,Gage height,1.84,ft,,Approved,water_level,12110208
+USGS-08474118,2024-11-20 21:37:48+00:00,00065,Gage height,1.7,ft,,Approved,water_level,12110208
+USGS-08474118,2025-01-07 16:34:00+00:00,00065,Gage height,1.41,ft,,Approved,water_level,12110208
+USGS-08474118,2025-01-07 17:10:39+00:00,00065,Gage height,1.41,ft,,Approved,water_level,12110208
+USGS-08474118,2025-01-07 17:24:00+00:00,00065,Gage height,1.41,ft,,Approved,water_level,12110208
+USGS-08474118,2025-02-25 21:42:46+00:00,00065,Gage height,1.39,ft,,Approved,water_level,12110208
+USGS-08474118,2025-03-29 22:48:29+00:00,00065,Gage height,9.47,ft,,Approved,water_level,12110208
+USGS-08474118,2025-03-29 23:27:00+00:00,00065,Gage height,9.39,ft,,Approved,water_level,12110208
+USGS-08474118,2025-03-30 13:30:00+00:00,00065,Gage height,8.17,ft,,Approved,water_level,12110208
+USGS-08474118,2025-03-30 13:48:11+00:00,00065,Gage height,8.14,ft,,Approved,water_level,12110208
+USGS-08474118,2025-04-22 21:16:31+00:00,00065,Gage height,2.0,ft,,Approved,water_level,12110208
+USGS-08474118,2025-12-18 21:17:00+00:00,00065,Gage height,1.52,ft,,Approved,water_level,12110208
+USGS-08474118,2025-12-18 21:44:23+00:00,00065,Gage height,1.51,ft,,Approved,water_level,12110208
+USGS-08474118,2025-12-18 21:57:00+00:00,00065,Gage height,1.51,ft,,Approved,water_level,12110208
+USGS-08474118,2026-01-30 14:56:00+00:00,00065,Gage height,1.27,ft,,Approved,water_level,12110208
+USGS-08474118,2026-01-30 15:29:22+00:00,00065,Gage height,1.27,ft,,Approved,water_level,12110208
+USGS-08474118,2026-01-30 15:46:00+00:00,00065,Gage height,1.27,ft,,Approved,water_level,12110208
+USGS-08474118,2026-04-16 21:57:00+00:00,00065,Gage height,1.46,ft,,Approved,water_level,12110208
+USGS-08474118,2026-04-16 22:32:11+00:00,00065,Gage height,1.46,ft,,Approved,water_level,12110208
+USGS-08474118,2026-04-16 22:43:00+00:00,00065,Gage height,1.46,ft,,Approved,water_level,12110208
+USGS-08474118,2026-06-16 14:00:00+00:00,00065,Gage height,1.75,ft,,Provisional,water_level,12110208
+USGS-08474118,2026-06-16 15:30:00+00:00,00065,Gage height,1.82,ft,,Provisional,water_level,12110208
+USGS-08474118,2026-06-16 15:54:42+00:00,00065,Gage height,1.84,ft,,Provisional,water_level,12110208
+USGS-08474118,2026-06-16 16:06:00+00:00,00065,Gage height,1.86,ft,,Provisional,water_level,12110208
+USGS-08474300,2022-01-26 15:25:54+00:00,00060,Discharge,1.55,ft^3/s,,Approved,discharge,12110208
+USGS-08474300,2022-07-27 17:25:21+00:00,00060,Discharge,6.01,ft^3/s,,Approved,discharge,12110208
+USGS-08474300,2022-12-07 15:24:28+00:00,00060,Discharge,9.33,ft^3/s,,Approved,discharge,12110208
+USGS-08474300,2024-02-14 18:38:26+00:00,00060,Discharge,0.19,ft^3/s,,Approved,discharge,12110208
+USGS-08474300,2024-04-17 17:03:12+00:00,00060,Discharge,2.41,ft^3/s,,Approved,discharge,12110208
+USGS-08474300,2024-06-20 22:19:07+00:00,00060,Discharge,5.35,ft^3/s,,Approved,discharge,12110208
+USGS-08474300,2024-06-26 19:20:42+00:00,00060,Discharge,0.71,ft^3/s,,Approved,discharge,12110208
+USGS-08474300,2024-08-28 17:42:47+00:00,00060,Discharge,1.05,ft^3/s,,Approved,discharge,12110208
+USGS-08474300,2024-11-20 18:46:12+00:00,00060,Discharge,1.02,ft^3/s,,Approved,discharge,12110208
+USGS-08474300,2025-01-08 16:46:00+00:00,00060,Discharge,0.13,ft^3/s,,Approved,discharge,12110208
+USGS-08474300,2025-01-28 20:30:00+00:00,00060,Discharge,0.0,ft^3/s,,Approved,discharge,12110208
+USGS-08474300,2025-02-26 18:58:19+00:00,00060,Discharge,2.91,ft^3/s,,Approved,discharge,12110208
+USGS-08474300,2025-03-29 17:47:41+00:00,00060,Discharge,55.2,ft^3/s,,Approved,discharge,12110208
+USGS-08474300,2025-04-23 13:50:30+00:00,00060,Discharge,0.38,ft^3/s,,Approved,discharge,12110208
+USGS-08474300,2025-06-25 22:17:00+00:00,00060,Discharge,0.79,ft^3/s,,Approved,discharge,12110208
+USGS-08474300,2025-08-27 15:31:34+00:00,00060,Discharge,0.44,ft^3/s,,Approved,discharge,12110208
+USGS-08474300,2025-12-18 16:14:54+00:00,00060,Discharge,0.22,ft^3/s,,Approved,discharge,12110208
+USGS-08474300,2026-01-29 16:02:38+00:00,00060,Discharge,0.16,ft^3/s,,Approved,discharge,12110208
+USGS-08474300,2026-04-16 15:11:11+00:00,00060,Discharge,0.12,ft^3/s,,Approved,discharge,12110208
+USGS-08474300,2026-05-27 23:13:57+00:00,00060,Discharge,26.7,ft^3/s,,Provisional,discharge,12110208
+USGS-08474300,2026-06-17 15:18:19+00:00,00060,Discharge,3.61,ft^3/s,,Provisional,discharge,12110208
+USGS-08474300,2022-01-26 14:51:00+00:00,00065,Gage height,1.14,ft,,Approved,water_level,12110208
+USGS-08474300,2022-01-26 15:25:54+00:00,00065,Gage height,1.15,ft,,Approved,water_level,12110208
+USGS-08474300,2022-01-26 15:56:00+00:00,00065,Gage height,1.15,ft,,Approved,water_level,12110208
+USGS-08474300,2022-07-27 17:01:00+00:00,00065,Gage height,1.15,ft,,Approved,water_level,12110208
+USGS-08474300,2022-07-27 17:25:21+00:00,00065,Gage height,1.15,ft,,Approved,water_level,12110208
+USGS-08474300,2022-07-27 17:39:00+00:00,00065,Gage height,1.16,ft,,Approved,water_level,12110208
+USGS-08474300,2022-12-07 15:10:00+00:00,00065,Gage height,1.45,ft,,Approved,water_level,12110208
+USGS-08474300,2022-12-07 15:24:28+00:00,00065,Gage height,1.43,ft,,Approved,water_level,12110208
+USGS-08474300,2022-12-07 16:23:00+00:00,00065,Gage height,1.45,ft,,Approved,water_level,12110208
+USGS-08474300,2022-12-07 16:29:00+00:00,00065,Gage height,1.44,ft,,Approved,water_level,12110208
+USGS-08474300,2022-12-07 16:53:00+00:00,00065,Gage height,1.43,ft,,Approved,water_level,12110208
+USGS-08474300,2022-12-07 16:57:00+00:00,00065,Gage height,1.43,ft,,Approved,water_level,12110208
+USGS-08474300,2023-04-12 14:34:00+00:00,00065,Gage height,0.85,ft,,Approved,water_level,12110208
+USGS-08474300,2023-04-12 15:01:00+00:00,00065,Gage height,0.9,ft,,Approved,water_level,12110208
+USGS-08474300,2023-06-07 19:41:00+00:00,00065,Gage height,1.69,ft,,Approved,water_level,12110208
+USGS-08474300,2023-12-12 17:20:00+00:00,00065,Gage height,0.77,ft,,Approved,water_level,12110208
+USGS-08474300,2024-02-14 18:29:00+00:00,00065,Gage height,0.48,ft,,Approved,water_level,12110208
+USGS-08474300,2024-02-14 18:38:26+00:00,00065,Gage height,0.48,ft,,Approved,water_level,12110208
+USGS-08474300,2024-02-14 18:43:00+00:00,00065,Gage height,0.48,ft,,Approved,water_level,12110208
+USGS-08474300,2024-03-20 17:48:00+00:00,00065,Gage height,0.83,ft,,Approved,water_level,12110208
+USGS-08474300,2024-03-20 19:48:00+00:00,00065,Gage height,0.86,ft,,Approved,water_level,12110208
+USGS-08474300,2024-04-17 16:49:00+00:00,00065,Gage height,0.94,ft,,Approved,water_level,12110208
+USGS-08474300,2024-04-17 17:03:12+00:00,00065,Gage height,0.94,ft,,Approved,water_level,12110208
+USGS-08474300,2024-04-17 17:12:00+00:00,00065,Gage height,0.94,ft,,Approved,water_level,12110208
+USGS-08474300,2024-06-20 21:59:00+00:00,00065,Gage height,2.92,ft,,Approved,water_level,12110208
+USGS-08474300,2024-06-20 22:19:07+00:00,00065,Gage height,2.9,ft,,Approved,water_level,12110208
+USGS-08474300,2024-06-20 22:27:00+00:00,00065,Gage height,2.88,ft,,Approved,water_level,12110208
+USGS-08474300,2024-06-26 19:20:42+00:00,00065,Gage height,1.06,ft,,Approved,water_level,12110208
+USGS-08474300,2024-08-28 17:42:47+00:00,00065,Gage height,0.84,ft,,Approved,water_level,12110208
+USGS-08474300,2024-11-20 18:46:12+00:00,00065,Gage height,0.99,ft,,Approved,water_level,12110208
+USGS-08474300,2025-01-08 16:02:00+00:00,00065,Gage height,0.64,ft,,Approved,water_level,12110208
+USGS-08474300,2025-01-08 16:46:00+00:00,00065,Gage height,0.64,ft,,Approved,water_level,12110208
+USGS-08474300,2025-01-08 17:16:00+00:00,00065,Gage height,0.65,ft,,Approved,water_level,12110208
+USGS-08474300,2025-01-28 20:12:00+00:00,00065,Gage height,0.63,ft,,Approved,water_level,12110208
+USGS-08474300,2025-01-28 20:30:00+00:00,00065,Gage height,0.63,ft,,Approved,water_level,12110208
+USGS-08474300,2025-02-26 18:13:00+00:00,00065,Gage height,1.71,ft,,Approved,water_level,12110208
+USGS-08474300,2025-02-26 18:51:00+00:00,00065,Gage height,1.71,ft,,Approved,water_level,12110208
+USGS-08474300,2025-02-26 18:58:19+00:00,00065,Gage height,1.71,ft,,Approved,water_level,12110208
+USGS-08474300,2025-02-26 19:08:00+00:00,00065,Gage height,1.71,ft,,Approved,water_level,12110208
+USGS-08474300,2025-03-11 17:54:00+00:00,00065,Gage height,1.56,ft,,Approved,water_level,12110208
+USGS-08474300,2025-03-29 17:10:00+00:00,00065,Gage height,3.57,ft,,Approved,water_level,12110208
+USGS-08474300,2025-03-29 17:47:41+00:00,00065,Gage height,3.54,ft,,Approved,water_level,12110208
+USGS-08474300,2025-03-29 18:00:00+00:00,00065,Gage height,3.51,ft,,Approved,water_level,12110208
+USGS-08474300,2025-04-23 13:24:00+00:00,00065,Gage height,1.46,ft,,Approved,water_level,12110208
+USGS-08474300,2025-04-23 13:50:30+00:00,00065,Gage height,1.46,ft,,Approved,water_level,12110208
+USGS-08474300,2025-04-23 14:18:00+00:00,00065,Gage height,1.46,ft,,Approved,water_level,12110208
+USGS-08474300,2025-06-25 21:58:00+00:00,00065,Gage height,1.48,ft,,Approved,water_level,12110208
+USGS-08474300,2025-06-25 22:17:00+00:00,00065,Gage height,1.47,ft,,Approved,water_level,12110208
+USGS-08474300,2025-06-25 22:30:00+00:00,00065,Gage height,1.47,ft,,Approved,water_level,12110208
+USGS-08474300,2025-08-27 15:05:00+00:00,00065,Gage height,1.44,ft,,Approved,water_level,12110208
+USGS-08474300,2025-08-27 15:31:34+00:00,00065,Gage height,1.44,ft,,Approved,water_level,12110208
+USGS-08474300,2025-08-27 15:50:00+00:00,00065,Gage height,1.44,ft,,Approved,water_level,12110208
+USGS-08474300,2025-12-18 16:00:00+00:00,00065,Gage height,1.42,ft,,Approved,water_level,12110208
+USGS-08474300,2025-12-18 16:14:54+00:00,00065,Gage height,1.42,ft,,Approved,water_level,12110208
+USGS-08474300,2025-12-18 16:37:00+00:00,00065,Gage height,1.42,ft,,Approved,water_level,12110208
+USGS-08474300,2026-01-29 15:44:00+00:00,00065,Gage height,1.42,ft,,Approved,water_level,12110208
+USGS-08474300,2026-01-29 16:02:38+00:00,00065,Gage height,1.42,ft,,Approved,water_level,12110208
+USGS-08474300,2026-01-29 16:22:00+00:00,00065,Gage height,1.42,ft,,Approved,water_level,12110208
+USGS-08474300,2026-04-16 15:01:00+00:00,00065,Gage height,1.42,ft,,Approved,water_level,12110208
+USGS-08474300,2026-04-16 15:11:11+00:00,00065,Gage height,1.42,ft,,Approved,water_level,12110208
+USGS-08474300,2026-05-12 18:10:00+00:00,00065,Gage height,0.73,ft,,Provisional,water_level,12110208
+USGS-08474300,2026-05-27 22:36:00+00:00,00065,Gage height,3.2,ft,,Provisional,water_level,12110208
+USGS-08474300,2026-05-27 23:13:57+00:00,00065,Gage height,3.23,ft,,Provisional,water_level,12110208
+USGS-08474300,2026-05-27 23:26:00+00:00,00065,Gage height,3.26,ft,,Provisional,water_level,12110208
+USGS-08474300,2026-06-17 14:34:00+00:00,00065,Gage height,2.02,ft,,Provisional,water_level,12110208
+USGS-08474300,2026-06-17 15:18:19+00:00,00065,Gage height,2.02,ft,,Provisional,water_level,12110208
+USGS-08474300,2026-06-17 15:33:00+00:00,00065,Gage height,2.03,ft,,Provisional,water_level,12110208
+USGS-08474320,2022-11-09 16:55:00+00:00,00065,Gage height,-0.09,ft,,Approved,water_level,12110208
+USGS-08474320,2022-11-15 19:35:00+00:00,00065,Gage height,0.35,ft,,Approved,water_level,12110208
+USGS-08474320,2022-11-15 20:00:00+00:00,00065,Gage height,0.35,ft,,Approved,water_level,12110208
+USGS-08474320,2023-02-15 17:58:00+00:00,00065,Gage height,0.31,ft,,Approved,water_level,12110208
+USGS-08474320,2025-04-23 16:44:00+00:00,00065,Gage height,0.5,ft,,Approved,water_level,12110208
+USGS-08474320,2025-06-25 21:10:00+00:00,00065,Gage height,0.58,ft,,Approved,water_level,12110208
+USGS-08474320,2025-08-27 14:35:00+00:00,00065,Gage height,0.35,ft,,Approved,water_level,12110208
+USGS-08474320,2025-12-18 14:29:00+00:00,00065,Gage height,0.02,ft,,Approved,water_level,12110208
+USGS-08474320,2026-04-16 14:00:00+00:00,00065,Gage height,0.72,ft,,Approved,water_level,12110208
+USGS-08474320,2026-04-16 14:09:00+00:00,00065,Gage height,0.73,ft,,Approved,water_level,12110208
+USGS-08474320,2026-06-17 14:00:00+00:00,00065,Gage height,1.37,ft,,Provisional,water_level,12110208
+USGS-08474395,2023-08-28 19:02:00+00:00,00060,Discharge,78300.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2023-08-28 20:46:45+00:00,00060,Discharge,76300.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2023-08-28 20:46:45+00:00,00060,Discharge,119000.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2023-08-28 20:54:19+00:00,00060,Discharge,119000.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2023-11-02 17:47:09+00:00,00060,Discharge,103000.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2023-11-02 17:54:24+00:00,00060,Discharge,99400.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2023-11-02 18:03:06+00:00,00060,Discharge,98200.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2023-11-02 18:11:03+00:00,00060,Discharge,93200.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2023-12-18 21:05:46+00:00,00060,Discharge,45100.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2023-12-18 21:12:14+00:00,00060,Discharge,38400.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2023-12-18 21:18:37+00:00,00060,Discharge,34100.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2023-12-18 21:25:07+00:00,00060,Discharge,30600.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2023-12-18 21:42:56+00:00,00060,Discharge,18700.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2023-12-18 21:49:16+00:00,00060,Discharge,12900.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2023-12-18 21:55:46+00:00,00060,Discharge,9640.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2023-12-18 22:01:57+00:00,00060,Discharge,4180.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2023-12-18 22:08:12+00:00,00060,Discharge,-1060.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2023-12-18 22:14:28+00:00,00060,Discharge,-5030.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2023-12-18 22:21:13+00:00,00060,Discharge,-9490.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2023-12-18 22:27:41+00:00,00060,Discharge,-15700.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-02-06 22:13:38+00:00,00060,Discharge,-113000.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-02-06 22:13:38+00:00,00060,Discharge,-117000.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-02-06 22:20:17+00:00,00060,Discharge,-111000.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-02-06 22:27:11+00:00,00060,Discharge,-108000.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 12:43:03+00:00,00060,Discharge,-69200.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 12:49:33+00:00,00060,Discharge,-71300.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 12:56:44+00:00,00060,Discharge,-68700.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 13:04:09+00:00,00060,Discharge,-65700.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 13:12:01+00:00,00060,Discharge,-64800.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 13:19:05+00:00,00060,Discharge,-62600.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 13:26:20+00:00,00060,Discharge,-60500.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 13:33:10+00:00,00060,Discharge,-59700.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 14:13:29+00:00,00060,Discharge,-46600.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 14:20:33+00:00,00060,Discharge,-46800.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 14:42:58+00:00,00060,Discharge,-31800.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 14:49:32+00:00,00060,Discharge,-25300.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 14:55:51+00:00,00060,Discharge,-18100.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 15:09:38+00:00,00060,Discharge,-18100.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 15:17:19+00:00,00060,Discharge,-15800.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 15:24:07+00:00,00060,Discharge,-15000.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 15:37:37+00:00,00060,Discharge,-13600.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 15:44:33+00:00,00060,Discharge,-16500.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 15:51:29+00:00,00060,Discharge,-12500.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 15:58:28+00:00,00060,Discharge,-10300.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 16:04:51+00:00,00060,Discharge,-10600.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 16:12:09+00:00,00060,Discharge,-11200.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 16:18:52+00:00,00060,Discharge,-13100.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 16:25:10+00:00,00060,Discharge,-9460.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 16:30:57+00:00,00060,Discharge,-15100.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 16:31:47+00:00,00060,Discharge,-7700.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 16:38:53+00:00,00060,Discharge,-10000.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 18:34:44+00:00,00060,Discharge,1120.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 18:36:13+00:00,00060,Discharge,10200.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 18:41:37+00:00,00060,Discharge,2990.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 18:48:27+00:00,00060,Discharge,2760.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 18:55:13+00:00,00060,Discharge,-437.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 19:02:08+00:00,00060,Discharge,2440.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 19:09:05+00:00,00060,Discharge,1750.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-04-24 19:29:30+00:00,00060,Discharge,9590.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-06-25 21:25:24+00:00,00060,Discharge,27200.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-06-25 21:32:20+00:00,00060,Discharge,25700.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-06-25 21:38:52+00:00,00060,Discharge,33000.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-06-25 21:45:58+00:00,00060,Discharge,30700.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-06-25 21:53:07+00:00,00060,Discharge,42100.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-06-25 22:00:17+00:00,00060,Discharge,38100.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-08-14 14:03:02+00:00,00060,Discharge,25100.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-08-14 14:10:02+00:00,00060,Discharge,33400.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-08-14 14:20:17+00:00,00060,Discharge,44700.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-08-14 14:34:15+00:00,00060,Discharge,50800.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2024-12-17 22:27:29+00:00,00060,Discharge,-117000.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2025-02-25 18:08:19+00:00,00060,Discharge,-115000.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2025-04-22 16:44:43+00:00,00060,Discharge,-131000.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2025-06-24 14:52:14+00:00,00060,Discharge,-42900.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2025-06-24 14:58:41+00:00,00060,Discharge,-39200.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2025-06-24 15:04:48+00:00,00060,Discharge,-34700.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2025-06-24 15:10:56+00:00,00060,Discharge,-28800.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2025-08-26 17:59:47+00:00,00060,Discharge,47600.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2025-08-26 18:07:40+00:00,00060,Discharge,42100.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2026-01-28 18:57:26+00:00,00060,Discharge,-128000.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2026-04-15 18:28:01+00:00,00060,Discharge,-70900.0,ft^3/s,,Provisional,discharge,12110208
+USGS-08474395,2023-08-28 19:02:00+00:00,00065,Gage height,6.53,ft,,Provisional,water_level,12110208
+USGS-08474395,2023-08-28 20:46:45+00:00,00065,Gage height,5.87,ft,,Provisional,water_level,12110208
+USGS-08474395,2023-08-28 20:46:45+00:00,00065,Gage height,5.87,ft,,Provisional,water_level,12110208
+USGS-08474395,2023-08-28 20:54:19+00:00,00065,Gage height,5.87,ft,,Provisional,water_level,12110208
+USGS-08474395,2023-11-02 17:47:09+00:00,00065,Gage height,5.78,ft,,Provisional,water_level,12110208
+USGS-08474395,2023-11-02 17:54:24+00:00,00065,Gage height,5.76,ft,,Provisional,water_level,12110208
+USGS-08474395,2023-11-02 18:03:06+00:00,00065,Gage height,5.78,ft,,Provisional,water_level,12110208
+USGS-08474395,2023-11-02 18:11:03+00:00,00065,Gage height,5.8,ft,,Provisional,water_level,12110208
+USGS-08474395,2023-12-18 21:05:46+00:00,00065,Gage height,5.9,ft,,Provisional,water_level,12110208
+USGS-08474395,2023-12-18 21:12:14+00:00,00065,Gage height,6.02,ft,,Provisional,water_level,12110208
+USGS-08474395,2023-12-18 21:18:37+00:00,00065,Gage height,6.0,ft,,Provisional,water_level,12110208
+USGS-08474395,2023-12-18 21:25:07+00:00,00065,Gage height,6.04,ft,,Provisional,water_level,12110208
+USGS-08474395,2023-12-18 21:42:56+00:00,00065,Gage height,6.09,ft,,Provisional,water_level,12110208
+USGS-08474395,2023-12-18 21:49:16+00:00,00065,Gage height,6.18,ft,,Provisional,water_level,12110208
+USGS-08474395,2023-12-18 21:55:46+00:00,00065,Gage height,6.17,ft,,Provisional,water_level,12110208
+USGS-08474395,2023-12-18 22:01:57+00:00,00065,Gage height,6.17,ft,,Provisional,water_level,12110208
+USGS-08474395,2023-12-18 22:08:12+00:00,00065,Gage height,6.24,ft,,Provisional,water_level,12110208
+USGS-08474395,2023-12-18 22:14:28+00:00,00065,Gage height,6.25,ft,,Provisional,water_level,12110208
+USGS-08474395,2023-12-18 22:21:13+00:00,00065,Gage height,6.29,ft,,Provisional,water_level,12110208
+USGS-08474395,2023-12-18 22:27:41+00:00,00065,Gage height,6.32,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-02-06 22:13:38+00:00,00065,Gage height,6.51,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-02-06 22:13:38+00:00,00065,Gage height,6.51,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-02-06 22:20:17+00:00,00065,Gage height,6.52,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-02-06 22:27:11+00:00,00065,Gage height,6.53,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 12:43:03+00:00,00065,Gage height,7.01,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 12:49:33+00:00,00065,Gage height,7.0,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 12:56:44+00:00,00065,Gage height,6.99,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 13:04:09+00:00,00065,Gage height,6.95,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 13:12:01+00:00,00065,Gage height,6.97,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 13:19:05+00:00,00065,Gage height,6.98,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 13:26:20+00:00,00065,Gage height,6.96,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 13:33:10+00:00,00065,Gage height,6.95,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 14:13:29+00:00,00065,Gage height,6.89,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 14:20:33+00:00,00065,Gage height,6.9,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 14:42:58+00:00,00065,Gage height,6.81,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 14:49:32+00:00,00065,Gage height,6.8,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 14:55:51+00:00,00065,Gage height,6.79,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 15:09:38+00:00,00065,Gage height,6.8,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 15:17:19+00:00,00065,Gage height,6.82,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 15:24:07+00:00,00065,Gage height,6.81,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 15:37:37+00:00,00065,Gage height,6.84,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 15:44:33+00:00,00065,Gage height,6.83,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 15:51:29+00:00,00065,Gage height,6.81,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 15:58:28+00:00,00065,Gage height,6.79,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 16:04:51+00:00,00065,Gage height,6.8,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 16:12:09+00:00,00065,Gage height,6.83,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 16:18:52+00:00,00065,Gage height,6.81,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 16:25:10+00:00,00065,Gage height,6.83,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 16:30:57+00:00,00065,Gage height,6.79,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 16:31:47+00:00,00065,Gage height,6.78,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 16:38:53+00:00,00065,Gage height,6.77,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 18:34:44+00:00,00065,Gage height,6.68,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 18:36:13+00:00,00065,Gage height,6.68,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 18:41:37+00:00,00065,Gage height,6.68,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 18:48:27+00:00,00065,Gage height,6.67,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 18:55:13+00:00,00065,Gage height,6.69,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 19:02:08+00:00,00065,Gage height,6.7,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 19:09:05+00:00,00065,Gage height,6.68,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-04-24 19:29:30+00:00,00065,Gage height,6.61,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-06-25 21:25:24+00:00,00065,Gage height,7.45,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-06-25 21:32:20+00:00,00065,Gage height,7.44,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-06-25 21:38:52+00:00,00065,Gage height,7.42,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-06-25 21:45:58+00:00,00065,Gage height,7.37,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-06-25 21:53:07+00:00,00065,Gage height,7.36,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-06-25 22:00:17+00:00,00065,Gage height,7.35,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-08-14 14:03:02+00:00,00065,Gage height,0.08,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-08-14 14:10:02+00:00,00065,Gage height,0.01,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-08-14 14:20:17+00:00,00065,Gage height,0.01,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-08-14 14:34:15+00:00,00065,Gage height,0.02,ft,,Provisional,water_level,12110208
+USGS-08474395,2024-12-17 22:27:29+00:00,00065,Gage height,0.58,ft,,Provisional,water_level,12110208
+USGS-08474395,2025-02-25 18:08:19+00:00,00065,Gage height,0.05,ft,,Provisional,water_level,12110208
+USGS-08474395,2025-04-22 16:44:43+00:00,00065,Gage height,0.64,ft,,Provisional,water_level,12110208
+USGS-08474395,2025-06-24 14:52:14+00:00,00065,Gage height,0.94,ft,,Provisional,water_level,12110208
+USGS-08474395,2025-06-24 14:58:41+00:00,00065,Gage height,0.86,ft,,Provisional,water_level,12110208
+USGS-08474395,2025-06-24 15:04:48+00:00,00065,Gage height,0.88,ft,,Provisional,water_level,12110208
+USGS-08474395,2025-06-24 15:10:56+00:00,00065,Gage height,0.85,ft,,Provisional,water_level,12110208
+USGS-08474395,2025-08-26 17:59:47+00:00,00065,Gage height,0.0,ft,,Provisional,water_level,12110208
+USGS-08474395,2025-08-26 18:07:40+00:00,00065,Gage height,0.0,ft,,Provisional,water_level,12110208
+USGS-08474395,2026-01-28 18:57:26+00:00,00065,Gage height,0.29,ft,,Provisional,water_level,12110208
+USGS-08474395,2026-04-15 18:28:01+00:00,00065,Gage height,0.58,ft,,Provisional,water_level,12110208
