@@ -42,7 +42,7 @@ two disagree, this file wins on process, README wins on scope.
 
 ## Commands
 
-Environment is managed by **pixi** ([pixi.toml](pixi.toml)); **never** use bare `pip`/`conda`.
+Environment is managed by **pixi** ([pyproject.toml](pyproject.toml)); **never** use bare `pip`/`conda`.
 Install and interactive use are in [README § Environment](README.md#environment). Working commands:
 
 ```bash
@@ -52,7 +52,7 @@ pixi run render      # build _site/ (executes notebooks, refreshes _freeze/)
 pixi run preview     # live-reload preview server
 ```
 
-Define any new reusable task under `[tasks]` in `pixi.toml` so it's discoverable.
+Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it's discoverable.
 
 ## Workflow
 
