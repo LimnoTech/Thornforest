@@ -23,6 +23,11 @@ two disagree, this file wins on process, README wins on scope.
   [Commands](#commands) and [Workflow](#workflow).
 - **Storage formats are fixed** — tabular → GeoParquet **+ CSV** (`save_outputs`); raster/xarray
   datacubes → **zarr v3** (`save_datacube`), never parquet. See [Storage & data](#storage--data).
+- **Preserve original source terminology in the data.** Carry each source's own parameter/variable
+  names, descriptions, and units **verbatim** in datasets and saved outputs; introduce new names only
+  for explicitly derived or blended quantities, and label them as such (so newcomers see the raw
+  vocabulary the agencies actually use). In prose (docstrings/markdown) paraphrasing is fine — but
+  **link to the primary documentation, liberally.**
 
 **This repo:**
 
