@@ -63,6 +63,12 @@ Define any new reusable task under `[tasks]` in `pixi.toml` so it's discoverable
   task-group, then a task review (spec + code quality) before handing to the user. Since the agent
   doesn't commit, per-group review runs on the **working-tree diff** (`git add -N` untracked, then
   `git diff`), not commit ranges.
+- **Typical cadence — pause at each task-group gate.** The agent implements a task-group, reviews it
+  (and applies fixes), then **stops and leaves the work staged for the user to commit** before the
+  next group starts; the user's commit becomes the next group's clean baseline. The agent runs
+  *within* a group autonomously (no check-ins between steps) — the gates are only *between* groups.
+  To maximize autonomy, **group more tasks per gate** (fewer, larger task-groups → fewer pauses);
+  to keep tighter checkpoints, split them.
 - **Verification (no test suite):** the deliverable is executed notebooks + the rendered site.
   Execute notebooks headlessly, run small assertion snippets, and `pixi run render` + grep.
 - **Explore new data sources in a `sandbox/` notebook first**, then port the proven approach into the
