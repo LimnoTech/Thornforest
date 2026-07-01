@@ -22,6 +22,10 @@ libgdal-arrow-parquet = "*"
 libgdal-xls = "*"
 python-libarchive-c = "*"
 
+# Data analysis
+exactextract = ">=0.3.0,<0.4"
+pymannkendall = ">=1.4.3,<2"
+
 # Remote Access
 fsspec = "*"
 python-dotenv = ">=1.2.2,<2"
@@ -51,10 +55,8 @@ jupytext = "*"
 pytest = "*"
 ruff = "*"
 
-# Website rendering & analysis
+# Documentation
 quarto = ">=1.9.38,<2"
-exactextract = ">=0.3.0,<0.4"
-pymannkendall = ">=1.4.3,<2"
 
 [tool.pixi.pypi-dependencies]
 # Put pip-only requirements here if needed
