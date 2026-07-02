@@ -56,5 +56,6 @@ def save_datacube(ds: xr.Dataset, zarr_path: Path | str, level: int = 3) -> Path
     compressor = zarr.codecs.ZstdCodec(level=level)
     encoding = {v: {"compressors": (compressor,)} for v in ds.data_vars if ds[v].ndim > 0}
     zarr_path.parent.mkdir(parents=True, exist_ok=True)
-    ds.to_zarr(zarr_path, mode="w", consolidated=True, encoding=encoding, zarr_format=3)
+    # Consolidated metadata is not part of the zarr v3 spec — write plain (v3-native) metadata.
+    ds.to_zarr(zarr_path, mode="w", consolidated=False, encoding=encoding, zarr_format=3)
     return zarr_path

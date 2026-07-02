@@ -54,7 +54,7 @@ def conus404_monthly_grid(
 
     zarr_path = Path(zarr_path)
     if zarr_path.exists():
-        cached = xr.open_zarr(zarr_path)
+        cached = xr.open_zarr(zarr_path, consolidated=False)
         if verbose:  # note the cached var set — a changed `variables` arg is ignored on a cache hit
             cached_vars = [v for v in cached.data_vars if v != "crs"]
             print(f"loading cached datacube ({len(cached_vars)} vars) → {zarr_path.name}")
