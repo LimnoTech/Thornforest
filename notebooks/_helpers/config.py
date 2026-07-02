@@ -43,5 +43,20 @@ WATERSHEDS = {
 # Lower it (or widen body-width) if any page side-scrolls.
 PLOT_WIDTH = 600
 
-# CONUS404 variables (Task 5 populates the derived-label mapping).
-CONUS404_VARIABLES = {}
+# CONUS404 source variable -> our derived presentation label + how we derive it.
+# Source names, long_name descriptions, and units are carried verbatim from the dataset's own
+# variable attributes (see NB2) — NOT paraphrased here. Docs:
+# https://www.usgs.gov/data/conus404-40-years-daily-4-km-resolution-conus-model-simulation-output
+CONUS404_VARIABLES = {
+    "PREC_ACC_NC": {"derived_label": "precip_mm", "derivation": "monthly precip accumulation (mm); sum 12 → water-year total"},
+    "ACETLSM":     {"derived_label": "et_mm", "derivation": "monthly ET accumulation (mm); sum 12 → water-year total"},
+    "ACRUNSF":     {"derived_label": "surf_runoff_mm", "derivation": "monthly surface-runoff accumulation (mm)"},
+    "ACRUNSB":     {"derived_label": "subsurf_runoff_mm", "derivation": "monthly subsurface-runoff accumulation (mm)"},
+    "RECH":        {"derived_label": "recharge_mm", "derivation": "monthly recharge accumulation (mm)"},
+    "SMOIS":       {"derived_label": "soil_moisture_m3m3", "derivation": "surface soil-layer volumetric moisture (m³/m³)"},
+    "SNOW":        {"derived_label": "snow_kgm2", "derivation": "snow water equivalent (kg/m²)"},
+    "CANWAT":      {"derived_label": "canopy_water_kgm2", "derivation": "canopy water (kg/m²)"},
+    "T2":          {"derived_label": "t2_degc", "derivation": "2 m air temperature, converted K → °C"},
+    "TD2":         {"derived_label": "td2_degc", "derivation": "2 m dewpoint, converted K → °C"},
+    "Q2":          {"derived_label": "q2_kgkg", "derivation": "2 m water-vapor mixing ratio (kg/kg)"},
+}
