@@ -27,18 +27,24 @@ header stays pinned). Code is hidden by default; click **"Show code"** to reveal
 
 ::: {.grid}
 
-::: {.g-col-12 .g-col-md-6}
-### [1 · USGS Hydrofabric](notebooks/1_usgs_hydrofabric.ipynb)
+::: {.g-col-12 .g-col-md-4}
+### [1 · USGS Hydrography](notebooks/1_usgs_hydrography.html)
 The **spatial foundation**: fetches the three HUC-8 **watershed boundaries** and maps them on an
 interactive topographic basemap.
 :::
 
-::: {.g-col-12 .g-col-md-6}
-### [2 · USGS WaterData stations](notebooks/2_usgs_waterdata.ipynb)
-Discovers the **USGS monitoring stations** within the watersheds via the new USGS Water Data API and
-records **which priority parameters** each measured — water quantity (**discharge**, **water level**)
-and water quality (conductivity, temperature, dissolved oxygen, nutrients, pH, turbidity, …) — mapped
-with a click-to-toggle legend.
+::: {.g-col-12 .g-col-md-4}
+### [2 · CONUS404 Climate](notebooks/2_usgs_climate.html)
+Fetches **CONUS404** monthly climate output as a gridded datacube and derives the long-term
+**water balance** (precipitation, ET, runoff, recharge) and **trends** — per watershed and per grid
+cell — across the whole area, including the Mexican side.
+:::
+
+::: {.g-col-12 .g-col-md-4}
+### [3 · USGS WaterData](notebooks/3_usgs_waterdata.html)
+Discovers the **USGS monitoring stations**, records **which priority parameters** each measured,
+and fetches the **time-series records** (daily values, discrete samples, field measurements) with a
+data-availability summary.
 :::
 
 :::

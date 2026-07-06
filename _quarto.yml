@@ -25,12 +25,12 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - href: notebooks/1_usgs_hydrofabric.html
-        text: "1 · Hydrofabric"
-      - href: notebooks/2_usgs_waterdata.html
-        text: "2 · WaterData stations"
-      - href: notebooks/3_usgs_conus404_climate.html
-        text: "3 · CONUS404 climate"
+      - href: notebooks/1_usgs_hydrography.html
+        text: "1 · Hydrography"
+      - href: notebooks/2_usgs_climate.html
+        text: "2 · Climate"
+      - href: notebooks/3_usgs_waterdata.html
+        text: "3 · WaterData stations"
     right:
       - icon: github
         href: https://github.com/LimnoTech/Thornforest
