@@ -48,13 +48,13 @@ PLOT_WIDTH = 600
 # variable attributes (see NB2) — NOT paraphrased here. Docs:
 # https://www.usgs.gov/data/conus404-40-years-daily-4-km-resolution-conus-model-simulation-output
 # https://www.usgs.gov/data/conus404-four-kilometer-long-term-regional-hydroclimate-reanalysis-over-conterminous-united
-# NOTE: ACRUNSF & ACRUNSB may be swapped in the source dataset based on the "surface" vs. "subsurface"
-# wording in the long_name attribute. 
+# NOTE: the CONUS404 runoff names are counterintuitive — the source long_name is authoritative:
+# ACRUNSF = "Accumulated subsurface runoff", ACRUNSB = "Accumulated surface runoff".
 CONUS404_VARIABLES = {
     "PREC_ACC_NC": {"derived_label": "precip_mm", "derivation": "monthly precip accumulation (mm); sum 12 → water-year total"},
     "ACETLSM":     {"derived_label": "et_mm", "derivation": "monthly ET accumulation (mm); sum 12 → water-year total"},
-    "ACRUNSF":     {"derived_label": "surf_runoff_mm", "derivation": "monthly surface-runoff accumulation (mm)"},
-    "ACRUNSB":     {"derived_label": "subsurf_runoff_mm", "derivation": "monthly subsurface-runoff accumulation (mm)"},
+    "ACRUNSF":     {"derived_label": "subsurf_runoff_mm", "derivation": "monthly subsurface-runoff accumulation (mm)"},
+    "ACRUNSB":     {"derived_label": "surf_runoff_mm", "derivation": "monthly surface-runoff accumulation (mm)"},
     "RECH":        {"derived_label": "recharge_mm", "derivation": "monthly recharge accumulation (mm)"},
     "SMOIS":       {"derived_label": "soil_moisture_m3m3", "derivation": "surface soil-layer volumetric moisture (m³/m³)"},
     "SNOW":        {"derived_label": "snow_kgm2", "derivation": "snow water equivalent (kg/m²)"},
