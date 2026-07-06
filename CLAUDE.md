@@ -19,8 +19,8 @@ two disagree, this file wins on process, README wins on scope.
   reviews the working-tree diff and commits before the next group. See [Workflow](#workflow).
 - **Edit the notebook `.py`, never the `.ipynb`.** Notebooks are jupytext-paired; the `.py` is the
   source of truth and what you review. After editing: `pixi run jupytext --sync <name>.py`.
-- **No formal test suite** — verify by executing notebooks headlessly + rendering, not pytest. See
-  [Commands](#commands) and [Workflow](#workflow).
+- **Tests run via `pixi run test` (pytest).** Verification is the pytest suite **plus** executing
+  notebooks headlessly + `pixi run render`. See [Commands](#commands) and [Workflow](#workflow).
 - **Storage formats are fixed** — tabular → GeoParquet **+ CSV** (`save_dataframe`); raster/xarray
   datacubes → **zarr v3** (`save_datacube`), never parquet. See [Storage & data](#storage--data).
 - **Preserve original source terminology in the data.** Carry each source's own parameter/variable
@@ -50,6 +50,7 @@ pixi run jupytext --sync notebooks/<name>.py                    # regenerate the
 pixi run jupyter nbconvert --to notebook --execute --inplace <nb>.ipynb   # refresh committed .ipynb outputs
 pixi run render      # build _site/ (executes notebooks, refreshes _freeze/)
 pixi run preview     # live-reload preview server
+pixi run test        # run the pytest unit suite (notebooks/tests/)
 ```
 
 Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it's discoverable.
@@ -69,8 +70,9 @@ Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it
   *within* a group autonomously (no check-ins between steps) — the gates are only *between* groups.
   To maximize autonomy, **group more tasks per gate** (fewer, larger task-groups → fewer pauses);
   to keep tighter checkpoints, split them.
-- **Verification (no test suite):** the deliverable is executed notebooks + the rendered site.
-  Execute notebooks headlessly, run small assertion snippets, and `pixi run render` + grep.
+- **Verification:** run `pixi run test` (pytest, `notebooks/tests/`) for the `_helpers` package,
+  **plus** the deliverable is executed notebooks + the rendered site — execute notebooks headlessly
+  and `pixi run render` + grep.
 - **Explore new data sources in a `sandbox/` notebook first**, then port the proven approach into the
   numbered notebooks. (`sandbox/` is excluded from the site render.)
 
@@ -78,9 +80,18 @@ Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it
 
 - **`.py` is the source of truth** (jupytext-paired) — edit it, then `--sync`. Notebooks are written
   for readers **new to Python/Jupyter**: explain each step in markdown, keep code cells small.
-- **Reusable helpers live in [`notebooks/_helpers.py`](notebooks/_helpers.py)** — `import` them, don't
-  redefine. The leading underscore makes Quarto ignore the module when rendering. Keep heavy imports
-  **lazy** (inside the functions that need them) so light notebooks don't pay the cost.
+- **Reusable helpers live in the [`notebooks/_helpers/`](notebooks/_helpers/) package** — `import`
+  them, don't redefine. The leading underscore makes Quarto ignore the package when rendering. Keep
+  heavy imports **lazy** (inside the functions that need them) so light notebooks don't pay the cost.
+  Modules are split by concern and kept **generic** (`session`, `io`, `viz`, `analysis`, `usgs`,
+  `climate`), with project-specific constants isolated in `config.py` and **injected as arguments**
+  (e.g. `groups`) rather than hardcoded — that seam is what would let the package be lifted into
+  another project. `usgs` splits fetching into `fetch_*` (network calls) vs. `tidy_*` (pure
+  transforms), so the pure half is unit-testable without a live API. `__init__.py` re-exports the
+  public API, so `from _helpers import save_dataframe, show, ...` is unchanged regardless of which
+  module a helper actually lives in.
+- **Type-hint functions in the `_helpers` package**; keep notebook cells hint-free — the audience is
+  new to Python/Jupyter, and inline type syntax adds noise without teaching value there.
 - **Set up each notebook with `S = init_session()`** once near the top — it loads `.env`, configures
   the HTTP cache, and returns paths/headers (`S.data_dir`, `S.cache_file`, `S.api_headers`, …). Don't
   scatter that config across cells.
@@ -89,13 +100,23 @@ Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it
   fixed-height, sticky-header scrollable box that emits every row.
 - **Color data with colorcet, never the brand palette** — `categorical_colors(keys)` (colorcet
   `b_glasbey_category10`) for figure data; the brand palette + Roboto (`_brand.yml`) are site chrome.
+- **Show intermediate results, don't just chain silently** — e.g. `show(raw.head())` right after an
+  API call, before tidying it — and **link to primary documentation** liberally, so a newcomer can
+  see the raw response shape and trace it back to the source API's own docs.
 
 **This repo:**
 
-- Helper inventory: `find_repo_root`, `init_session`/`Session`, `save_dataframe`, `save_datacube`,
-  `show`, `categorical_colors`/`CATEGORICAL`, `make_legend_clickable`, plus the CONUS404 set
-  (`conus404_monthly_grid`, `zonal_by_huc8`, `water_year`, `mk_sen_trend`, `pixel_trend`). Candidate
-  to grow into a shareable cross-project package.
+- Helper inventory (`notebooks/_helpers/`, re-exported from the package root):
+  - `session` — `find_repo_root`, `init_session`/`Session`.
+  - `io` — `save_dataframe`, `save_datacube`.
+  - `viz` — `show`, `categorical_colors`/`CATEGORICAL`, `make_legend_clickable`.
+  - `analysis` — `water_year`, `mk_sen_trend`, `coverage`.
+  - `usgs` — `classify_parameter`, `build_parameter_name_lookup`, `station_parameters`,
+    `fetch_daily`/`fetch_samples`/`fetch_field`, `tidy_daily`/`tidy_samples`/`tidy_field`.
+  - `climate` — `conus404_monthly_grid`, `zonal_by_huc8`, `pixel_trend`, plus the `CONUS404_VARIABLES`
+    constant from `config`.
+  - Candidate to grow into a shareable cross-project package (`config.py` is the only
+    Thornforest-specific module).
 - Per-notebook responsibilities and methods are described in [README § Approach](README.md#approach).
 
 ## Storage & data
@@ -127,8 +148,8 @@ Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it
   HoloViews/GeoViews Bokeh embeds (`holoviews_exec`) into the static HTML — then freezes to
   **`_freeze/` (committed)**. **Re-render and leave `_freeze/` staged after editing a notebook.**
 - **Render resolves paired notebooks via their `.py`** (the `render:` list targets `.py`;
-  underscore-prefixed files like `_helpers.py` are ignored); **navbar `href`s point at the output
-  `.html`**. `sandbox/` is excluded.
+  underscore-prefixed files **and directories**, like `_helpers/`, are ignored); **navbar `href`s
+  point at the output `.html`**. `sandbox/` is excluded.
 - **Refreshing committed `.ipynb` outputs:** neither `jupytext --sync` nor `pixi run render` updates
   the `.ipynb`'s stored outputs (what you see in the IDE / on GitHub). After changing code that
   affects displayed output, run the `nbconvert` command in [Commands](#commands), then render.
