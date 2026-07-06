@@ -225,7 +225,7 @@ __marimo__/
 # Scratch data downloads (sandbox / raw source archives)
 /data_temp/
 
-# Raw CONUS404 monthly gridded datacube (~80 MB) — regenerated from OSN by NB3.
+# Raw CONUS404 monthly gridded datacube (~57 MB) — regenerated from OSN by NB2.
 # Small DERIVED products (climatology/trend zarrs, per-HUC-8 parquet/CSV) ARE committed.
 /data/climate/conus404_monthly_grid.zarr/
 

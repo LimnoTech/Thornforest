@@ -22988,12 +22988,12 @@ USGS-08475000,2024-11-19 15:00:00+00:00,Ammonia and ammonium,71846,0.046,mg/L,Fi
 USGS-08475000,2024-11-19 15:00:00+00:00,Ammonia and ammonium,608,0.04,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
 USGS-08475000,2024-12-10 16:00:00+00:00,Ammonia and ammonium,71846,0.134,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2024-12-10 16:00:00+00:00,Ammonia and ammonium,608,0.10,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
-USGS-08475000,2025-02-25 21:00:00+00:00,Ammonia and ammonium,71846,0.133,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-02-25 21:00:00+00:00,Ammonia and ammonium,608,0.10,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
+USGS-08475000,2025-02-25 21:00:00+00:00,Ammonia and ammonium,71846,0.133,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-04-21 19:00:00+00:00,Ammonia and ammonium,71846,,,Filtered field and/or lab,Not Detected,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-04-21 19:00:00+00:00,Ammonia and ammonium,608,,,Filtered field and/or lab,Not Detected,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
-USGS-08475000,2025-07-17 13:30:00+00:00,Ammonia and ammonium,71846,0.186,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-07-17 13:30:00+00:00,Ammonia and ammonium,608,0.14,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
+USGS-08475000,2025-07-17 13:30:00+00:00,Ammonia and ammonium,71846,0.186,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-07-30 13:30:00+00:00,Ammonia and ammonium,71846,0.109,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-07-30 13:30:00+00:00,Ammonia and ammonium,608,0.08,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
 USGS-08475000,2026-02-18 15:30:00+00:00,Ammonia and ammonium,608,,,Filtered field and/or lab,Not Detected,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
@@ -25121,10 +25121,10 @@ USGS-08475000,2025-02-25 21:00:00+00:00,Kjeldahl nitrogen,623,0.71,mg/L,Filtered
 USGS-08475000,2025-02-25 21:00:00+00:00,Kjeldahl nitrogen,625,0.77,mg/L,Unfiltered,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
 USGS-08475000,2025-04-21 19:00:00+00:00,Kjeldahl nitrogen,623,0.37,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
 USGS-08475000,2025-04-21 19:00:00+00:00,Kjeldahl nitrogen,625,1.8,mg/L,Unfiltered,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
-USGS-08475000,2025-07-17 13:30:00+00:00,Kjeldahl nitrogen,623,0.82,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
 USGS-08475000,2025-07-17 13:30:00+00:00,Kjeldahl nitrogen,625,0.94,mg/L,Unfiltered,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
-USGS-08475000,2025-07-30 13:30:00+00:00,Kjeldahl nitrogen,623,0.76,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
+USGS-08475000,2025-07-17 13:30:00+00:00,Kjeldahl nitrogen,623,0.82,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
 USGS-08475000,2025-07-30 13:30:00+00:00,Kjeldahl nitrogen,625,1.4,mg/L,Unfiltered,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
+USGS-08475000,2025-07-30 13:30:00+00:00,Kjeldahl nitrogen,623,0.76,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
 USGS-08475000,2026-02-18 15:30:00+00:00,Kjeldahl nitrogen,623,0.53,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
 USGS-08475000,2026-02-18 15:30:00+00:00,Kjeldahl nitrogen,625,1.3,mg/L,Unfiltered,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
 USGS-08475000,2026-04-14 15:00:00+00:00,Kjeldahl nitrogen,623,0.59,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
@@ -25843,12 +25843,12 @@ USGS-08475000,2024-12-10 16:00:00+00:00,Nitrate,618,1.60,mg/L,Filtered field and
 USGS-08475000,2024-12-10 16:00:00+00:00,Nitrate,71851,7.09,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-02-25 21:00:00+00:00,Nitrate,618,1.64,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-02-25 21:00:00+00:00,Nitrate,71851,7.24,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
-USGS-08475000,2025-04-21 19:00:00+00:00,Nitrate,618,,,Filtered field and/or lab,Not Detected,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-04-21 19:00:00+00:00,Nitrate,71851,,,Filtered field and/or lab,Not Detected,,Nutrient,,nitrogen,13090002
-USGS-08475000,2025-07-17 13:30:00+00:00,Nitrate,71851,1.93,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
+USGS-08475000,2025-04-21 19:00:00+00:00,Nitrate,618,,,Filtered field and/or lab,Not Detected,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-07-17 13:30:00+00:00,Nitrate,618,0.436,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
-USGS-08475000,2025-07-30 13:30:00+00:00,Nitrate,71851,2.62,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
+USGS-08475000,2025-07-17 13:30:00+00:00,Nitrate,71851,1.93,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-07-30 13:30:00+00:00,Nitrate,618,0.591,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
+USGS-08475000,2025-07-30 13:30:00+00:00,Nitrate,71851,2.62,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2026-02-18 15:30:00+00:00,Nitrate,71851,,,Filtered field and/or lab,Not Detected,,Nutrient,,nitrogen,13090002
 USGS-08475000,2026-02-18 15:30:00+00:00,Nitrate,618,,,Filtered field and/or lab,Not Detected,,Nutrient,,nitrogen,13090002
 USGS-08475000,2026-04-14 15:00:00+00:00,Nitrate,71851,2.56,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
@@ -26575,18 +26575,18 @@ USGS-08475000,2024-10-16 15:00:00+00:00,Nitrite,71856,0.021,mg/L,Filtered field 
 USGS-08475000,2024-10-16 15:00:00+00:00,Nitrite,613,0.006,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
 USGS-08475000,2024-11-19 15:00:00+00:00,Nitrite,71856,0.037,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2024-11-19 15:00:00+00:00,Nitrite,613,0.011,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
-USGS-08475000,2024-12-10 16:00:00+00:00,Nitrite,71856,0.031,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2024-12-10 16:00:00+00:00,Nitrite,613,0.010,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
-USGS-08475000,2025-02-25 21:00:00+00:00,Nitrite,71856,0.017,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
+USGS-08475000,2024-12-10 16:00:00+00:00,Nitrite,71856,0.031,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-02-25 21:00:00+00:00,Nitrite,613,0.005,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
+USGS-08475000,2025-02-25 21:00:00+00:00,Nitrite,71856,0.017,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-04-21 19:00:00+00:00,Nitrite,71856,0.012,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-04-21 19:00:00+00:00,Nitrite,613,0.004,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
 USGS-08475000,2025-07-17 13:30:00+00:00,Nitrite,613,0.049,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
 USGS-08475000,2025-07-17 13:30:00+00:00,Nitrite,71856,0.160,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-07-30 13:30:00+00:00,Nitrite,71856,0.246,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-07-30 13:30:00+00:00,Nitrite,613,0.075,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
-USGS-08475000,2026-02-18 15:30:00+00:00,Nitrite,613,,,Filtered field and/or lab,Not Detected,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
 USGS-08475000,2026-02-18 15:30:00+00:00,Nitrite,71856,,,Filtered field and/or lab,Not Detected,,Nutrient,,nitrogen,13090002
+USGS-08475000,2026-02-18 15:30:00+00:00,Nitrite,613,,,Filtered field and/or lab,Not Detected,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
 USGS-08475000,2026-04-14 15:00:00+00:00,Nitrite,613,0.079,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
 USGS-08475000,2026-04-14 15:00:00+00:00,Nitrite,71856,0.259,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2001-08-29 16:40:00+00:00,Nitrogen,49570,0.070,mg/L,,,,Nutrient,,nitrogen,13090002
@@ -27769,9 +27769,9 @@ USGS-08475000,2024-11-19 15:00:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), org
 USGS-08475000,2024-12-10 16:00:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)",600,2.3,mg/L,Unfiltered,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2024-12-10 16:00:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)",602,2.2,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2024-12-10 16:00:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)",62854,2.21,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
+USGS-08475000,2025-02-25 21:00:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)",62854,2.24,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
 USGS-08475000,2025-02-25 21:00:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)",602,2.4,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-02-25 21:00:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)",600,2.3,mg/L,Unfiltered,,,Nutrient,,nitrogen,13090002
-USGS-08475000,2025-02-25 21:00:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)",62854,2.24,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
 USGS-08475000,2025-04-21 19:00:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)",602,,,Filtered field and/or lab,Not Detected,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-04-21 19:00:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)",62854,0.42,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
 USGS-08475000,2025-04-21 19:00:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)",600,1.4,mg/L,Unfiltered,,,Nutrient,,nitrogen,13090002
@@ -27781,9 +27781,9 @@ USGS-08475000,2025-07-17 13:30:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), org
 USGS-08475000,2025-07-30 13:30:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)",602,1.4,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-07-30 13:30:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)",600,2.2,mg/L,Unfiltered,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-07-30 13:30:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)",62854,1.41,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
+USGS-08475000,2026-02-18 15:30:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)",62854,0.56,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
 USGS-08475000,2026-02-18 15:30:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)",600,1.5,mg/L,Unfiltered,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2026-02-18 15:30:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)",602,,,Filtered field and/or lab,Not Detected,,Nutrient,,nitrogen,13090002
-USGS-08475000,2026-02-18 15:30:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)",62854,0.56,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
 USGS-08475000,2026-04-14 15:00:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)",62854,1.12,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",nitrogen,13090002
 USGS-08475000,2026-04-14 15:00:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)",600,1.7,mg/L,Unfiltered,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2026-04-14 15:00:00+00:00,"Nitrogen, mixed forms (NH3), (NH4), organic, (NO2) and (NO3)",602,1.2,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
@@ -28500,8 +28500,8 @@ USGS-08475000,2025-04-21 19:00:00+00:00,Organic Nitrogen,605,,,Unfiltered,Not De
 USGS-08475000,2025-04-21 19:00:00+00:00,Organic Nitrogen,607,,,Filtered field and/or lab,Not Detected,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-07-17 13:30:00+00:00,Organic Nitrogen,605,0.80,mg/L,Unfiltered,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-07-17 13:30:00+00:00,Organic Nitrogen,607,0.74,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
-USGS-08475000,2025-07-30 13:30:00+00:00,Organic Nitrogen,605,1.3,mg/L,Unfiltered,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2025-07-30 13:30:00+00:00,Organic Nitrogen,607,0.66,mg/L,Filtered field and/or lab,,,Nutrient,,nitrogen,13090002
+USGS-08475000,2025-07-30 13:30:00+00:00,Organic Nitrogen,605,1.3,mg/L,Unfiltered,,,Nutrient,,nitrogen,13090002
 USGS-08475000,2026-02-18 15:30:00+00:00,Organic Nitrogen,607,,,Filtered field and/or lab,Not Detected,,Nutrient,,nitrogen,13090002
 USGS-08475000,2026-02-18 15:30:00+00:00,Organic Nitrogen,605,,,Unfiltered,Not Detected,,Nutrient,,nitrogen,13090002
 USGS-08475000,2026-04-14 15:00:00+00:00,Organic Nitrogen,605,0.94,mg/L,Unfiltered,,,Nutrient,,nitrogen,13090002
@@ -29194,10 +29194,10 @@ USGS-08475000,2024-11-19 15:00:00+00:00,Orthophosphate,660,0.788,mg/L,Filtered f
 USGS-08475000,2024-11-19 15:00:00+00:00,Orthophosphate,671,0.257,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",phosphorus,13090002
 USGS-08475000,2024-12-10 16:00:00+00:00,Orthophosphate,660,0.577,mg/L,Filtered field and/or lab,,,Nutrient,,phosphorus,13090002
 USGS-08475000,2024-12-10 16:00:00+00:00,Orthophosphate,671,0.188,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",phosphorus,13090002
-USGS-08475000,2025-02-25 21:00:00+00:00,Orthophosphate,660,0.980,mg/L,Filtered field and/or lab,,,Nutrient,,phosphorus,13090002
 USGS-08475000,2025-02-25 21:00:00+00:00,Orthophosphate,671,0.320,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",phosphorus,13090002
-USGS-08475000,2025-04-21 19:00:00+00:00,Orthophosphate,660,,,Filtered field and/or lab,Not Detected,,Nutrient,,phosphorus,13090002
+USGS-08475000,2025-02-25 21:00:00+00:00,Orthophosphate,660,0.980,mg/L,Filtered field and/or lab,,,Nutrient,,phosphorus,13090002
 USGS-08475000,2025-04-21 19:00:00+00:00,Orthophosphate,671,,,Filtered field and/or lab,Not Detected,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",phosphorus,13090002
+USGS-08475000,2025-04-21 19:00:00+00:00,Orthophosphate,660,,,Filtered field and/or lab,Not Detected,,Nutrient,,phosphorus,13090002
 USGS-08475000,2025-07-17 13:30:00+00:00,Orthophosphate,671,0.165,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",phosphorus,13090002
 USGS-08475000,2025-07-17 13:30:00+00:00,Orthophosphate,660,0.507,mg/L,Filtered field and/or lab,,,Nutrient,,phosphorus,13090002
 USGS-08475000,2025-07-30 13:30:00+00:00,Orthophosphate,660,0.507,mg/L,Filtered field and/or lab,,,Nutrient,,phosphorus,13090002
@@ -30222,12 +30222,12 @@ USGS-08475000,2024-12-10 16:00:00+00:00,Phosphorus,666,0.18,mg/L,Filtered field 
 USGS-08475000,2024-12-10 16:00:00+00:00,Phosphorus,665,0.21,mg/L,Unfiltered,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",phosphorus,13090002
 USGS-08475000,2025-02-25 21:00:00+00:00,Phosphorus,666,0.31,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",phosphorus,13090002
 USGS-08475000,2025-02-25 21:00:00+00:00,Phosphorus,665,0.33,mg/L,Unfiltered,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",phosphorus,13090002
-USGS-08475000,2025-04-21 19:00:00+00:00,Phosphorus,666,,,Filtered field and/or lab,Not Detected,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",phosphorus,13090002
 USGS-08475000,2025-04-21 19:00:00+00:00,Phosphorus,665,0.27,mg/L,Unfiltered,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",phosphorus,13090002
-USGS-08475000,2025-07-17 13:30:00+00:00,Phosphorus,666,0.18,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",phosphorus,13090002
+USGS-08475000,2025-04-21 19:00:00+00:00,Phosphorus,666,,,Filtered field and/or lab,Not Detected,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",phosphorus,13090002
 USGS-08475000,2025-07-17 13:30:00+00:00,Phosphorus,665,0.26,mg/L,Unfiltered,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",phosphorus,13090002
-USGS-08475000,2025-07-30 13:30:00+00:00,Phosphorus,665,0.29,mg/L,Unfiltered,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",phosphorus,13090002
+USGS-08475000,2025-07-17 13:30:00+00:00,Phosphorus,666,0.18,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",phosphorus,13090002
 USGS-08475000,2025-07-30 13:30:00+00:00,Phosphorus,666,0.17,mg/L,Filtered field and/or lab,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",phosphorus,13090002
+USGS-08475000,2025-07-30 13:30:00+00:00,Phosphorus,665,0.29,mg/L,Unfiltered,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",phosphorus,13090002
 USGS-08475000,2026-02-18 15:30:00+00:00,Phosphorus,665,0.19,mg/L,Unfiltered,,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",phosphorus,13090002
 USGS-08475000,2026-02-18 15:30:00+00:00,Phosphorus,666,,,Filtered field and/or lab,Not Detected,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",phosphorus,13090002
 USGS-08475000,2026-04-14 15:00:00+00:00,Phosphorus,666,,,Filtered field and/or lab,Not Detected,,Nutrient,"USGS-National Water Quality Lab, Denver, CO",phosphorus,13090002
@@ -31015,10 +31015,10 @@ USGS-08475000,2025-02-25 21:00:00+00:00,Specific conductance,95,1650,uS/cm,Unfil
 USGS-08475000,2025-02-25 21:00:00+00:00,Specific conductance,90095,1660,uS/cm,Unfiltered,,,Physical,"USGS-National Water Quality Lab, Denver, CO",conductivity,13090002
 USGS-08475000,2025-04-21 19:00:00+00:00,Specific conductance,95,1350,uS/cm,Unfiltered,,,Physical,U.S. Geological Survey-Water Resources Discipline,conductivity,13090002
 USGS-08475000,2025-04-21 19:00:00+00:00,Specific conductance,90095,1320,uS/cm,Unfiltered,,,Physical,"USGS-National Water Quality Lab, Denver, CO",conductivity,13090002
-USGS-08475000,2025-07-17 13:30:00+00:00,Specific conductance,90095,1660,uS/cm,Unfiltered,,,Physical,"USGS-National Water Quality Lab, Denver, CO",conductivity,13090002
 USGS-08475000,2025-07-17 13:30:00+00:00,Specific conductance,95,1680,uS/cm,Unfiltered,,,Physical,U.S. Geological Survey-Water Resources Discipline,conductivity,13090002
-USGS-08475000,2025-07-30 13:30:00+00:00,Specific conductance,90095,1810,uS/cm,Unfiltered,,,Physical,"USGS-National Water Quality Lab, Denver, CO",conductivity,13090002
+USGS-08475000,2025-07-17 13:30:00+00:00,Specific conductance,90095,1660,uS/cm,Unfiltered,,,Physical,"USGS-National Water Quality Lab, Denver, CO",conductivity,13090002
 USGS-08475000,2025-07-30 13:30:00+00:00,Specific conductance,95,1840,uS/cm,Unfiltered,,,Physical,U.S. Geological Survey-Water Resources Discipline,conductivity,13090002
+USGS-08475000,2025-07-30 13:30:00+00:00,Specific conductance,90095,1810,uS/cm,Unfiltered,,,Physical,"USGS-National Water Quality Lab, Denver, CO",conductivity,13090002
 USGS-08475000,2026-02-18 15:30:00+00:00,Specific conductance,90095,1480,uS/cm,Unfiltered,,,Physical,"USGS-National Water Quality Lab, Denver, CO",conductivity,13090002
 USGS-08475000,2026-02-18 15:30:00+00:00,Specific conductance,95,1490,uS/cm,Unfiltered,,,Physical,U.S. Geological Survey-Water Resources Discipline,conductivity,13090002
 USGS-08475000,2026-04-14 15:00:00+00:00,Specific conductance,95,1230,uS/cm,Unfiltered,,,Physical,U.S. Geological Survey-Water Resources Discipline,conductivity,13090002
@@ -34073,23 +34073,23 @@ USGS-08475000,2024-12-10 16:00:00+00:00,Total dissolved solids,70300,783,mg/L,Fi
 USGS-08475000,2025-02-25 21:00:00+00:00,Total dissolved solids,70300,1010,mg/L,Filtered field and/or lab,,,Physical,"USGS-National Water Quality Lab, Denver, CO",dissolved_solids,13090002
 USGS-08475000,2025-02-25 21:00:00+00:00,Total dissolved solids,70303,1.37,tons/ac ft,Filtered field and/or lab,,,Physical,,dissolved_solids,13090002
 USGS-08475000,2025-02-25 21:00:00+00:00,Total dissolved solids,70301,977,mg/L,Filtered field and/or lab,,,Physical,,dissolved_solids,13090002
-USGS-08475000,2025-04-21 19:00:00+00:00,Total dissolved solids,70301,760,mg/L,Filtered field and/or lab,,,Physical,,dissolved_solids,13090002
 USGS-08475000,2025-04-21 19:00:00+00:00,Total dissolved solids,70303,1.09,tons/ac ft,Filtered field and/or lab,,,Physical,,dissolved_solids,13090002
+USGS-08475000,2025-04-21 19:00:00+00:00,Total dissolved solids,70301,760,mg/L,Filtered field and/or lab,,,Physical,,dissolved_solids,13090002
 USGS-08475000,2025-04-21 19:00:00+00:00,Total dissolved solids,70300,801,mg/L,Filtered field and/or lab,,,Physical,"USGS-National Water Quality Lab, Denver, CO",dissolved_solids,13090002
+USGS-08475000,2025-07-17 13:30:00+00:00,Total dissolved solids,70303,1.36,tons/ac ft,Filtered field and/or lab,,,Physical,,dissolved_solids,13090002
 USGS-08475000,2025-07-17 13:30:00+00:00,Total dissolved solids,70300,1000,mg/L,Filtered field and/or lab,,,Physical,"USGS-National Water Quality Lab, Denver, CO",dissolved_solids,13090002
 USGS-08475000,2025-07-17 13:30:00+00:00,Total dissolved solids,70301,941,mg/L,Filtered field and/or lab,,,Physical,,dissolved_solids,13090002
 USGS-08475000,2025-07-17 13:30:00+00:00,Total dissolved solids,70302,4.52,tons/day,Filtered field and/or lab,,,Physical,,dissolved_solids,13090002
-USGS-08475000,2025-07-17 13:30:00+00:00,Total dissolved solids,70303,1.36,tons/ac ft,Filtered field and/or lab,,,Physical,,dissolved_solids,13090002
-USGS-08475000,2025-07-30 13:30:00+00:00,Total dissolved solids,70300,1130,mg/L,Filtered field and/or lab,,,Physical,"USGS-National Water Quality Lab, Denver, CO",dissolved_solids,13090002
-USGS-08475000,2025-07-30 13:30:00+00:00,Total dissolved solids,70302,4.48,tons/day,Filtered field and/or lab,,,Physical,,dissolved_solids,13090002
-USGS-08475000,2025-07-30 13:30:00+00:00,Total dissolved solids,70303,1.54,tons/ac ft,Filtered field and/or lab,,,Physical,,dissolved_solids,13090002
 USGS-08475000,2025-07-30 13:30:00+00:00,Total dissolved solids,70301,1050,mg/L,Filtered field and/or lab,,,Physical,,dissolved_solids,13090002
+USGS-08475000,2025-07-30 13:30:00+00:00,Total dissolved solids,70303,1.54,tons/ac ft,Filtered field and/or lab,,,Physical,,dissolved_solids,13090002
+USGS-08475000,2025-07-30 13:30:00+00:00,Total dissolved solids,70302,4.48,tons/day,Filtered field and/or lab,,,Physical,,dissolved_solids,13090002
+USGS-08475000,2025-07-30 13:30:00+00:00,Total dissolved solids,70300,1130,mg/L,Filtered field and/or lab,,,Physical,"USGS-National Water Quality Lab, Denver, CO",dissolved_solids,13090002
+USGS-08475000,2026-02-18 15:30:00+00:00,Total dissolved solids,70300,908,mg/L,Filtered field and/or lab,,,Physical,"USGS-National Water Quality Lab, Denver, CO",dissolved_solids,13090002
 USGS-08475000,2026-02-18 15:30:00+00:00,Total dissolved solids,70303,1.24,tons/ac ft,Filtered field and/or lab,,,Physical,,dissolved_solids,13090002
 USGS-08475000,2026-02-18 15:30:00+00:00,Total dissolved solids,70301,894,mg/L,Filtered field and/or lab,,,Physical,,dissolved_solids,13090002
-USGS-08475000,2026-02-18 15:30:00+00:00,Total dissolved solids,70300,908,mg/L,Filtered field and/or lab,,,Physical,"USGS-National Water Quality Lab, Denver, CO",dissolved_solids,13090002
+USGS-08475000,2026-04-14 15:00:00+00:00,Total dissolved solids,70300,733,mg/L,Filtered field and/or lab,,,Physical,"USGS-National Water Quality Lab, Denver, CO",dissolved_solids,13090002
 USGS-08475000,2026-04-14 15:00:00+00:00,Total dissolved solids,70303,1.0,tons/ac ft,Filtered field and/or lab,,,Physical,,dissolved_solids,13090002
 USGS-08475000,2026-04-14 15:00:00+00:00,Total dissolved solids,70301,718,mg/L,Filtered field and/or lab,,,Physical,,dissolved_solids,13090002
-USGS-08475000,2026-04-14 15:00:00+00:00,Total dissolved solids,70300,733,mg/L,Filtered field and/or lab,,,Physical,"USGS-National Water Quality Lab, Denver, CO",dissolved_solids,13090002
 USGS-08475000,,Total dissolved solids,70300,970,mg/L,Filtered field and/or lab,,,Physical,,dissolved_solids,13090002
 USGS-08475000,,Total dissolved solids,70301,983,mg/L,Filtered field and/or lab,,,Physical,,dissolved_solids,13090002
 USGS-08475000,,Total dissolved solids,70303,0.36,tons/ac ft,Filtered field and/or lab,,,Physical,,dissolved_solids,13090002
@@ -34544,6 +34544,7 @@ USGS-08475000,2025-07-30 13:30:00+00:00,Turbidity,63676,20,NTRU,Unfiltered,,,Phy
 USGS-08475000,2026-02-18 15:30:00+00:00,Turbidity,63676,28,NTRU,Unfiltered,,,Physical,"USGS-National Water Quality Lab, Denver, CO",turbidity,13090002
 USGS-08475000,2026-04-14 15:00:00+00:00,Turbidity,63676,50,NTRU,Unfiltered,,,Physical,"USGS-National Water Quality Lab, Denver, CO",turbidity,13090002
 USGS-08475000,2026-04-14 15:00:00+00:00,Turbidity,63680,44,FNU,Unfiltered,,,Physical,U.S. Geological Survey-Water Resources Discipline,turbidity,13090002
+USGS-08475000,2026-06-16 15:00:00+00:00,Turbidity,63676,18,NTRU,Unfiltered,,,Physical,"USGS-National Water Quality Lab, Denver, CO",turbidity,13090002
 USGS-08475000,2008-02-28 15:40:00+00:00,Turbidity severity (choice list),1350,2 - Moderate,,,,,Physical,,turbidity,13090002
 USGS-08475000,2008-05-19 20:10:00+00:00,Turbidity severity (choice list),1350,1 - Mild,,,,,Physical,,turbidity,13090002
 USGS-08475000,2008-06-16 19:50:00+00:00,Turbidity severity (choice list),1350,1 - Mild,,,,,Physical,,turbidity,13090002
@@ -35346,14 +35347,14 @@ USGS-08475000,2024-09-24 15:00:00+00:00,pH,400,7.1,standard units,Unfiltered,,,P
 USGS-08475000,2024-09-24 15:00:00+00:00,pH,403,8.0,standard units,Unfiltered,,,Physical,"USGS-National Water Quality Lab, Denver, CO",pH,13090002
 USGS-08475000,2024-10-16 15:00:00+00:00,pH,403,8.0,standard units,Unfiltered,,,Physical,"USGS-National Water Quality Lab, Denver, CO",pH,13090002
 USGS-08475000,2024-10-16 15:00:00+00:00,pH,400,7.4,standard units,Unfiltered,,,Physical,U.S. Geological Survey-Water Resources Discipline,pH,13090002
-USGS-08475000,2024-11-19 15:00:00+00:00,pH,400,7.6,standard units,Unfiltered,,,Physical,U.S. Geological Survey-Water Resources Discipline,pH,13090002
 USGS-08475000,2024-11-19 15:00:00+00:00,pH,403,8.1,standard units,Unfiltered,,,Physical,"USGS-National Water Quality Lab, Denver, CO",pH,13090002
+USGS-08475000,2024-11-19 15:00:00+00:00,pH,400,7.6,standard units,Unfiltered,,,Physical,U.S. Geological Survey-Water Resources Discipline,pH,13090002
 USGS-08475000,2024-12-10 16:00:00+00:00,pH,403,8.0,standard units,Unfiltered,,,Physical,"USGS-National Water Quality Lab, Denver, CO",pH,13090002
 USGS-08475000,2024-12-10 16:00:00+00:00,pH,400,7.5,standard units,Unfiltered,,,Physical,U.S. Geological Survey-Water Resources Discipline,pH,13090002
-USGS-08475000,2025-02-25 21:00:00+00:00,pH,403,8.0,standard units,Unfiltered,,,Physical,"USGS-National Water Quality Lab, Denver, CO",pH,13090002
 USGS-08475000,2025-02-25 21:00:00+00:00,pH,400,7.8,standard units,Unfiltered,,,Physical,U.S. Geological Survey-Water Resources Discipline,pH,13090002
-USGS-08475000,2025-04-21 19:00:00+00:00,pH,403,8.2,standard units,Unfiltered,,,Physical,"USGS-National Water Quality Lab, Denver, CO",pH,13090002
+USGS-08475000,2025-02-25 21:00:00+00:00,pH,403,8.0,standard units,Unfiltered,,,Physical,"USGS-National Water Quality Lab, Denver, CO",pH,13090002
 USGS-08475000,2025-04-21 19:00:00+00:00,pH,400,7.6,standard units,Unfiltered,,,Physical,U.S. Geological Survey-Water Resources Discipline,pH,13090002
+USGS-08475000,2025-04-21 19:00:00+00:00,pH,403,8.2,standard units,Unfiltered,,,Physical,"USGS-National Water Quality Lab, Denver, CO",pH,13090002
 USGS-08475000,2025-07-17 13:30:00+00:00,pH,400,7.7,standard units,Unfiltered,,,Physical,U.S. Geological Survey-Water Resources Discipline,pH,13090002
 USGS-08475000,2025-07-17 13:30:00+00:00,pH,403,8.2,standard units,Unfiltered,,,Physical,"USGS-National Water Quality Lab, Denver, CO",pH,13090002
 USGS-08475000,2025-07-30 13:30:00+00:00,pH,403,8.2,standard units,Unfiltered,,,Physical,"USGS-National Water Quality Lab, Denver, CO",pH,13090002

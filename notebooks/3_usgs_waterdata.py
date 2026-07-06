@@ -14,11 +14,11 @@
 # ---
 
 # %% [markdown]
-# # 2 · USGS WaterData — Monitoring Stations & Parameters
+# # 3 · USGS WaterData — Monitoring Stations, Parameters & Time-Series
 #
 # Reads the watershed boundaries from notebook 1, discovers the USGS monitoring stations
 # inside them via the new USGS **Water Data** API, and records **which priority parameters**
-# each station measured.
+# each station measured. Primary source & API docs: <https://api.waterdata.usgs.gov/>.
 
 # %% [markdown]
 # ## Step 1 — Imports and setup
@@ -42,13 +42,25 @@ from _helpers import (
     show,
     categorical_colors,
     make_legend_clickable,
+    PRIORITY_GROUPS,
+    PRIORITY_NAMES,
+    classify_parameter,
+    build_parameter_name_lookup,
+    station_parameters,
+    fetch_daily,
+    fetch_samples,
+    fetch_field,
+    tidy_daily,
+    tidy_samples,
+    tidy_field,
+    coverage,
 )
 
 gv.extension("bokeh")
 S = init_session()
 
 # %% [markdown]
-# ## Step 5 — Discover monitoring stations
+# ## Step 2 — Discover monitoring stations
 #
 # We load the watershed boundaries saved by notebook 1, ask the Water Data API for every
 # station in their bounding box, then keep only those that fall **within** the watershed
@@ -90,58 +102,13 @@ print(stations_in_area["name"].value_counts().to_string())
 show(stations_in_area[["monitoring_location_id", "monitoring_location_name", "site_type", "name"]])
 
 # %% [markdown]
-# ## Step 6 — Which priority parameters does each station measure?
+# ## Step 3 — Which priority parameters does each station measure?
 #
 # The README prioritizes these water-quality parameters, plus water-quantity (flow & level). For
 # each we list the USGS `parameter_code`s (used by the time-series & field-measurement services) and
-# the Water Quality characteristic-name patterns (used by the discrete-samples service).
-# `classify_parameter` maps any measured parameter code / characteristic to its priority group (or `None`).
-
-# %%
-# group -> {"parameter_codes": set[str], "characteristics": list[str] (lowercase substrings)}
-PRIORITY_GROUPS = {
-    "conductivity": {"parameter_codes": {"00095", "90095"}, "characteristics": ["specific conductance", "conductivity"]},
-    "temperature": {"parameter_codes": {"00010"}, "characteristics": ["temperature, water"]},
-    "dissolved_oxygen": {"parameter_codes": {"00300", "00301"}, "characteristics": ["dissolved oxygen"]},
-    "dissolved_solids": {"parameter_codes": {"70300", "00515"}, "characteristics": ["total dissolved solids"]},
-    "chlorophyll": {"parameter_codes": {"32209", "32210", "32211", "70953"}, "characteristics": ["chlorophyll", "algae"]},
-    "pH": {"parameter_codes": {"00400"}, "characteristics": ["ph"]},  # pH matched EXACTLY (see classifier)
-    "nitrogen": {
-        "parameter_codes": {"00600", "00605", "00608", "00613", "00615", "00618", "00620", "00625", "00630"},
-        "characteristics": ["nitrogen", "nitrate", "nitrite", "ammonia", "kjeldahl"],
-    },
-    "phosphorus": {"parameter_codes": {"00650", "00665", "00666", "00671"}, "characteristics": ["phosphorus", "orthophosphate"]},
-    "turbidity": {"parameter_codes": {"00076", "63675", "63676", "63680"}, "characteristics": ["turbidity"]},
-    # Water quantity (flow & level), added Round 1.1
-    "discharge": {
-        "parameter_codes": {"00060", "00061", "00055", "70232", "30208", "30209"},  # discharge + velocity
-        "characteristics": ["discharge", "stream flow", "streamflow"],
-    },
-    "water_level": {
-        "parameter_codes": {"00065", "00062", "00054", "62611", "62614", "62615", "63160", "72019", "72020", "72148", "72150", "72170"},  # gage height / stage / depth / elevation
-        "characteristics": ["gage height", "stream stage", "water level", "water-surface elevation"],
-    },
-}
-PRIORITY_NAMES = list(PRIORITY_GROUPS)
-
-
-def classify_parameter(parameter_code=None, characteristic=None):
-    """Return the priority group for a USGS parameter_code or a WQ characteristic name, else None."""
-    if parameter_code is not None:
-        parameter_code = str(parameter_code).strip().zfill(5)
-        for group, spec in PRIORITY_GROUPS.items():
-            if parameter_code in spec["parameter_codes"]:
-                return group
-    if characteristic is not None:
-        name = str(characteristic).strip().lower()
-        if name == "ph":
-            return "pH"
-        for group, spec in PRIORITY_GROUPS.items():
-            if group == "pH":
-                continue  # pH only via exact match above (avoid 'ph' substring false positives)
-            if any(pat in name for pat in spec["characteristics"]):
-                return group
-    return None
+# the Water Quality characteristic-name patterns (used by the discrete-samples service) — see
+# `PRIORITY_GROUPS` in `_helpers/config.py`. `classify_parameter` (from `_helpers`) maps any measured
+# parameter code / characteristic to its priority group (or `None`).
 
 # %%
 SAMPLES_SUMMARY_URL = "https://api.waterdata.usgs.gov/samples-data/summary"
@@ -172,44 +139,19 @@ samples_summaries = {  # station_id -> summary DataFrame (may be empty)
 samples_ids = {sid for sid, df in samples_summaries.items() if len(df) > 0}
 
 # %%
-# parameter_code -> readable name, from the USGS reference table (for the `parameters` list).
-parameter_codes_table, _ = waterdata.get_reference_table("parameter-codes")
-parameter_name_by_code = dict(
-    zip(parameter_codes_table["parameter_code"].astype(str), parameter_codes_table["parameter_name"])
-)
+# parameter_code -> readable name, from the USGS reference table (verbatim source names).
+parameter_name_by_code = build_parameter_name_lookup()
 
 # Build, per station: the set of measured parameter_codes/characteristics, the priority groups they
 # hit, and a sorted human-readable parameter list.
 ts_parameter_codes_by_site = ts_meta.groupby("monitoring_location_id")["parameter_code"].agg(set).to_dict()
 fm_parameter_codes_by_site = fm_meta.groupby("monitoring_location_id")["parameter_code"].agg(set).to_dict()
 
-
-def station_parameters(sid):
-    """Return (priority_groups: set[str], parameter_names: sorted list[str]) for one station."""
-    groups, names = set(), set()
-    for parameter_code in ts_parameter_codes_by_site.get(sid, set()) | fm_parameter_codes_by_site.get(sid, set()):
-        parameter_code = str(parameter_code)
-        names.add(
-            parameter_name_by_code.get(
-                parameter_code.zfill(5), parameter_name_by_code.get(parameter_code, parameter_code)
-            )
-        )
-        g = classify_parameter(parameter_code=parameter_code)
-        if g:
-            groups.add(g)
-    summary = samples_summaries.get(sid)
-    if summary is not None and "characteristic" in summary.columns:
-        for char in summary["characteristic"].dropna().unique():
-            names.add(str(char))
-            g = classify_parameter(characteristic=char)
-            if g:
-                groups.add(g)
-    return groups, sorted(names)
-
-
 groups_by_site, params_by_site = {}, {}
 for sid in station_ids:
-    g, names = station_parameters(sid)
+    g, names = station_parameters(
+        sid, ts_parameter_codes_by_site, fm_parameter_codes_by_site, parameter_name_by_code, samples_summaries
+    )
     groups_by_site[sid] = g
     params_by_site[sid] = names
 
@@ -255,25 +197,22 @@ print("\n".join(unmatched[:25]))
 show(stations_in_area[["monitoring_location_id", "monitoring_location_name", *PRIORITY_NAMES]])
 
 # %% [markdown]
-# ## Step 7 — Fetch the time-series records
+# ## Step 4 — Fetch the time-series records
 #
 # For the stations that actually have data, fetch the **full available record** of the **priority
-# parameters** from three USGS Water Data services and save one tidy (long-format) table per data
-# type. Daily values and field measurements filter by USGS `parameter_code`; discrete samples are
-# keyed by characteristic name, so we fetch all and keep rows whose characteristic maps to a
-# priority group. (Analysis later subsets to the 25-year study window — we keep everything.)
+# parameters** from three USGS Water Data services (docs: <https://api.waterdata.usgs.gov/>) and
+# save one tidy (long-format) table per data type. Daily values and field measurements filter by
+# USGS `parameter_code`; discrete samples are keyed by characteristic name, so we fetch all and keep
+# rows whose characteristic maps to a priority group. (Analysis later subsets to the 25-year study
+# window — we keep everything.) Each `fetch_*`/`tidy_*` pair (from `_helpers/usgs.py`) is shown
+# below: first the **raw** API response, then the **tidy** result actually saved.
 
 # %%
 # All priority parameter codes, flattened, for the code-keyed services (daily, field).
 PRIORITY_CODES = sorted({c for spec in PRIORITY_GROUPS.values() for c in spec["parameter_codes"]})
 
-# Reusable lookups (built from the inventory in Step 6).
+# Reusable lookup (built from the inventory in Step 3).
 huc8_by_station = dict(zip(stations_in_area["monitoring_location_id"], stations_in_area["huc8"]))
-
-
-def _parameter_name(code):
-    code = str(code)
-    return parameter_name_by_code.get(code.zfill(5), parameter_name_by_code.get(code, code))
 
 # %% [markdown]
 # ### Daily values
@@ -282,24 +221,13 @@ def _parameter_name(code):
 
 # %%
 daily_station_ids = stations_in_area.loc[stations_in_area["daily"], "monitoring_location_id"].tolist()
-daily_raw, _ = waterdata.get_daily(
-    monitoring_location_id=daily_station_ids,
-    parameter_code=PRIORITY_CODES,
-    skip_geometry=True,
-)
-daily = daily_raw.rename(columns={"time": "date", "statistic_id": "statistic", "unit_of_measure": "unit"})
-daily["parameter_name"] = daily["parameter_code"].map(_parameter_name)
-daily["priority_group"] = daily["parameter_code"].map(lambda c: classify_parameter(parameter_code=c))
-daily = daily[daily["priority_group"].notna()].copy()
-daily["huc8"] = daily["monitoring_location_id"].map(huc8_by_station)
-daily = (
-    daily[
-        ["monitoring_location_id", "date", "parameter_code", "parameter_name", "statistic",
-         "value", "unit", "approval_status", "qualifier", "priority_group", "huc8"]
-    ]
-    .sort_values(["monitoring_location_id", "parameter_code", "date"])
-    .reset_index(drop=True)
-)
+daily_raw = fetch_daily(daily_station_ids, PRIORITY_CODES)
+show(daily_raw.head())  # peek at the raw USGS response shape before we tidy it
+
+# %%
+# Tidy to a long-format table tagged with priority_group / parameter_name / huc8 (see _helpers/usgs.py).
+daily = tidy_daily(daily_raw, huc8_by_station, parameter_name_by_code)
+show(daily.head())
 save_dataframe(daily, S.data_dir / "usgs_waterdata" / "usgs_daily_values.parquet")
 
 # %% [markdown]
@@ -311,32 +239,12 @@ save_dataframe(daily, S.data_dir / "usgs_waterdata" / "usgs_daily_values.parquet
 
 # %%
 samples_station_ids = stations_in_area.loc[stations_in_area["samples"], "monitoring_location_id"].tolist()
-samples_raw, _ = waterdata.get_samples(monitoring_location_id=samples_station_ids)
-samples = samples_raw.rename(columns={
-    "Location_Identifier": "monitoring_location_id",
-    "Activity_StartDateTime": "datetime",
-    "Result_Characteristic": "characteristic",
-    "USGSpcode": "parameter_code",
-    "Result_Measure": "value",  # NOTE: value is str (includes non-detect/text results); cast with pd.to_numeric(errors="coerce") before numeric ops
-    "Result_MeasureUnit": "unit",
-    "Result_SampleFraction": "fraction",
-    "Result_ResultDetectionCondition": "detection_condition",
-    "Result_MeasureQualifierCode": "qualifier",
-    "Result_CharacteristicGroup": "characteristic_group",
-    "LabInfo_Name": "lab_name",
-})
-samples["priority_group"] = samples["characteristic"].map(lambda c: classify_parameter(characteristic=c))
-samples = samples[samples["priority_group"].notna()].copy()
-samples["huc8"] = samples["monitoring_location_id"].map(huc8_by_station)
-samples = (
-    samples[
-        ["monitoring_location_id", "datetime", "characteristic", "parameter_code", "value", "unit",
-         "fraction", "detection_condition", "qualifier", "characteristic_group", "lab_name",
-         "priority_group", "huc8"]
-    ]
-    .sort_values(["monitoring_location_id", "characteristic", "datetime"])
-    .reset_index(drop=True)
-)
+samples_raw = fetch_samples(samples_station_ids)
+show(samples_raw.head())  # peek at the raw USGS response shape before we tidy it
+
+# %%
+samples = tidy_samples(samples_raw, huc8_by_station)
+show(samples.head())
 save_dataframe(samples, S.data_dir / "usgs_waterdata" / "usgs_samples.parquet")
 
 # %% [markdown]
@@ -347,28 +255,16 @@ save_dataframe(samples, S.data_dir / "usgs_waterdata" / "usgs_samples.parquet")
 
 # %%
 field_station_ids = stations_in_area.loc[stations_in_area["field_measurements"], "monitoring_location_id"].tolist()
-field_raw, _ = waterdata.get_field_measurements(
-    monitoring_location_id=field_station_ids,
-    parameter_code=PRIORITY_CODES,
-    skip_geometry=True,
-)
-field = field_raw.rename(columns={"time": "datetime", "unit_of_measure": "unit"})
-field["parameter_name"] = field["parameter_code"].map(_parameter_name)
-field["priority_group"] = field["parameter_code"].map(lambda c: classify_parameter(parameter_code=c))
-field = field[field["priority_group"].notna()].copy()
-field["huc8"] = field["monitoring_location_id"].map(huc8_by_station)
-field = (
-    field[
-        ["monitoring_location_id", "datetime", "parameter_code", "parameter_name", "value", "unit",
-         "qualifier", "approval_status", "priority_group", "huc8"]
-    ]
-    .sort_values(["monitoring_location_id", "parameter_code", "datetime"])
-    .reset_index(drop=True)
-)
+field_raw = fetch_field(field_station_ids, PRIORITY_CODES)
+show(field_raw.head())  # peek at the raw USGS response shape before we tidy it
+
+# %%
+field = tidy_field(field_raw, huc8_by_station, parameter_name_by_code)
+show(field.head())
 save_dataframe(field, S.data_dir / "usgs_waterdata" / "usgs_field_measurements.parquet")
 
 # %% [markdown]
-# ## Step 8 — Map stations by priority parameter
+# ## Step 5 — Map stations by priority parameter
 #
 # One colored layer per priority parameter, over the watershed outlines on the topo basemap.
 # A station that measures several parameters appears in several layers.
@@ -399,26 +295,13 @@ stations_param_map = stations_param_map.opts(
 stations_param_map
 
 # %% [markdown]
-# ## Step 10 — Data availability & a sample series
+# ## Step 6 — Data availability & a sample series
 #
 # Confirm the fetch: per data type, how many records and what date span each station × priority
 # group has, a quick availability heatmap, and one illustrative series. (Trend and pre/post
 # analyses live in the later display notebooks.)
 
 # %%
-def coverage(df, time_col):
-    """Record count + first/last date per station × priority group."""
-    t = pd.to_datetime(df[time_col])
-    out = (
-        df.assign(_t=t)
-        .groupby(["monitoring_location_id", "priority_group"])["_t"]
-        .agg(n="size", start="min", end="max")
-        .reset_index()
-        .sort_values(["priority_group", "monitoring_location_id"])
-    )
-    return out
-
-
 show(coverage(daily, "date"))
 
 # %%

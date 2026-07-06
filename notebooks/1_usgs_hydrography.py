@@ -14,7 +14,7 @@
 # ---
 
 # %% [markdown]
-# # 1 · USGS Hydrofabric — Watershed Boundaries & HydroGeospatial Context
+# # 1 · USGS Hydrography — Watershed Boundaries & Context
 #
 # First notebook in the Thornforest hydrology series. It builds the **spatial foundation** (the three HUC-8 watershed boundaries) that the other notebooks rely on, and maps it.
 #

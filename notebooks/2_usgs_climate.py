@@ -14,7 +14,7 @@
 # ---
 
 # %% [markdown]
-# # 3 · CONUS404 Climate — Spatial Patterns & Water-Balance Trends
+# # 2 · CONUS404 Climate — Spatial Patterns & Water-Balance Trends
 #
 # This notebook builds a long-term **climate and water-balance** record for the three South-Texas
 # HUC-8 watersheds from **CONUS404** — a 4-km hourly reanalysis of the conterminous US (NCAR/USGS,
@@ -35,7 +35,7 @@
 # 5. map and chart the results interactively.
 #
 # > **Storage convention.** Gridded data (datacubes) are saved as **zarr**; tabular summaries are
-# > saved as **parquet** (+ CSV). The ~80 MB raw monthly cube is *git-ignored and regenerated*
+# > saved as **parquet** (+ CSV). The ~57 MB raw monthly cube is *git-ignored and regenerated*
 # > from the cloud; the small derived products (climatology/trend grids, per-watershed tables) are
 # > committed.
 
@@ -64,6 +64,7 @@ from _helpers import (
     water_year,
     mk_sen_trend,
     pixel_trend,
+    CONUS404_VARIABLES,
 )
 
 gv.extension("bokeh")
@@ -76,9 +77,11 @@ WATERSHED_COLORS = categorical_colors(WATERSHED_ORDER)
 # %% [markdown]
 # ## Step 2 — Watersheds and the CONUS404 variables
 #
-# We reuse the HUC-8 boundaries saved by notebook 1. The table lists the 11 CONUS404 variables we
-# aggregate — the fluxes that make up the water balance, the storage states, and the
-# temperature/humidity forcing. Monthly flux variables are **monthly totals** (mm).
+# We reuse the HUC-8 boundaries saved by notebook 1. We aggregate 11 CONUS404 variables — the
+# fluxes that make up the water balance, the storage states, and the temperature/humidity forcing
+# (`CONUS404_VARIABLES` in `_helpers/config.py`). Monthly flux variables are **monthly totals**
+# (mm). The source variable names, `long_name`s, and units are shown verbatim once the cube is
+# loaded in Step 3, below.
 
 # %%
 boundaries_path = S.data_dir / "hydrography" / "huc8_watersheds.parquet"
@@ -88,25 +91,7 @@ if not boundaries_path.exists():
     )
 watersheds_gdf = gpd.read_parquet(boundaries_path)
 
-import pandas as pd  # noqa: E402  (kept local to this descriptive cell)
-
-conus404_variables = pd.DataFrame(
-    [
-        ("PREC_ACC_NC", "Precipitation", "mm/month", "flux"),
-        ("ACETLSM", "Total evapotranspiration", "mm/month", "flux"),
-        ("ACRUNSB", "Surface runoff", "mm/month", "flux"),
-        ("ACRUNSF", "Subsurface runoff", "mm/month", "flux"),
-        ("RECH", "Water-table recharge", "mm/month", "flux"),
-        ("SMOIS", "Soil moisture (surface layer)", "m³/m³", "storage"),
-        ("SNOW", "Snow water equivalent", "mm", "storage"),
-        ("CANWAT", "Canopy water", "mm", "storage"),
-        ("T2", "Air temperature (2 m)", "K", "forcing"),
-        ("TD2", "Dewpoint (2 m)", "K", "forcing"),
-        ("Q2", "Water-vapor mixing ratio (2 m)", "kg/kg", "forcing"),
-    ],
-    columns=["variable", "description", "units", "role"],
-)
-show(conus404_variables, height=320)
+import pandas as pd  # noqa: E402  (kept local; first needed by the table below)
 
 # %% [markdown]
 # ## Step 3 — Monthly gridded datacube
@@ -126,6 +111,27 @@ print(
     f"datacube {dict(grid.sizes)} | {str(grid.time.values[0])[:7]} → {str(grid.time.values[-1])[:7]} "
     f"| grid CRS: {grid_crs.name}"
 )
+
+# %% [markdown]
+# ### Source variable names — verbatim from CONUS404
+#
+# `original_name`, `long_name`, and `units` below are copied unmodified from the CONUS404 store's
+# own variable attributes (source-term fidelity); `derived_label`/`derivation` describe the
+# friendly name and computation we use for the rest of this notebook. Full documentation:
+# [CONUS404 dataset page](https://www.usgs.gov/data/conus404-40-years-daily-4-km-resolution-conus-model-simulation-output).
+
+# %%
+conus404_variables = pd.DataFrame([
+    {
+        "original_name": var,
+        "long_name": grid[var].attrs.get("long_name", ""),
+        "units": grid[var].attrs.get("units", ""),
+        "derived_label": spec["derived_label"],
+        "derivation": spec["derivation"],
+    }
+    for var, spec in CONUS404_VARIABLES.items()
+])
+show(conus404_variables, height=320)
 
 # %% [markdown]
 # ## Step 4 — Per-watershed water-year balance
@@ -152,13 +158,10 @@ complete = wy["n_months"] == 12  # keep only full water years (all do, but guard
 print(f"dropping {int((~complete).sum())} incomplete water year(s)")
 wy = wy[complete].copy()
 
-wy = wy.rename(
-    columns={
-        "PREC_ACC_NC": "precip_mm", "ACETLSM": "et_mm",
-        "ACRUNSB": "surf_runoff_mm", "ACRUNSF": "subsurf_runoff_mm", "RECH": "recharge_mm",
-        "SMOIS": "soil_moisture_m3m3", "SNOW": "swe_mm", "CANWAT": "canopy_mm", "Q2": "q2_kgkg",
-    }
-)
+# Friendly labels driven by CONUS404_VARIABLES (source-term fidelity: T2/TD2 keep their raw name
+# here since they still need a K → °C conversion below, so a plain rename would be misleading).
+SIMPLE_RENAME_VARS = ["PREC_ACC_NC", "ACETLSM", "ACRUNSF", "ACRUNSB", "RECH", "SMOIS", "SNOW", "CANWAT", "Q2"]
+wy = wy.rename(columns={v: CONUS404_VARIABLES[v]["derived_label"] for v in SIMPLE_RENAME_VARS})
 wy["runoff_mm"] = wy["surf_runoff_mm"] + wy["subsurf_runoff_mm"]
 wy["t2_degc"] = wy["T2"] - 273.15
 wy["td2_degc"] = wy["TD2"] - 273.15
@@ -168,7 +171,7 @@ wy = wy.drop(columns=["T2", "TD2"]).sort_values(["name", "water_year"]).reset_in
 wy = wy[[
     "huc8", "name", "water_year", "precip_mm", "et_mm", "runoff_mm",
     "surf_runoff_mm", "subsurf_runoff_mm", "recharge_mm", "balance_mm",
-    "soil_moisture_m3m3", "swe_mm", "canopy_mm", "t2_degc", "td2_degc", "q2_kgkg", "n_months",
+    "soil_moisture_m3m3", "snow_kgm2", "canopy_water_kgm2", "t2_degc", "td2_degc", "q2_kgkg", "n_months",
 ]]
 
 wy_path = S.data_dir / "climate" / "conus404_wateryear_by_huc8.parquet"

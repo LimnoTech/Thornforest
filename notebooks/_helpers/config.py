@@ -47,6 +47,9 @@ PLOT_WIDTH = 600
 # Source names, long_name descriptions, and units are carried verbatim from the dataset's own
 # variable attributes (see NB2) — NOT paraphrased here. Docs:
 # https://www.usgs.gov/data/conus404-40-years-daily-4-km-resolution-conus-model-simulation-output
+# https://www.usgs.gov/data/conus404-four-kilometer-long-term-regional-hydroclimate-reanalysis-over-conterminous-united
+# NOTE: ACRUNSF & ACRUNSB may be swapped in the source dataset based on the "surface" vs. "subsurface"
+# wording in the long_name attribute. 
 CONUS404_VARIABLES = {
     "PREC_ACC_NC": {"derived_label": "precip_mm", "derivation": "monthly precip accumulation (mm); sum 12 → water-year total"},
     "ACETLSM":     {"derived_label": "et_mm", "derivation": "monthly ET accumulation (mm); sum 12 → water-year total"},

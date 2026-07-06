@@ -194,7 +194,10 @@ def tidy_samples(
 
     NOTE: `value` (Result_Measure) is a string (may hold non-detect/text results) — cast with
     pd.to_numeric(errors='coerce') before numeric ops. Columns are assigned in a single .assign to
-    avoid the PerformanceWarning from repeatedly inserting into a wide frame. Pure; no network."""
+    avoid the PerformanceWarning from repeatedly inserting into a wide frame; the raw samples
+    response itself already arrives as a highly-fragmented (many-block) frame from the underlying
+    CSV parse, so it is defragmented with `.copy()` right after the rename (pandas' own suggested
+    fix) rather than downstream where the warning would otherwise fire. Pure; no network."""
     if raw.empty:
         return pd.DataFrame(columns=SAMPLES_COLUMNS)
     renamed = raw.rename(columns={
@@ -203,7 +206,7 @@ def tidy_samples(
         "Result_Measure": "value", "Result_MeasureUnit": "unit", "Result_SampleFraction": "fraction",
         "Result_ResultDetectionCondition": "detection_condition", "Result_MeasureQualifierCode": "qualifier",
         "Result_CharacteristicGroup": "characteristic_group", "LabInfo_Name": "lab_name",
-    })
+    }).copy()
     priority = renamed["characteristic"].map(lambda c: classify_parameter(characteristic=c, groups=groups))
     keep = priority.notna()
     tidy = renamed.loc[keep].assign(

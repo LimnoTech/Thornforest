@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     import pandas as pd
     import xarray as xr
 
-# --- CONUS404 climate (NB3) ---------------------------------------------------
+# --- CONUS404 climate (NB2) ---------------------------------------------------
 # Heavy imports (xarray/pyproj/xvec/pymannkendall) are done lazily inside the
 # functions so NB1/NB2, which never call these, don't pay the import cost.
 # Storage convention: the gridded cube is an xarray datacube saved to ZARR;
