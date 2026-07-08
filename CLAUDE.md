@@ -13,8 +13,9 @@ two disagree, this file wins on process, README wins on scope.
 
 - **Only the user commits and merges — never the agent.** Do **not** run `git commit`, `git merge`,
   or `git push`. Make and verify changes, leave them **staged / on-disk**, and let the user review
-  and commit in GitHub Desktop. Creating a branch (`git checkout -b`) is fine. *A git-ignored
-  `.claude/` hook also blocks these, but this written rule is the durable, cross-machine contract.*
+  and commit in GitHub Desktop. Creating a branch (`git checkout -b`) **or a git worktree** is fine.
+  *A git-ignored `.claude/` hook also blocks these, but this written rule is the durable,
+  cross-machine contract.*
 - **Multi-step work pauses at each task-group gate** — branch off `main`, agent does not commit, user
   reviews the working-tree diff and commits before the next group. See [Workflow](#workflow).
 - **Edit the notebook `.py`, never the `.ipynb`.** Notebooks are jupytext-paired; the `.py` is the
@@ -60,16 +61,27 @@ Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it
 - **Branch per coupled task-group, off `main`.** Group tightly-coupled tasks onto one branch (not one
   per micro-step). The user reviews, commits, and merges each group before the next branches off the
   updated `main`. Task-groups are dependent, so **pause after each group** for that gate.
+- **Independent task-groups may run in parallel git worktrees.** Check the plan's own stated
+  dependencies first: if two or more groups don't depend on each other's output, implement each in
+  its own isolated worktree/branch off the same `main`, concurrently, instead of serializing them.
+  This does **not** relax the no-agent-commit rule — subagents in a worktree still only stage
+  changes. The user reviews and commits **from that worktree's own directory** (open it in GitHub
+  Desktop as its own local repo, or `cd` into it) and merges its branch into `main` from the primary
+  checkout before any *dependent* group's worktree branches off the updated `main`. Remove a
+  worktree (`git worktree remove`, or `ExitWorktree`) once its branch is merged.
 - **Multi-step plans run via subagent-driven development** — a fresh implementer subagent per
   task-group, then a task review (spec + code quality) before handing to the user. Since the agent
   doesn't commit, per-group review runs on the **working-tree diff** (`git add -N` untracked, then
-  `git diff`), not commit ranges.
+  `git diff`) within that group's branch or worktree, not commit ranges.
 - **Typical cadence — pause at each task-group gate.** The agent implements a task-group, reviews it
-  (and applies fixes), then **stops and leaves the work staged for the user to commit** before the
-  next group starts; the user's commit becomes the next group's clean baseline. The agent runs
-  *within* a group autonomously (no check-ins between steps) — the gates are only *between* groups.
-  To maximize autonomy, **group more tasks per gate** (fewer, larger task-groups → fewer pauses);
-  to keep tighter checkpoints, split them.
+  (and applies fixes), then **stops and leaves the work staged** — in the primary checkout for a
+  plain branch, or in that group's own worktree directory when run in parallel — **for the user to
+  commit** before the next (or next batch of parallel) group(s) start; the user's commit(s) become
+  the clean baseline. The agent runs *within* a group autonomously (no check-ins between steps) — the
+  gates are only *between* groups. To maximize autonomy, **group more tasks per gate** (fewer, larger
+  task-groups → fewer pauses); to keep tighter checkpoints, split them. When handing off a
+  worktree-based group, the agent states the **worktree path, branch name, and a short guidance list
+  of what to check** in that diff.
 - **Verification:** run `pixi run test` (pytest, `notebooks/tests/`) for the `_helpers` package,
   **plus** the deliverable is executed notebooks + the rendered site — execute notebooks headlessly
   and `pixi run render` + grep.
