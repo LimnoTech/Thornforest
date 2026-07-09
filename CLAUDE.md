@@ -13,11 +13,13 @@ two disagree, this file wins on process, README wins on scope.
 
 - **Only the user commits and merges — never the agent.** Do **not** run `git commit`, `git merge`,
   or `git push`. Make and verify changes, leave them **staged / on-disk**, and let the user review
-  and commit in GitHub Desktop. Creating a branch (`git checkout -b`) **or a git worktree** is fine.
-  *A git-ignored `.claude/` hook also blocks these, but this written rule is the durable,
-  cross-machine contract.*
-- **Multi-step work pauses at each task-group gate** — branch off `main`, agent does not commit, user
-  reviews the working-tree diff and commits before the next group. See [Workflow](#workflow).
+  and commit in GitHub Desktop. Creating a branch (`git checkout -b`) **or a git worktree** is fine —
+  for a multi-task-group round of work, that's the round's own **integration branch** (e.g.
+  `round4-<topic>`, see [Workflow](#workflow)), never `main` directly. *A git-ignored `.claude/`
+  hook also blocks these, but this written rule is the durable, cross-machine contract.*
+- **Multi-step work pauses at each task-group gate** — branch off the round's integration branch
+  (off `main` only for a single-task-group round), agent does not commit, user reviews the
+  working-tree diff and commits before the next group. See [Workflow](#workflow).
 - **Edit the notebook `.py`, never the `.ipynb`.** Notebooks are jupytext-paired; the `.py` is the
   source of truth and what you review. After editing: `pixi run jupytext --sync <name>.py`.
 - **Tests run via `pixi run test` (pytest).** Verification is the pytest suite **plus** executing

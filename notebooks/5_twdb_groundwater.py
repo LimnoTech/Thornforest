@@ -16,10 +16,11 @@
 # %% [markdown]
 # # 5 · TWDB Groundwater — Well Inventory, Water Levels & Quality
 #
-# Reads the watershed boundaries from notebook 1, discovers **TWDB Groundwater Database (GWDB)**
-# wells inside them via the TWDB ArcGIS FeatureServer, then fetches their water-level and
-# water-quality **measurements** from TWDB's nightly full-state bulk file — the FeatureServer only
-# carries well *inventory* (location, aquifer, flags), not the actual time series. Primary source:
+# Reads the watershed boundaries from notebook 1, discovers **Texas Water Development Board
+# (TWDB)** **Groundwater Database (GWDB)** wells inside them via the TWDB ArcGIS FeatureServer,
+# then fetches their water-level and water-quality **measurements** from TWDB's nightly full-state
+# bulk file — the FeatureServer only carries well *inventory* (location, aquifer, flags), not the
+# actual time series. Primary source:
 # <https://www.twdb.texas.gov/groundwater/data/index.asp>.
 
 # %% [markdown]

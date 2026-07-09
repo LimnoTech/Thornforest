@@ -26,7 +26,7 @@
 # unpacking the whole archive, (4) filtering the huge `WaterQualityMajor.txt` (~1 GB uncompressed)
 # by `StateWellNumber` without loading it entirely into memory, and (5) confirming TWDB's water-
 # quality `ParameterCode` reuses USGS-style codes (so `classify_parameter(parameter_code=...)`
-# works unchanged). Once proven here, the approach is ported into `5_twdb_waterdata.py`.
+# works unchanged). Once proven here, the approach is ported into `5_twdb_groundwater.py`.
 
 # %% [markdown]
 # ## Step 1 — Well inventory via the ArcGIS FeatureServer (paginated)

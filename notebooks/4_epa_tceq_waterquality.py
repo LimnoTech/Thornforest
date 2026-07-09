@@ -16,9 +16,10 @@
 # %% [markdown]
 # # 4 · TCEQ Surface Water Quality — Monitoring Stations & Results
 #
-# Reads the watershed boundaries from notebook 1, discovers TCEQ **Surface Water Quality
-# Monitoring (SWQM)** stations inside them, and fetches their results. TCEQ has no public API of
-# its own — SWQMIS data is submitted to the EPA **Water Quality Portal (WQP)** under organization
+# Reads the watershed boundaries from notebook 1, discovers **Texas Commission on Environmental
+# Quality (TCEQ)** **Surface Water Quality Monitoring (SWQM)** stations inside them, and fetches
+# their results. TCEQ has no public API of its own — SWQMIS data is submitted to the **U.S.
+# Environmental Protection Agency (EPA)** **Water Quality Portal (WQP)** under organization
 # `TCEQMAIN`, which we query via the same `dataretrieval` package used for USGS
 # (`dataretrieval.wqp`). Primary source: <https://www.tceq.texas.gov/waterquality/monitoring>.
 # API docs: <https://www.waterqualitydata.us/>.

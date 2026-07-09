@@ -48,15 +48,16 @@ data-availability summary.
 :::
 
 ::: {.g-col-12 .g-col-md-4}
-### [4 · TCEQ WaterData](notebooks/4_tceq_waterdata.html)
-Discovers **TCEQ Surface Water Quality Monitoring** stations via the EPA Water Quality Portal and
-fetches their results, classified into the same priority parameters.
+### [4 · EPA-TCEQ Water Quality](notebooks/4_epa_tceq_waterquality.html)
+Discovers **Texas Commission on Environmental Quality (TCEQ)** Surface Water Quality Monitoring
+stations via the EPA Water Quality Portal and fetches their results, classified into the same
+priority parameters.
 :::
 
 ::: {.g-col-12 .g-col-md-4}
-### [5 · TWDB WaterData](notebooks/5_twdb_waterdata.html)
-Discovers **TWDB Groundwater Database** wells and fetches water-level and water-quality
-measurements from TWDB's nightly bulk file.
+### [5 · TWDB Groundwater](notebooks/5_twdb_groundwater.html)
+Discovers **Texas Water Development Board (TWDB)** Groundwater Database wells and fetches
+water-level and water-quality measurements from TWDB's nightly bulk file.
 :::
 
 :::
