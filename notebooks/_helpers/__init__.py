@@ -25,6 +25,22 @@ from .usgs import (
     tidy_field,
     tidy_samples,
 )
+from .tceq import TCEQ_COLUMNS, fetch_wqp_results, tidy_wqp_results
+from .twdb import (
+    GWDB_BULK_URL,
+    GWDB_COLUMNS_LEVELS,
+    GWDB_COLUMNS_QUALITY,
+    GWDB_FEATURESERVER_URL,
+    WATER_LEVEL_MEMBERS,
+    WATER_LEVEL_USECOLS,
+    WATER_QUALITY_MEMBERS,
+    WATER_QUALITY_USECOLS,
+    fetch_gwdb_members,
+    fetch_gwdb_wells,
+    fetch_gwdb_zip,
+    tidy_gwdb_water_levels,
+    tidy_gwdb_water_quality,
+)
 from .viz import (
     CATEGORICAL,
     categorical_colors,
@@ -41,5 +57,10 @@ __all__ = [
     "water_year", "mk_sen_trend", "coverage", "trend_by_group",
     "classify_parameter", "build_parameter_name_lookup", "station_parameters",
     "fetch_daily", "fetch_samples", "fetch_field", "tidy_daily", "tidy_samples", "tidy_field",
+    "TCEQ_COLUMNS", "fetch_wqp_results", "tidy_wqp_results",
+    "GWDB_FEATURESERVER_URL", "GWDB_BULK_URL", "WATER_LEVEL_MEMBERS", "WATER_QUALITY_MEMBERS",
+    "WATER_LEVEL_USECOLS", "WATER_QUALITY_USECOLS", "GWDB_COLUMNS_LEVELS", "GWDB_COLUMNS_QUALITY",
+    "fetch_gwdb_wells", "fetch_gwdb_zip", "fetch_gwdb_members",
+    "tidy_gwdb_water_levels", "tidy_gwdb_water_quality",
     "conus404_monthly_grid", "zonal_by_huc8", "pixel_trend",
 ]

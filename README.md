@@ -61,6 +61,14 @@ The work is organized as a series of Jupyter notebooks following a **hybrid** st
     measured — water quality (conductivity, temperature, dissolved oxygen, dissolved solids,
     chlorophyll, pH, nitrogen, phosphorus, turbidity) and water quantity (**discharge** and **water
     level**).
+  - **`4_epa_tceq_waterquality`** — discovers Texas Commission on Environmental Quality (TCEQ)
+    Surface Water Quality Monitoring stations within the watersheds via the EPA Water Quality
+    Portal (TCEQ has no public API of its own) and fetches their results, classified into the same
+    priority parameter groups.
+  - **`5_twdb_groundwater`** — discovers Texas Water Development Board (TWDB) Groundwater Database
+    wells within the watersheds via TWDB's ArcGIS FeatureServer, then fetches water-level and
+    water-quality measurements from TWDB's nightly bulk file (the FeatureServer itself carries only
+    well inventory, not time series).
 - **Display / analyze notebooks (shared)** — read the saved data and work across sources by data type or
   watershed (maps, trend analyses, pre/post-restoration comparisons). A structured deliverable (Excel or
   the format American Forests prefers) is exported from the harmonized data at the end.

@@ -13,11 +13,13 @@ two disagree, this file wins on process, README wins on scope.
 
 - **Only the user commits and merges — never the agent.** Do **not** run `git commit`, `git merge`,
   or `git push`. Make and verify changes, leave them **staged / on-disk**, and let the user review
-  and commit in GitHub Desktop. Creating a branch (`git checkout -b`) **or a git worktree** is fine.
-  *A git-ignored `.claude/` hook also blocks these, but this written rule is the durable,
-  cross-machine contract.*
-- **Multi-step work pauses at each task-group gate** — branch off `main`, agent does not commit, user
-  reviews the working-tree diff and commits before the next group. See [Workflow](#workflow).
+  and commit in GitHub Desktop. Creating a branch (`git checkout -b`) **or a git worktree** is fine —
+  for a multi-task-group round of work, that's the round's own **integration branch** (e.g.
+  `round4-<topic>`, see [Workflow](#workflow)), never `main` directly. *A git-ignored `.claude/`
+  hook also blocks these, but this written rule is the durable, cross-machine contract.*
+- **Multi-step work pauses at each task-group gate** — branch off the round's integration branch
+  (off `main` only for a single-task-group round), agent does not commit, user reviews the
+  working-tree diff and commits before the next group. See [Workflow](#workflow).
 - **Edit the notebook `.py`, never the `.ipynb`.** Notebooks are jupytext-paired; the `.py` is the
   source of truth and what you review. After editing: `pixi run jupytext --sync <name>.py`.
 - **Tests run via `pixi run test` (pytest).** Verification is the pytest suite **plus** executing
@@ -58,17 +60,35 @@ Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it
 
 ## Workflow
 
-- **Branch per coupled task-group, off `main`.** Group tightly-coupled tasks onto one branch (not one
-  per micro-step). The user reviews, commits, and merges each group before the next branches off the
-  updated `main`. Task-groups are dependent, so **pause after each group** for that gate.
+- **Branch per coupled task-group, off the round's integration branch.** For any plan with **more
+  than one task-group**, first create one local **integration branch** off `main` (e.g.
+  `round4-<topic>`) — every group in that round branches off, and merges back into, *that* branch,
+  never `main` directly. Group tightly-coupled tasks onto one branch (not one per micro-step). The
+  user reviews, commits, and merges each group into the integration branch before the next branches
+  off its updated tip. Task-groups are dependent, so **pause after each group** for that gate. Only
+  once the **entire round** is complete does the integration branch itself get merged into `main`
+  (and pushed) — a single-plan round should produce exactly **one** merge-to-`main` event, not one
+  per task-group. (A single-task-group round can skip the integration branch and branch directly
+  off `main`, since there's nothing to isolate it from.)
 - **Independent task-groups may run in parallel git worktrees.** Check the plan's own stated
   dependencies first: if two or more groups don't depend on each other's output, implement each in
-  its own isolated worktree/branch off the same `main`, concurrently, instead of serializing them.
-  This does **not** relax the no-agent-commit rule — subagents in a worktree still only stage
-  changes. The user reviews and commits **from that worktree's own directory** (open it in GitHub
-  Desktop as its own local repo, or `cd` into it) and merges its branch into `main` from the primary
-  checkout before any *dependent* group's worktree branches off the updated `main`. Remove a
-  worktree (`git worktree remove`, or `ExitWorktree`) once its branch is merged.
+  its own isolated worktree/branch off the round's integration branch (see above), concurrently,
+  instead of serializing them. This does **not** relax the no-agent-commit rule — subagents in a
+  worktree still only stage changes. The user reviews and commits **from that worktree's own
+  directory** (open it in GitHub Desktop as its own local repo, or `cd` into it) and merges its
+  branch into the integration branch from the primary checkout before any *dependent* group's
+  worktree branches off the updated tip. Remove a worktree (`git worktree remove`, or
+  `ExitWorktree`) once its branch is merged.
+  - **`worktree.baseRef` must be `"head"` for this to work**, set in `.claude/settings.json`
+    (`{"worktree": {"baseRef": "head"}}`). The default (`"fresh"`) branches every new worktree from
+    **`origin/<default-branch>`**, not local `main` — so if the integration branch (or any
+    task-group merge into it) hasn't been *pushed*, new worktrees silently branch from a stale ref
+    and miss it. `"head"` branches from whatever the primary checkout currently has checked out
+    (the integration branch, kept up to date locally as groups merge in), so no push is needed
+    until the round's single final merge-to-`main`.
+  - Before creating the round's first worktree, **check out the integration branch** in the primary
+    checkout (`git checkout -b round4-<topic>`) so it — not `main` — is the local HEAD every
+    worktree branches from.
 - **Multi-step plans run via subagent-driven development** — a fresh implementer subagent per
   task-group, then a task review (spec + code quality) before handing to the user. Since the agent
   doesn't commit, per-group review runs on the **working-tree diff** (`git add -N` untracked, then
@@ -122,9 +142,14 @@ Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it
   - `session` — `find_repo_root`, `init_session`/`Session`.
   - `io` — `save_dataframe`, `save_datacube`.
   - `viz` — `show`, `categorical_colors`/`CATEGORICAL`, `make_legend_clickable`.
-  - `analysis` — `water_year`, `mk_sen_trend`, `coverage`.
+  - `analysis` — `water_year`, `mk_sen_trend`, `coverage`, `trend_by_group`.
   - `usgs` — `classify_parameter`, `build_parameter_name_lookup`, `station_parameters`,
     `fetch_daily`/`fetch_samples`/`fetch_field`, `tidy_daily`/`tidy_samples`/`tidy_field`.
+  - `tceq` — `fetch_wqp_results`/`tidy_wqp_results` (EPA Water Quality Portal, organization
+    `TCEQMAIN` — TCEQ has no API of its own).
+  - `twdb` — `fetch_gwdb_wells` (ArcGIS FeatureServer inventory), `fetch_gwdb_zip`/
+    `fetch_gwdb_members` (nightly bulk file — the FeatureServer has no time-series endpoint),
+    `tidy_gwdb_water_levels`/`tidy_gwdb_water_quality`.
   - `climate` — `conus404_monthly_grid`, `zonal_by_huc8`, `pixel_trend`, plus the `CONUS404_VARIABLES`
     constant from `config`.
   - Candidate to grow into a shareable cross-project package (`config.py` is the only
@@ -142,11 +167,18 @@ Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it
   curated **outputs** other notebooks read (written every run, not freshness-gated).
 - **Git-ignored:** `cache/`, `data_temp/` (scratch/raw downloads), `.pixi/`, `_site/`, `.quarto/`.
   **Committed:** `data/` outputs, `pixi.lock`, and `_freeze/` (the render cache).
+- **`data_temp/gwdb_download.zip`** (git-ignored scratch) caches TWDB's nightly full-state bulk
+  file for a week — much larger than the HTTP request cache, so it's kept separate rather than
+  routed through `cache/`.
 
 **This repo:**
 
 - `data/hydrography/` — HyRiver/`pygeohydro` geometries (e.g. `huc8_watersheds`).
 - `data/usgs_waterdata/` — `dataretrieval.waterdata` products (station inventory + time-series).
+- `data/tceq_waterdata/` — TCEQ Surface Water Quality Monitoring results via the EPA Water
+  Quality Portal (`dataretrieval.wqp`, organization `TCEQMAIN`).
+- `data/twdb_waterdata/` — TWDB GWDB well inventory (ArcGIS FeatureServer) + water levels/quality
+  (TWDB's nightly bulk file, filtered to the study wells).
 - `data/climate/` — CONUS404: the raw `conus404_monthly_grid.zarr` cube is **git-ignored** (~57 MB,
   regenerated from the cloud); the derived climatology/trend grids and water-year/trend tables are committed.
 - `data/<source>/` — one folder per new source (TCEQ, NCEI, …).
@@ -168,7 +200,10 @@ Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it
 
 **This repo:** [`.github/workflows/publish.yml`](.github/workflows/publish.yml) renders and deploys on
 every push to `main`; the render step gets the **`API_USGS_PAT`** repo secret so a freeze-miss CI
-re-execution stays authenticated. Live at <https://limnotech.github.io/Thornforest/>.
+re-execution stays authenticated. Live at <https://limnotech.github.io/Thornforest/>. **This is why
+multi-task-group rounds use a local integration branch** (see [Workflow](#workflow)) rather than
+merging each group straight into `main` — pushing `main` mid-round would deploy an incomplete round
+to the live site once per group instead of once per round.
 
 ## USGS WaterData APIs & discovery
 
