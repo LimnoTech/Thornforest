@@ -140,9 +140,14 @@ Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it
   - `session` — `find_repo_root`, `init_session`/`Session`.
   - `io` — `save_dataframe`, `save_datacube`.
   - `viz` — `show`, `categorical_colors`/`CATEGORICAL`, `make_legend_clickable`.
-  - `analysis` — `water_year`, `mk_sen_trend`, `coverage`.
+  - `analysis` — `water_year`, `mk_sen_trend`, `coverage`, `trend_by_group`.
   - `usgs` — `classify_parameter`, `build_parameter_name_lookup`, `station_parameters`,
     `fetch_daily`/`fetch_samples`/`fetch_field`, `tidy_daily`/`tidy_samples`/`tidy_field`.
+  - `tceq` — `fetch_wqp_results`/`tidy_wqp_results` (EPA Water Quality Portal, organization
+    `TCEQMAIN` — TCEQ has no API of its own).
+  - `twdb` — `fetch_gwdb_wells` (ArcGIS FeatureServer inventory), `fetch_gwdb_zip`/
+    `fetch_gwdb_members` (nightly bulk file — the FeatureServer has no time-series endpoint),
+    `tidy_gwdb_water_levels`/`tidy_gwdb_water_quality`.
   - `climate` — `conus404_monthly_grid`, `zonal_by_huc8`, `pixel_trend`, plus the `CONUS404_VARIABLES`
     constant from `config`.
   - Candidate to grow into a shareable cross-project package (`config.py` is the only
@@ -160,11 +165,18 @@ Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it
   curated **outputs** other notebooks read (written every run, not freshness-gated).
 - **Git-ignored:** `cache/`, `data_temp/` (scratch/raw downloads), `.pixi/`, `_site/`, `.quarto/`.
   **Committed:** `data/` outputs, `pixi.lock`, and `_freeze/` (the render cache).
+- **`data_temp/gwdb_download.zip`** (git-ignored scratch) caches TWDB's nightly full-state bulk
+  file for a week — much larger than the HTTP request cache, so it's kept separate rather than
+  routed through `cache/`.
 
 **This repo:**
 
 - `data/hydrography/` — HyRiver/`pygeohydro` geometries (e.g. `huc8_watersheds`).
 - `data/usgs_waterdata/` — `dataretrieval.waterdata` products (station inventory + time-series).
+- `data/tceq_waterdata/` — TCEQ Surface Water Quality Monitoring results via the EPA Water
+  Quality Portal (`dataretrieval.wqp`, organization `TCEQMAIN`).
+- `data/twdb_waterdata/` — TWDB GWDB well inventory (ArcGIS FeatureServer) + water levels/quality
+  (TWDB's nightly bulk file, filtered to the study wells).
 - `data/climate/` — CONUS404: the raw `conus404_monthly_grid.zarr` cube is **git-ignored** (~57 MB,
   regenerated from the cloud); the derived climatology/trend grids and water-year/trend tables are committed.
 - `data/<source>/` — one folder per new source (TCEQ, NCEI, …).

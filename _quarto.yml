@@ -31,6 +31,10 @@ website:
         text: "2 · Climate"
       - href: notebooks/3_usgs_waterdata.html
         text: "3 · WaterData stations"
+      - href: notebooks/4_tceq_waterdata.html
+        text: "4 · TCEQ WaterData"
+      - href: notebooks/5_twdb_waterdata.html
+        text: "5 · TWDB WaterData"
     right:
       - icon: github
         href: https://github.com/LimnoTech/Thornforest
