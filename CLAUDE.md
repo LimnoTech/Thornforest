@@ -130,6 +130,24 @@ Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it
 - **`save_dataframe` returns nothing on purpose** (a save is often a cell's last line; a returned frame
   would auto-render as a stray, non-scrollable table). Display tables with **`show(df)`** — a
   fixed-height, sticky-header scrollable box that emits every row.
+- **`load_dataframe` is the read-side companion — use it as a "backup cache" for fetch calls that
+  bypass `cache/`.** Libraries like `dataretrieval` (USGS/WQP) and plain `requests`-based ArcGIS
+  queries make their own HTTP requests outside HyRiver's `async_retriever`, so they never hit the
+  on-disk request cache. Instead, treat the already-saved product **parquet file itself** as the
+  cache: `load_dataframe(path, max_age_days=7)` returns the saved (Geo)DataFrame if it's still
+  fresh, or `None` if missing/stale — guard the fetch with `if load_dataframe(...) is None:` and
+  only `save_dataframe` inside that branch, so a fresh run within the window skips the network call
+  entirely. When a stage's cache-hit means a downstream diagnostic can't run (e.g. an audit that
+  needs the *raw*, untidied response), gate that diagnostic on the same fetch-vs-cache flag rather
+  than making it error or silently produce nothing — see `3_usgs_waterdata`/`4_tceq_waterquality`/
+  `5_twdb_groundwater` for the pattern with multiple interdependent cached stages.
+- **Prefer pyarrow explicitly for tabular I/O** — both for performance and because it infers dtypes
+  better than pandas' legacy NumPy-based engine. `save_dataframe`/`load_dataframe` pass
+  `engine="pyarrow"` (write) and `engine="pyarrow", dtype_backend="pyarrow"` (read, plain
+  DataFrames) explicitly rather than relying on pandas' `engine="auto"` default. GeoDataFrames read
+  via `geopandas.read_parquet` are already pyarrow-based internally, so no extra option is needed
+  there. Code that consumes a `load_dataframe`-returned frame should expect pyarrow-backed dtypes
+  (e.g. `string[pyarrow]`, `double[pyarrow]`), not classic NumPy `object`/`float64`.
 - **Color data with colorcet, never the brand palette** — `categorical_colors(keys)` (colorcet
   `b_glasbey_category10`) for figure data; the brand palette + Roboto (`_brand.yml`) are site chrome.
 - **Show intermediate results, don't just chain silently** — e.g. `show(raw.head())` right after an
@@ -140,7 +158,7 @@ Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it
 
 - Helper inventory (`notebooks/_helpers/`, re-exported from the package root):
   - `session` — `find_repo_root`, `init_session`/`Session`.
-  - `io` — `save_dataframe`, `save_datacube`.
+  - `io` — `save_dataframe`, `load_dataframe` (parquet-as-backup-cache read side), `save_datacube`.
   - `viz` — `show`, `categorical_colors`/`CATEGORICAL`, `make_legend_clickable`.
   - `analysis` — `water_year`, `mk_sen_trend`, `coverage`, `trend_by_group`.
   - `usgs` — `classify_parameter`, `build_parameter_name_lookup`, `station_parameters`,
@@ -175,9 +193,9 @@ Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it
 
 - `data/hydrography/` — HyRiver/`pygeohydro` geometries (e.g. `huc8_watersheds`).
 - `data/usgs_waterdata/` — `dataretrieval.waterdata` products (station inventory + time-series).
-- `data/tceq_waterdata/` — TCEQ Surface Water Quality Monitoring results via the EPA Water
+- `data/tceq_waterquality/` — TCEQ Surface Water Quality Monitoring results via the EPA Water
   Quality Portal (`dataretrieval.wqp`, organization `TCEQMAIN`).
-- `data/twdb_waterdata/` — TWDB GWDB well inventory (ArcGIS FeatureServer) + water levels/quality
+- `data/twdb_groundwater/` — TWDB GWDB well inventory (ArcGIS FeatureServer) + water levels/quality
   (TWDB's nightly bulk file, filtered to the study wells).
 - `data/climate/` — CONUS404: the raw `conus404_monthly_grid.zarr` cube is **git-ignored** (~57 MB,
   regenerated from the cloud); the derived climatology/trend grids and water-year/trend tables are committed.

@@ -48,7 +48,7 @@ data-availability summary.
 :::
 
 ::: {.g-col-12 .g-col-md-4}
-### [4 · EPA-TCEQ Water Quality](notebooks/4_epa_tceq_waterquality.html)
+### [4 · TCEQ Water Quality](notebooks/4_tceq_waterquality.html)
 Discovers **Texas Commission on Environmental Quality (TCEQ)** Surface Water Quality Monitoring
 stations via the EPA Water Quality Portal and fetches their results, classified into the same
 priority parameters.
