@@ -220,6 +220,7 @@ __marimo__/
 
 ## Project-specific ##
 .claude/
+.superpowers/
 *cache/
 
 # Scratch data downloads (sandbox / raw source archives)

@@ -24,3 +24,16 @@ def test_unknown_returns_none():
     assert classify_parameter(parameter_code="99999") is None
     assert classify_parameter(characteristic="Fecal coliform") is None
     assert classify_parameter() is None
+
+
+def test_widened_oxygen_and_temperature_match_tceq_naming():
+    assert classify_parameter(characteristic="Oxygen") == "dissolved_oxygen"
+    assert classify_parameter(characteristic="Temperature, sample") == "temperature"
+    # still match the original USGS/WQX names
+    assert classify_parameter(characteristic="Dissolved oxygen (DO)") == "dissolved_oxygen"
+    assert classify_parameter(characteristic="Temperature, water") == "temperature"
+
+
+def test_twdb_parameter_codes_classify():
+    assert classify_parameter(parameter_code="00403") == "pH"        # TWDB lab pH
+    assert classify_parameter(parameter_code="82079") == "turbidity"  # TWDB lab turbidity

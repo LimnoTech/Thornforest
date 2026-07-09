@@ -9,7 +9,7 @@ project constants as arguments; Thornforest-specific constants live in `config`.
 """
 
 from . import config
-from .analysis import coverage, mk_sen_trend, water_year
+from .analysis import coverage, mk_sen_trend, trend_by_group, water_year
 from .climate import conus404_monthly_grid, pixel_trend, zonal_by_huc8
 from .config import CONUS404_VARIABLES, PLOT_WIDTH, PRIORITY_GROUPS, PRIORITY_NAMES, WATERSHEDS
 from .io import save_dataframe, save_datacube
@@ -38,7 +38,7 @@ __all__ = [
     "find_repo_root", "Session", "init_session",
     "save_dataframe", "save_datacube",
     "show", "set_plot_defaults", "CATEGORICAL", "categorical_colors", "make_legend_clickable",
-    "water_year", "mk_sen_trend", "coverage",
+    "water_year", "mk_sen_trend", "coverage", "trend_by_group",
     "classify_parameter", "build_parameter_name_lookup", "station_parameters",
     "fetch_daily", "fetch_samples", "fetch_field", "tidy_daily", "tidy_samples", "tidy_field",
     "conus404_monthly_grid", "zonal_by_huc8", "pixel_trend",

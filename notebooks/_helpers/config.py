@@ -9,17 +9,17 @@ variables — an explicitly-new blend, distinct from the verbatim source paramet
 # group -> {"parameter_codes": set[str], "characteristics": list[str] (lowercase substrings)}
 PRIORITY_GROUPS = {
     "conductivity": {"parameter_codes": {"00095", "90095"}, "characteristics": ["specific conductance", "conductivity"]},
-    "temperature": {"parameter_codes": {"00010"}, "characteristics": ["temperature, water"]},
-    "dissolved_oxygen": {"parameter_codes": {"00300", "00301"}, "characteristics": ["dissolved oxygen"]},
+    "temperature": {"parameter_codes": {"00010"}, "characteristics": ["temperature"]},  # broadened: matches TCEQ's "Temperature, sample" too
+    "dissolved_oxygen": {"parameter_codes": {"00300", "00301"}, "characteristics": ["oxygen"]},  # broadened: matches TCEQ's bare "Oxygen"
     "dissolved_solids": {"parameter_codes": {"70300", "00515"}, "characteristics": ["total dissolved solids"]},
     "chlorophyll": {"parameter_codes": {"32209", "32210", "32211", "70953"}, "characteristics": ["chlorophyll", "algae"]},
-    "pH": {"parameter_codes": {"00400"}, "characteristics": ["ph"]},  # pH matched EXACTLY (see classify_parameter)
+    "pH": {"parameter_codes": {"00400", "00403"}, "characteristics": ["ph"]},  # 00403 = TWDB GWDB lab pH; pH matched EXACTLY (see classify_parameter)
     "nitrogen": {
         "parameter_codes": {"00600", "00605", "00608", "00613", "00615", "00618", "00620", "00625", "00630"},
         "characteristics": ["nitrogen", "nitrate", "nitrite", "ammonia", "kjeldahl"],
     },
     "phosphorus": {"parameter_codes": {"00650", "00665", "00666", "00671"}, "characteristics": ["phosphorus", "orthophosphate"]},
-    "turbidity": {"parameter_codes": {"00076", "63675", "63676", "63680"}, "characteristics": ["turbidity"]},
+    "turbidity": {"parameter_codes": {"00076", "63675", "63676", "63680", "82079"}, "characteristics": ["turbidity"]},  # 82079 = TWDB GWDB lab turbidity
     # Water quantity (flow & level)
     "discharge": {
         "parameter_codes": {"00060", "00061", "00055", "70232", "30208", "30209"},  # discharge + velocity

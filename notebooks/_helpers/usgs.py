@@ -7,6 +7,7 @@ import warnings
 
 import pandas as pd
 
+from .analysis import _warn_missing_huc8
 from .config import PRIORITY_GROUPS
 
 DAILY_COLUMNS = ["monitoring_location_id", "date", "parameter_code", "parameter_name",
@@ -16,15 +17,6 @@ SAMPLES_COLUMNS = ["monitoring_location_id", "datetime", "characteristic", "para
                    "lab_name", "priority_group", "huc8"]
 FIELD_COLUMNS = ["monitoring_location_id", "datetime", "parameter_code", "parameter_name", "value",
                  "unit", "qualifier", "approval_status", "priority_group", "huc8"]
-
-
-def _warn_missing_huc8(df: pd.DataFrame, label: str) -> pd.DataFrame:
-    """Warn (don't silently drop) if the huc8 join produced NaN — signals a station-id mismatch."""
-    missing = df["huc8"].isna()
-    if missing.any():
-        ids = sorted(df.loc[missing, "monitoring_location_id"].unique())[:10]
-        print(f"WARNING: {int(missing.sum())} {label} rows had no huc8 match; unmatched ids: {ids}")
-    return df
 
 
 def classify_parameter(
