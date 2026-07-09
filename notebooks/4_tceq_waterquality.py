@@ -39,6 +39,7 @@ import geoviews.tile_sources as gvts
 from _helpers import (
     init_session,
     save_dataframe,
+    load_dataframe,
     show,
     categorical_colors,
     make_legend_clickable,
@@ -59,6 +60,11 @@ S = init_session()
 # `wqp.what_sites` returns a **plain DataFrame** (unlike `dataretrieval.waterdata`, WQP has no
 # built-in geometry column) — we build one from its lat/long columns, then keep only stations
 # **within** the watershed polygons, exactly as notebook 3 does for USGS stations.
+#
+# > **Caching note:** `dataretrieval.wqp` makes its own HTTP requests, bypassing the on-disk
+# > request cache (`cache/`) HyRiver calls use — so instead we treat the saved
+# > `tceq_monitoring_locations.parquet` itself as a **backup cache** (`load_dataframe`, one-week
+# > freshness window): if it's still fresh, we load it and skip the network call entirely.
 
 # %%
 boundaries_path = S.data_dir / "hydrography" / "huc8_watersheds.parquet"
@@ -69,22 +75,26 @@ if not boundaries_path.exists():
 watersheds_gdf = gpd.read_parquet(boundaries_path)
 bbox = list(watersheds_gdf.total_bounds)  # [min_lon, min_lat, max_lon, max_lat]; reused below
 
-sites_df, _ = wqp.what_sites(organization="TCEQMAIN", bBox=",".join(str(v) for v in bbox))
-stations_gdf = gpd.GeoDataFrame(
-    sites_df,
-    geometry=gpd.points_from_xy(sites_df["LongitudeMeasure"], sites_df["LatitudeMeasure"]),
-    crs=4326,
-)
-stations_in_area = gpd.sjoin(
-    stations_gdf,
-    watersheds_gdf[["huc8", "name", "geometry"]],
-    predicate="within",
-    how="inner",
-)
-print(
-    f"{len(stations_gdf)} TCEQ stations in the bounding box; "
-    f"{len(stations_in_area)} within the watersheds."
-)
+stations_path = S.data_dir / "tceq_waterquality" / "tceq_monitoring_locations.parquet"
+stations_in_area = load_dataframe(stations_path, max_age_days=7)
+stations_were_cached = stations_in_area is not None
+if not stations_were_cached:
+    sites_df, _ = wqp.what_sites(organization="TCEQMAIN", bBox=",".join(str(v) for v in bbox))
+    stations_gdf = gpd.GeoDataFrame(
+        sites_df,
+        geometry=gpd.points_from_xy(sites_df["LongitudeMeasure"], sites_df["LatitudeMeasure"]),
+        crs=4326,
+    )
+    stations_in_area = gpd.sjoin(
+        stations_gdf,
+        watersheds_gdf[["huc8", "name", "geometry"]],
+        predicate="within",
+        how="inner",
+    )
+    print(
+        f"{len(stations_gdf)} TCEQ stations in the bounding box; "
+        f"{len(stations_in_area)} within the watersheds."
+    )
 show(stations_in_area[["MonitoringLocationIdentifier", "MonitoringLocationName", "name"]])
 
 # %% [markdown]
@@ -94,24 +104,30 @@ show(stations_in_area[["MonitoringLocationIdentifier", "MonitoringLocationName",
 # characteristic up front, mirroring notebook 3's discrete-samples fetch (`fetch_samples`), since
 # WQP's per-organization-plus-bbox query is already small enough to pull in full (verified: tens of
 # thousands of rows, under two minutes) and its exact characteristic-name vocabulary is easier to
-# filter **after** fetching than to guess before.
+# filter **after** fetching than to guess before. This is the slow step (~1-2 minutes), so it's the
+# one most worth caching — same `load_dataframe`-as-backup-cache approach as Step 2.
 
 # %%
-raw_results = fetch_wqp_results(bbox, organization="TCEQMAIN")
-show(raw_results.head())  # peek at the raw WQP response shape before we tidy it
+results_path = S.data_dir / "tceq_waterquality" / "tceq_results.parquet"
+raw_results = None
+tceq_results = load_dataframe(results_path, max_age_days=7)
+if tceq_results is None:
+    raw_results = fetch_wqp_results(bbox, organization="TCEQMAIN")
+    show(raw_results.head())  # peek at the raw WQP response shape before we tidy it
 
 # %% [markdown]
 # ## Step 4 — Tidy and classify by priority parameter
 #
 # `tidy_wqp_results` renames WQP's columns to the project's convention, keeps only rows whose
 # `characteristic` maps to one of our priority groups (`classify_parameter`), and tags
-# `priority_group`/`huc8`.
+# `priority_group`/`huc8`. Skipped when `tceq_results` already came from the cache above.
 
 # %%
 huc8_by_station = dict(zip(stations_in_area["MonitoringLocationIdentifier"], stations_in_area["huc8"]))
-tceq_results = tidy_wqp_results(raw_results, huc8_by_station)
-show(tceq_results.head())
-save_dataframe(tceq_results, S.data_dir / "tceq_waterdata" / "tceq_results.parquet")
+if tceq_results is None:
+    tceq_results = tidy_wqp_results(raw_results, huc8_by_station)
+    show(tceq_results.head())
+    save_dataframe(tceq_results, results_path)
 
 # %% [markdown]
 # ### Which stations measure which priority parameters?
@@ -131,20 +147,24 @@ for group in PRIORITY_NAMES:
     stations_in_area[group] = stations_in_area["MonitoringLocationIdentifier"].map(
         lambda s, g=group: g in groups_by_station.get(s, set())
     )
-save_dataframe(
-    stations_in_area,
-    S.data_dir / "tceq_waterdata" / "tceq_monitoring_locations.parquet",
-)
+# Only re-save if something was actually fetched fresh above (stations or results) — otherwise
+# both came straight from cache and touching the file would reset its own freshness clock for
+# nothing.
+if not stations_were_cached or raw_results is not None:
+    save_dataframe(stations_in_area, stations_path)
 
 print(f"Stations by priority parameter (of {len(stations_in_area)}):")
 print(stations_in_area[PRIORITY_NAMES].sum().to_string())
 
-unmatched = sorted({
-    str(c) for c in raw_results["CharacteristicName"].dropna().unique()
-    if classify_parameter(characteristic=c) is None
-})
-print(f"\n{len(unmatched)} unmatched characteristics (first 25):")
-print("\n".join(unmatched[:25]))
+if raw_results is not None:
+    unmatched = sorted({
+        str(c) for c in raw_results["CharacteristicName"].dropna().unique()
+        if classify_parameter(characteristic=c) is None
+    })
+    print(f"\n{len(unmatched)} unmatched characteristics (first 25):")
+    print("\n".join(unmatched[:25]))
+else:
+    print("\n(unmatched-characteristics audit skipped — tceq_results came from the cache, not a fresh fetch)")
 
 show(stations_in_area[["MonitoringLocationIdentifier", "MonitoringLocationName", *PRIORITY_NAMES]])
 
@@ -204,7 +224,7 @@ tceq_trends = trend_by_group(
     tceq_results, ["monitoring_location_id", "priority_group"], "datetime", "value", agg="median"
 )
 tceq_trends["significant"] = tceq_trends["p"] < 0.05
-save_dataframe(tceq_trends, S.data_dir / "tceq_waterdata" / "tceq_trends.parquet")
+save_dataframe(tceq_trends, S.data_dir / "tceq_waterquality" / "tceq_trends.parquet")
 show(tceq_trends.round({"p": 4, "slope": 4}))
 
 # %%
@@ -220,6 +240,6 @@ trend_chart
 # %% [markdown]
 # ## What's next
 #
-# TCEQ results, station inventory, and trends are saved under `data/tceq_waterdata/`. Notebook
+# TCEQ results, station inventory, and trends are saved under `data/tceq_waterquality/`. Notebook
 # **`5_twdb_waterdata`** covers TWDB groundwater; a future shared display notebook can compare
 # trends across USGS/TCEQ/TWDB side by side.

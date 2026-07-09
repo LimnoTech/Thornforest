@@ -12,7 +12,7 @@ from . import config
 from .analysis import coverage, mk_sen_trend, trend_by_group, water_year
 from .climate import conus404_monthly_grid, pixel_trend, zonal_by_huc8
 from .config import CONUS404_VARIABLES, PLOT_WIDTH, PRIORITY_GROUPS, PRIORITY_NAMES, WATERSHEDS
-from .io import save_dataframe, save_datacube
+from .io import load_dataframe, save_dataframe, save_datacube
 from .session import Session, find_repo_root, init_session
 from .usgs import (
     build_parameter_name_lookup,
@@ -52,7 +52,7 @@ from .viz import (
 __all__ = [
     "config", "CONUS404_VARIABLES", "PLOT_WIDTH", "PRIORITY_GROUPS", "PRIORITY_NAMES", "WATERSHEDS",
     "find_repo_root", "Session", "init_session",
-    "save_dataframe", "save_datacube",
+    "save_dataframe", "load_dataframe", "save_datacube",
     "show", "set_plot_defaults", "CATEGORICAL", "categorical_colors", "make_legend_clickable",
     "water_year", "mk_sen_trend", "coverage", "trend_by_group",
     "classify_parameter", "build_parameter_name_lookup", "station_parameters",

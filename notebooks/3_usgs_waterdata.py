@@ -39,6 +39,7 @@ import geoviews.tile_sources as gvts
 from _helpers import (
     init_session,
     save_dataframe,
+    load_dataframe,
     show,
     categorical_colors,
     make_legend_clickable,
@@ -66,6 +67,11 @@ S = init_session()
 # We load the watershed boundaries saved by notebook 1, ask the Water Data API for every
 # station in their bounding box, then keep only those that fall **within** the watershed
 # polygons (a spatial join).
+#
+# > **Caching note:** `dataretrieval.waterdata` makes its own HTTP requests, bypassing the
+# > on-disk request cache (`cache/`) HyRiver calls use — so Steps 2-3 treat the final saved
+# > `usgs_monitoring_locations_parameters.parquet` as a **backup cache** (`load_dataframe`,
+# > one-week freshness window): if it's still fresh, both steps' fetches are skipped entirely.
 
 # %%
 boundaries_path = S.data_dir / "hydrography" / "huc8_watersheds.parquet"
@@ -76,21 +82,26 @@ if not boundaries_path.exists():
 watersheds_gdf = gpd.read_parquet(boundaries_path)
 bbox = list(watersheds_gdf.total_bounds)  # [min_lon, min_lat, max_lon, max_lat]; reused below
 
-stations_gdf, _ = waterdata.get_monitoring_locations(bbox=bbox)
-stations_gdf = stations_gdf.set_crs(4326)
-stations_in_area = gpd.sjoin(
-    stations_gdf,
-    watersheds_gdf[["huc8", "name", "geometry"]],
-    predicate="within",
-    how="inner",
-)
-print(
-    f"{len(stations_gdf)} stations in the bounding box; "
-    f"{len(stations_in_area)} within the watersheds."
-)
-save_dataframe(
-    stations_in_area, S.data_dir / "usgs_waterdata" / "usgs_monitoring_locations.parquet"
-)
+stations_path = S.data_dir / "usgs_waterdata" / "usgs_monitoring_locations_parameters.parquet"
+stations_in_area = load_dataframe(stations_path, max_age_days=7)
+stations_were_cached = stations_in_area is not None
+
+if not stations_were_cached:
+    stations_gdf, _ = waterdata.get_monitoring_locations(bbox=bbox)
+    stations_gdf = stations_gdf.set_crs(4326)
+    stations_in_area = gpd.sjoin(
+        stations_gdf,
+        watersheds_gdf[["huc8", "name", "geometry"]],
+        predicate="within",
+        how="inner",
+    )
+    print(
+        f"{len(stations_gdf)} stations in the bounding box; "
+        f"{len(stations_in_area)} within the watersheds."
+    )
+    save_dataframe(
+        stations_in_area, S.data_dir / "usgs_waterdata" / "usgs_monitoring_locations.parquet"
+    )
 
 # %% [markdown]
 # ### What kinds of stations are there?
@@ -109,73 +120,77 @@ show(stations_in_area[["monitoring_location_id", "monitoring_location_name", "si
 # each we list the USGS `parameter_code`s (used by the time-series & field-measurement services) and
 # the Water Quality characteristic-name patterns (used by the discrete-samples service) — see
 # `PRIORITY_GROUPS` in `_helpers/config.py`. `classify_parameter` (from `_helpers`) maps any measured
-# parameter code / characteristic to its priority group (or `None`).
+# parameter code / characteristic to its priority group (or `None`). The fetches below are skipped
+# when the station inventory above already came from the cache.
 
 # %%
-SAMPLES_SUMMARY_URL = "https://api.waterdata.usgs.gov/samples-data/summary"
+samples_summaries = None
+if not stations_were_cached:
+    SAMPLES_SUMMARY_URL = "https://api.waterdata.usgs.gov/samples-data/summary"
 
-# Time-series metadata (daily & continuous), split by computation period; carries parameter_codes.
-ts_meta, _ = waterdata.get_time_series_metadata(bbox=bbox, skip_geometry=True)
-period = ts_meta["computation_period_identifier"]
-daily_ids = set(ts_meta.loc[period == "Daily", "monitoring_location_id"])
-continuous_ids = set(ts_meta.loc[period == "Points", "monitoring_location_id"])
+    # Time-series metadata (daily & continuous), split by computation period; carries parameter_codes.
+    ts_meta, _ = waterdata.get_time_series_metadata(bbox=bbox, skip_geometry=True)
+    period = ts_meta["computation_period_identifier"]
+    daily_ids = set(ts_meta.loc[period == "Daily", "monitoring_location_id"])
+    continuous_ids = set(ts_meta.loc[period == "Points", "monitoring_location_id"])
 
-# Field-measurement metadata; carries parameter_codes.
-fm_meta, _ = waterdata.get_field_measurements_metadata(bbox=bbox, skip_geometry=True)
-field_ids = set(fm_meta["monitoring_location_id"])
+    # Field-measurement metadata; carries parameter_codes.
+    fm_meta, _ = waterdata.get_field_measurements_metadata(bbox=bbox, skip_geometry=True)
+    field_ids = set(fm_meta["monitoring_location_id"])
 
-# Per-station discrete-samples summaries, fetched concurrently (and cached) via async-retriever.
-station_ids = stations_in_area["monitoring_location_id"].tolist()
-summary_urls = [f"{SAMPLES_SUMMARY_URL}/{quote(sid, safe='')}?mimeType=text/csv" for sid in station_ids]
-summary_texts = ar.retrieve_text(
-    summary_urls,
-    request_kwds=[{"headers": S.api_headers}] * len(summary_urls) if S.api_headers else None,
-    cache_name=S.cache_file,
-    expire_after=S.cache_expire_seconds,
-    limit_per_host=8,
-)
-samples_summaries = {  # station_id -> summary DataFrame (may be empty)
-    sid: pd.read_csv(StringIO(txt)) for sid, txt in zip(station_ids, summary_texts) if txt
-}
-samples_ids = {sid for sid, df in samples_summaries.items() if len(df) > 0}
+    # Per-station discrete-samples summaries, fetched concurrently (and cached) via async-retriever.
+    station_ids = stations_in_area["monitoring_location_id"].tolist()
+    summary_urls = [f"{SAMPLES_SUMMARY_URL}/{quote(sid, safe='')}?mimeType=text/csv" for sid in station_ids]
+    summary_texts = ar.retrieve_text(
+        summary_urls,
+        request_kwds=[{"headers": S.api_headers}] * len(summary_urls) if S.api_headers else None,
+        cache_name=S.cache_file,
+        expire_after=S.cache_expire_seconds,
+        limit_per_host=8,
+    )
+    samples_summaries = {  # station_id -> summary DataFrame (may be empty)
+        sid: pd.read_csv(StringIO(txt)) for sid, txt in zip(station_ids, summary_texts) if txt
+    }
+    samples_ids = {sid for sid, df in samples_summaries.items() if len(df) > 0}
 
 # %%
-# parameter_code -> readable name, from the USGS reference table (verbatim source names).
+# parameter_code -> readable name, from the USGS reference table (verbatim source names). Needed
+# by Step 4's tidy_daily/tidy_field regardless of the station-inventory cache above, so fetched
+# unconditionally — it's a single small reference-table call, not the per-station bottleneck.
 parameter_name_by_code = build_parameter_name_lookup()
 
-# Build, per station: the set of measured parameter_codes/characteristics, the priority groups they
-# hit, and a sorted human-readable parameter list.
-ts_parameter_codes_by_site = ts_meta.groupby("monitoring_location_id")["parameter_code"].agg(set).to_dict()
-fm_parameter_codes_by_site = fm_meta.groupby("monitoring_location_id")["parameter_code"].agg(set).to_dict()
+if not stations_were_cached:
+    # Build, per station: the set of measured parameter_codes/characteristics, the priority groups they
+    # hit, and a sorted human-readable parameter list.
+    ts_parameter_codes_by_site = ts_meta.groupby("monitoring_location_id")["parameter_code"].agg(set).to_dict()
+    fm_parameter_codes_by_site = fm_meta.groupby("monitoring_location_id")["parameter_code"].agg(set).to_dict()
 
-groups_by_site, params_by_site = {}, {}
-for sid in station_ids:
-    g, names = station_parameters(
-        sid, ts_parameter_codes_by_site, fm_parameter_codes_by_site, parameter_name_by_code, samples_summaries
-    )
-    groups_by_site[sid] = g
-    params_by_site[sid] = names
+    groups_by_site, params_by_site = {}, {}
+    for sid in station_ids:
+        g, names = station_parameters(
+            sid, ts_parameter_codes_by_site, fm_parameter_codes_by_site, parameter_name_by_code, samples_summaries
+        )
+        groups_by_site[sid] = g
+        params_by_site[sid] = names
 
-# Data-type flags (kept) + one boolean column per priority group + the readable parameter list.
-sid_col = stations_in_area["monitoring_location_id"]
-stations_in_area["daily"] = sid_col.isin(daily_ids)
-stations_in_area["continuous"] = sid_col.isin(continuous_ids)
-stations_in_area["field_measurements"] = sid_col.isin(field_ids)
-stations_in_area["samples"] = sid_col.isin(samples_ids)
-for group in PRIORITY_NAMES:
-    stations_in_area[group] = sid_col.map(lambda s, g=group: g in groups_by_site.get(s, set()))
-stations_in_area["parameters"] = sid_col.map(lambda s: params_by_site.get(s, []))
+    # Data-type flags (kept) + one boolean column per priority group + the readable parameter list.
+    sid_col = stations_in_area["monitoring_location_id"]
+    stations_in_area["daily"] = sid_col.isin(daily_ids)
+    stations_in_area["continuous"] = sid_col.isin(continuous_ids)
+    stations_in_area["field_measurements"] = sid_col.isin(field_ids)
+    stations_in_area["samples"] = sid_col.isin(samples_ids)
+    for group in PRIORITY_NAMES:
+        stations_in_area[group] = sid_col.map(lambda s, g=group: g in groups_by_site.get(s, set()))
+    stations_in_area["parameters"] = sid_col.map(lambda s: params_by_site.get(s, []))
 
-save_dataframe(
-    stations_in_area,
-    S.data_dir / "usgs_waterdata" / "usgs_monitoring_locations_parameters.parquet",
-)
+    save_dataframe(stations_in_area, stations_path)
 
 # %% [markdown]
 # ### How many stations measure each priority parameter?
 #
 # The audit below lists any measured parameter codes / characteristics that did NOT map to a priority
-# group — useful for sanity-checking and refining `PRIORITY_GROUPS`.
+# group — useful for sanity-checking and refining `PRIORITY_GROUPS`. Skipped when using a cached
+# station inventory (the raw per-station summaries aren't kept around).
 
 # %%
 DATA_TYPES = ["daily", "continuous", "field_measurements", "samples"]
@@ -184,16 +199,19 @@ print(stations_in_area[DATA_TYPES].sum().to_string())
 print(f"\nStations by priority parameter (of {len(stations_in_area)}):")
 print(stations_in_area[PRIORITY_NAMES].sum().to_string())
 
-# Audit: characteristics seen in samples that mapped to no priority group.
-unmatched = sorted({
-    str(c)
-    for df in samples_summaries.values()
-    if "characteristic" in df.columns
-    for c in df["characteristic"].dropna().unique()
-    if classify_parameter(characteristic=c) is None
-})
-print(f"\n{len(unmatched)} unmatched sample characteristics (first 25):")
-print("\n".join(unmatched[:25]))
+if samples_summaries is not None:
+    # Audit: characteristics seen in samples that mapped to no priority group.
+    unmatched = sorted({
+        str(c)
+        for df in samples_summaries.values()
+        if "characteristic" in df.columns
+        for c in df["characteristic"].dropna().unique()
+        if classify_parameter(characteristic=c) is None
+    })
+    print(f"\n{len(unmatched)} unmatched sample characteristics (first 25):")
+    print("\n".join(unmatched[:25]))
+else:
+    print("\n(unmatched-characteristics audit skipped — using cached station inventory, not a fresh fetch)")
 
 show(stations_in_area[["monitoring_location_id", "monitoring_location_name", *PRIORITY_NAMES]])
 
@@ -206,7 +224,9 @@ show(stations_in_area[["monitoring_location_id", "monitoring_location_name", *PR
 # USGS `parameter_code`; discrete samples are keyed by characteristic name, so we fetch all and keep
 # rows whose characteristic maps to a priority group. (Analysis later subsets to the 25-year study
 # window — we keep everything.) Each `fetch_*`/`tidy_*` pair (from `_helpers/usgs.py`) is shown
-# below: first the **raw** API response, then the **tidy** result actually saved.
+# below: first the **raw** API response, then the **tidy** result actually saved — each pair is
+# skipped when its own saved product is still fresh (same `load_dataframe`-as-backup-cache pattern
+# as Steps 2-3).
 
 # %%
 # All priority parameter codes, flattened, for the code-keyed services (daily, field).
@@ -221,15 +241,19 @@ huc8_by_station = dict(zip(stations_in_area["monitoring_location_id"], stations_
 # Daily statistics (mostly discharge & water level) for the stations flagged `daily`.
 
 # %%
-daily_station_ids = stations_in_area.loc[stations_in_area["daily"], "monitoring_location_id"].tolist()
-daily_raw = fetch_daily(daily_station_ids, PRIORITY_CODES)
-show(daily_raw.head())  # peek at the raw USGS response shape before we tidy it
+daily_path = S.data_dir / "usgs_waterdata" / "usgs_daily_values.parquet"
+daily = load_dataframe(daily_path, max_age_days=7)
+if daily is None:
+    daily_station_ids = stations_in_area.loc[stations_in_area["daily"], "monitoring_location_id"].tolist()
+    daily_raw = fetch_daily(daily_station_ids, PRIORITY_CODES)
+    show(daily_raw.head())  # peek at the raw USGS response shape before we tidy it
 
 # %%
-# Tidy to a long-format table tagged with priority_group / parameter_name / huc8 (see _helpers/usgs.py).
-daily = tidy_daily(daily_raw, huc8_by_station, parameter_name_by_code)
-show(daily.head())
-save_dataframe(daily, S.data_dir / "usgs_waterdata" / "usgs_daily_values.parquet")
+if daily is None:
+    # Tidy to a long-format table tagged with priority_group / parameter_name / huc8 (see _helpers/usgs.py).
+    daily = tidy_daily(daily_raw, huc8_by_station, parameter_name_by_code)
+    show(daily.head())
+    save_dataframe(daily, daily_path)
 
 # %% [markdown]
 # ### Discrete water-quality samples
@@ -239,14 +263,18 @@ save_dataframe(daily, S.data_dir / "usgs_waterdata" / "usgs_daily_values.parquet
 # our priority groups via `classify_parameter`.
 
 # %%
-samples_station_ids = stations_in_area.loc[stations_in_area["samples"], "monitoring_location_id"].tolist()
-samples_raw = fetch_samples(samples_station_ids)
-show(samples_raw.head())  # peek at the raw USGS response shape before we tidy it
+samples_path = S.data_dir / "usgs_waterdata" / "usgs_samples.parquet"
+samples = load_dataframe(samples_path, max_age_days=7)
+if samples is None:
+    samples_station_ids = stations_in_area.loc[stations_in_area["samples"], "monitoring_location_id"].tolist()
+    samples_raw = fetch_samples(samples_station_ids)
+    show(samples_raw.head())  # peek at the raw USGS response shape before we tidy it
 
 # %%
-samples = tidy_samples(samples_raw, huc8_by_station)
-show(samples.head())
-save_dataframe(samples, S.data_dir / "usgs_waterdata" / "usgs_samples.parquet")
+if samples is None:
+    samples = tidy_samples(samples_raw, huc8_by_station)
+    show(samples.head())
+    save_dataframe(samples, samples_path)
 
 # %% [markdown]
 # ### Field measurements
@@ -255,14 +283,18 @@ save_dataframe(samples, S.data_dir / "usgs_waterdata" / "usgs_samples.parquet")
 # `field_measurements`.
 
 # %%
-field_station_ids = stations_in_area.loc[stations_in_area["field_measurements"], "monitoring_location_id"].tolist()
-field_raw = fetch_field(field_station_ids, PRIORITY_CODES)
-show(field_raw.head())  # peek at the raw USGS response shape before we tidy it
+field_path = S.data_dir / "usgs_waterdata" / "usgs_field_measurements.parquet"
+field = load_dataframe(field_path, max_age_days=7)
+if field is None:
+    field_station_ids = stations_in_area.loc[stations_in_area["field_measurements"], "monitoring_location_id"].tolist()
+    field_raw = fetch_field(field_station_ids, PRIORITY_CODES)
+    show(field_raw.head())  # peek at the raw USGS response shape before we tidy it
 
 # %%
-field = tidy_field(field_raw, huc8_by_station, parameter_name_by_code)
-show(field.head())
-save_dataframe(field, S.data_dir / "usgs_waterdata" / "usgs_field_measurements.parquet")
+if field is None:
+    field = tidy_field(field_raw, huc8_by_station, parameter_name_by_code)
+    show(field.head())
+    save_dataframe(field, field_path)
 
 # %% [markdown]
 # ## Step 5 — Map stations by priority parameter

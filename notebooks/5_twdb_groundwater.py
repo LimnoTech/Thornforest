@@ -37,6 +37,7 @@ import geoviews.tile_sources as gvts
 from _helpers import (
     init_session,
     save_dataframe,
+    load_dataframe,
     show,
     categorical_colors,
     make_legend_clickable,
@@ -59,6 +60,11 @@ S = init_session()
 # Queries the GWDB well-inventory ArcGIS FeatureServer within the watersheds' bounding box, then
 # keeps only wells **within** the watershed polygons — same bbox-then-spatial-join pattern as
 # notebooks 3-4.
+#
+# > **Caching note:** the ArcGIS query bypasses the on-disk request cache (`cache/`) HyRiver calls
+# > use — so we treat the saved `twdb_wells.parquet` itself as a **backup cache**
+# > (`load_dataframe`, one-week freshness window): if it's still fresh, we load it and skip the
+# > network call entirely.
 
 # %%
 boundaries_path = S.data_dir / "hydrography" / "huc8_watersheds.parquet"
@@ -69,15 +75,18 @@ if not boundaries_path.exists():
 watersheds_gdf = gpd.read_parquet(boundaries_path)
 bbox = list(watersheds_gdf.total_bounds)  # [min_lon, min_lat, max_lon, max_lat]; reused below
 
-wells_gdf = fetch_gwdb_wells(bbox)
-wells_in_area = gpd.sjoin(
-    wells_gdf,
-    watersheds_gdf[["huc8", "name", "geometry"]],
-    predicate="within",
-    how="inner",
-)
-print(f"{len(wells_gdf)} GWDB wells in the bounding box; {len(wells_in_area)} within the watersheds.")
-save_dataframe(wells_in_area, S.data_dir / "twdb_waterdata" / "twdb_wells.parquet")
+wells_path = S.data_dir / "twdb_groundwater" / "twdb_wells.parquet"
+wells_in_area = load_dataframe(wells_path, max_age_days=7)
+if wells_in_area is None:
+    wells_gdf = fetch_gwdb_wells(bbox)
+    wells_in_area = gpd.sjoin(
+        wells_gdf,
+        watersheds_gdf[["huc8", "name", "geometry"]],
+        predicate="within",
+        how="inner",
+    )
+    print(f"{len(wells_gdf)} GWDB wells in the bounding box; {len(wells_in_area)} within the watersheds.")
+    save_dataframe(wells_in_area, wells_path)
 show(wells_in_area[["StateWellNumber", "CountyName", "WaterLevelObservationType", "WaterQualityAvailable", "name"]])
 
 # %% [markdown]
@@ -85,43 +94,60 @@ show(wells_in_area[["StateWellNumber", "CountyName", "WaterLevelObservationType"
 #
 # The ArcGIS layer above is inventory-only; the actual water-level/quality measurements live in a
 # nightly full-state zip, cached locally for a week (like this project's other request caches) so
-# re-running the notebook doesn't re-download ~81 MB every time.
+# re-running the notebook doesn't re-download ~81 MB every time. If both `twdb_water_levels` and
+# `twdb_water_quality` below are already fresh, we skip the download entirely — there's no need to
+# even check the zip if neither of its contents is going to be read this run.
 
 # %%
-zip_path = fetch_gwdb_zip(S.repo_root / "data_temp" / "gwdb_download.zip")
+levels_path = S.data_dir / "twdb_groundwater" / "twdb_water_levels.parquet"
+quality_path = S.data_dir / "twdb_groundwater" / "twdb_water_quality.parquet"
+twdb_water_levels = load_dataframe(levels_path, max_age_days=7)
+twdb_water_quality = load_dataframe(quality_path, max_age_days=7)
+
 well_ids = set(wells_in_area["StateWellNumber"].dropna())
 huc8_by_well = dict(zip(wells_in_area["StateWellNumber"], wells_in_area["huc8"]))
-print(f"{zip_path} ({zip_path.stat().st_size:,} bytes); {len(well_ids)} wells to filter for")
+
+if twdb_water_levels is None or twdb_water_quality is None:
+    zip_path = fetch_gwdb_zip(S.repo_root / "data_temp" / "gwdb_download.zip")
+    print(f"{zip_path} ({zip_path.stat().st_size:,} bytes); {len(well_ids)} wells to filter for")
+else:
+    print("water levels and water quality are both cached — skipping the bulk-file download")
 
 # %% [markdown]
 # ## Step 4 — Water levels
 #
 # Filters the four Major/Minor/Combination/OtherUnassigned water-level files down to our wells,
-# streamed in chunks (the files are large statewide extracts).
+# streamed in chunks (the files are large statewide extracts). Skipped when `twdb_water_levels`
+# already came from the cache above.
 
 # %%
-water_levels_raw = fetch_gwdb_members(zip_path, WATER_LEVEL_MEMBERS, WATER_LEVEL_USECOLS, well_ids)
-show(water_levels_raw.head())  # peek at the raw GWDB file shape before we tidy it
+if twdb_water_levels is None:
+    water_levels_raw = fetch_gwdb_members(zip_path, WATER_LEVEL_MEMBERS, WATER_LEVEL_USECOLS, well_ids)
+    show(water_levels_raw.head())  # peek at the raw GWDB file shape before we tidy it
 
 # %%
-twdb_water_levels = tidy_gwdb_water_levels(water_levels_raw, huc8_by_well)
-show(twdb_water_levels.head())
-save_dataframe(twdb_water_levels, S.data_dir / "twdb_waterdata" / "twdb_water_levels.parquet")
+if twdb_water_levels is None:
+    twdb_water_levels = tidy_gwdb_water_levels(water_levels_raw, huc8_by_well)
+    show(twdb_water_levels.head())
+    save_dataframe(twdb_water_levels, levels_path)
 
 # %% [markdown]
 # ## Step 5 — Water quality
 #
 # Same filtering approach for the water-quality files; classification reuses `classify_parameter`
 # on GWDB's `ParameterCode` (confirmed in the sandbox exploration to reuse USGS-style codes).
+# Skipped when `twdb_water_quality` already came from the cache above.
 
 # %%
-water_quality_raw = fetch_gwdb_members(zip_path, WATER_QUALITY_MEMBERS, WATER_QUALITY_USECOLS, well_ids)
-show(water_quality_raw.head())  # peek at the raw GWDB file shape before we tidy it
+if twdb_water_quality is None:
+    water_quality_raw = fetch_gwdb_members(zip_path, WATER_QUALITY_MEMBERS, WATER_QUALITY_USECOLS, well_ids)
+    show(water_quality_raw.head())  # peek at the raw GWDB file shape before we tidy it
 
 # %%
-twdb_water_quality = tidy_gwdb_water_quality(water_quality_raw, huc8_by_well)
-show(twdb_water_quality.head())
-save_dataframe(twdb_water_quality, S.data_dir / "twdb_waterdata" / "twdb_water_quality.parquet")
+if twdb_water_quality is None:
+    twdb_water_quality = tidy_gwdb_water_quality(water_quality_raw, huc8_by_well)
+    show(twdb_water_quality.head())
+    save_dataframe(twdb_water_quality, quality_path)
 
 print(f"Wells by data type (of {len(wells_in_area)}):")
 print(pd.Series({
@@ -184,7 +210,7 @@ twdb_trends = pd.concat(
     ignore_index=True,
 )
 twdb_trends["significant"] = twdb_trends["p"] < 0.05
-save_dataframe(twdb_trends, S.data_dir / "twdb_waterdata" / "twdb_trends.parquet")
+save_dataframe(twdb_trends, S.data_dir / "twdb_groundwater" / "twdb_trends.parquet")
 show(twdb_trends.round({"p": 4, "slope": 4}))
 
 # %%
@@ -200,7 +226,7 @@ trend_chart
 # %% [markdown]
 # ## What's next
 #
-# Well inventory, water levels, water quality, and trends are saved under `data/twdb_waterdata/`.
+# Well inventory, water levels, water quality, and trends are saved under `data/twdb_groundwater/`.
 # A future shared display notebook can compare USGS/TCEQ/TWDB trends side by side, and TWDB's
 # coastal surface-water data (waterdatafortexas.org, relevant to the South Laguna Madre watershed)
 # remains a candidate for a later round.

@@ -32,7 +32,7 @@ def save_dataframe(df: pd.DataFrame, parquet_path: Path | str) -> None:
 
     parquet_path = Path(parquet_path)
     parquet_path.parent.mkdir(parents=True, exist_ok=True)
-    ordered.to_parquet(parquet_path)
+    ordered.to_parquet(parquet_path, engine="pyarrow")
     ordered.to_csv(parquet_path.with_suffix(".csv"), index=False)  # geometry -> WKT when GeoDataFrame
 
     try:
@@ -40,6 +40,48 @@ def save_dataframe(df: pd.DataFrame, parquet_path: Path | str) -> None:
     except ValueError:
         shown = parquet_path
     print(f"saved {len(ordered)} rows → {shown} (+ .csv)")
+
+
+def load_dataframe(parquet_path: Path | str, max_age_days: float | None = None) -> pd.DataFrame | None:
+    """Load a (Geo)DataFrame previously written by `save_dataframe`, if present and (when
+    `max_age_days` is given) still fresh — a lightweight "backup cache" for fetch calls
+    (`dataretrieval`, ArcGIS, WQP) that bypass the HTTP request cache (`cache/aiohttp_cache.sqlite`)
+    because those client libraries make their own requests outside HyRiver's `async_retriever`.
+
+    Returns `None` if the file is missing or older than `max_age_days`, so the caller falls back
+    to a live fetch (and re-saves via `save_dataframe`). Auto-detects GeoParquet (read with
+    geopandas) vs plain parquet from the file's own embedded schema metadata."""
+    import time
+
+    import pandas as pd
+    import pyarrow.parquet as pq
+
+    parquet_path = Path(parquet_path)
+    if not parquet_path.exists():
+        return None
+    if max_age_days is not None:
+        age_days = (time.time() - parquet_path.stat().st_mtime) / 86400
+        if age_days >= max_age_days:
+            return None
+
+    schema_metadata = pq.read_schema(parquet_path).metadata or {}
+    if b"geo" in schema_metadata:
+        import geopandas as gpd
+
+        df = gpd.read_parquet(parquet_path)  # geopandas' parquet path is already pyarrow-based
+    else:
+        # dtype_backend="pyarrow": pyarrow-backed nullable dtypes read back more precisely than
+        # pandas' legacy NumPy dtypes (e.g. proper nullable ints instead of silently upcasting to
+        # float on a missing value) — exactly the "better at inferring data types" pyarrow gives.
+        df = pd.read_parquet(parquet_path, engine="pyarrow", dtype_backend="pyarrow")
+
+    try:
+        shown = parquet_path.relative_to(find_repo_root())
+    except ValueError:
+        shown = parquet_path
+    age_note = f", < {max_age_days:g} days old" if max_age_days is not None else ""
+    print(f"using cached {shown} ({len(df)} rows{age_note})")
+    return df
 
 
 def save_datacube(ds: xr.Dataset, zarr_path: Path | str, level: int = 3) -> Path:
