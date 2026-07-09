@@ -58,17 +58,35 @@ Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it
 
 ## Workflow
 
-- **Branch per coupled task-group, off `main`.** Group tightly-coupled tasks onto one branch (not one
-  per micro-step). The user reviews, commits, and merges each group before the next branches off the
-  updated `main`. Task-groups are dependent, so **pause after each group** for that gate.
+- **Branch per coupled task-group, off the round's integration branch.** For any plan with **more
+  than one task-group**, first create one local **integration branch** off `main` (e.g.
+  `round4-<topic>`) — every group in that round branches off, and merges back into, *that* branch,
+  never `main` directly. Group tightly-coupled tasks onto one branch (not one per micro-step). The
+  user reviews, commits, and merges each group into the integration branch before the next branches
+  off its updated tip. Task-groups are dependent, so **pause after each group** for that gate. Only
+  once the **entire round** is complete does the integration branch itself get merged into `main`
+  (and pushed) — a single-plan round should produce exactly **one** merge-to-`main` event, not one
+  per task-group. (A single-task-group round can skip the integration branch and branch directly
+  off `main`, since there's nothing to isolate it from.)
 - **Independent task-groups may run in parallel git worktrees.** Check the plan's own stated
   dependencies first: if two or more groups don't depend on each other's output, implement each in
-  its own isolated worktree/branch off the same `main`, concurrently, instead of serializing them.
-  This does **not** relax the no-agent-commit rule — subagents in a worktree still only stage
-  changes. The user reviews and commits **from that worktree's own directory** (open it in GitHub
-  Desktop as its own local repo, or `cd` into it) and merges its branch into `main` from the primary
-  checkout before any *dependent* group's worktree branches off the updated `main`. Remove a
-  worktree (`git worktree remove`, or `ExitWorktree`) once its branch is merged.
+  its own isolated worktree/branch off the round's integration branch (see above), concurrently,
+  instead of serializing them. This does **not** relax the no-agent-commit rule — subagents in a
+  worktree still only stage changes. The user reviews and commits **from that worktree's own
+  directory** (open it in GitHub Desktop as its own local repo, or `cd` into it) and merges its
+  branch into the integration branch from the primary checkout before any *dependent* group's
+  worktree branches off the updated tip. Remove a worktree (`git worktree remove`, or
+  `ExitWorktree`) once its branch is merged.
+  - **`worktree.baseRef` must be `"head"` for this to work**, set in `.claude/settings.json`
+    (`{"worktree": {"baseRef": "head"}}`). The default (`"fresh"`) branches every new worktree from
+    **`origin/<default-branch>`**, not local `main` — so if the integration branch (or any
+    task-group merge into it) hasn't been *pushed*, new worktrees silently branch from a stale ref
+    and miss it. `"head"` branches from whatever the primary checkout currently has checked out
+    (the integration branch, kept up to date locally as groups merge in), so no push is needed
+    until the round's single final merge-to-`main`.
+  - Before creating the round's first worktree, **check out the integration branch** in the primary
+    checkout (`git checkout -b round4-<topic>`) so it — not `main` — is the local HEAD every
+    worktree branches from.
 - **Multi-step plans run via subagent-driven development** — a fresh implementer subagent per
   task-group, then a task review (spec + code quality) before handing to the user. Since the agent
   doesn't commit, per-group review runs on the **working-tree diff** (`git add -N` untracked, then
@@ -168,7 +186,10 @@ Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it
 
 **This repo:** [`.github/workflows/publish.yml`](.github/workflows/publish.yml) renders and deploys on
 every push to `main`; the render step gets the **`API_USGS_PAT`** repo secret so a freeze-miss CI
-re-execution stays authenticated. Live at <https://limnotech.github.io/Thornforest/>.
+re-execution stays authenticated. Live at <https://limnotech.github.io/Thornforest/>. **This is why
+multi-task-group rounds use a local integration branch** (see [Workflow](#workflow)) rather than
+merging each group straight into `main` — pushing `main` mid-round would deploy an incomplete round
+to the live site once per group instead of once per round.
 
 ## USGS WaterData APIs & discovery
 
