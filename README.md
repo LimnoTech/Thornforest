@@ -61,7 +61,7 @@ The work is organized as a series of Jupyter notebooks following a **hybrid** st
     measured — water quality (conductivity, temperature, dissolved oxygen, dissolved solids,
     chlorophyll, pH, nitrogen, phosphorus, turbidity) and water quantity (**discharge** and **water
     level**).
-  - **`4_epa_tceq_waterquality`** — discovers Texas Commission on Environmental Quality (TCEQ)
+  - **`4_tceq_waterquality`** — discovers Texas Commission on Environmental Quality (TCEQ)
     Surface Water Quality Monitoring stations within the watersheds via the EPA Water Quality
     Portal (TCEQ has no public API of its own) and fetches their results, classified into the same
     priority parameter groups.

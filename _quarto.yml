@@ -31,8 +31,8 @@ website:
         text: "2 · Climate"
       - href: notebooks/3_usgs_waterdata.html
         text: "3 · USGS Water Data"
-      - href: notebooks/4_epa_tceq_waterquality.html
-        text: "4 · EPA-TCEQ Water Quality"
+      - href: notebooks/4_tceq_waterquality.html
+        text: "4 · TCEQ Water Quality"
       - href: notebooks/5_twdb_groundwater.html
         text: "5 · TWDB Groundwater"
     right:
