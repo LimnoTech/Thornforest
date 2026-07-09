@@ -158,7 +158,8 @@ Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it
 
 - Helper inventory (`notebooks/_helpers/`, re-exported from the package root):
   - `session` — `find_repo_root`, `init_session`/`Session`.
-  - `io` — `save_dataframe`, `load_dataframe` (parquet-as-backup-cache read side), `save_datacube`.
+  - `io` — `save_dataframe`, `load_dataframe` (parquet-as-backup-cache read side — parquet itself is
+    git-ignored, only its CSV sibling is committed), `save_datacube`.
   - `viz` — `show`, `categorical_colors`/`CATEGORICAL`, `make_legend_clickable`.
   - `analysis` — `water_year`, `mk_sen_trend`, `coverage`, `trend_by_group`.
   - `usgs` — `classify_parameter`, `build_parameter_name_lookup`, `station_parameters`,
@@ -176,15 +177,22 @@ Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it
 
 ## Storage & data
 
-- **Tabular** (Geo)DataFrames → **GeoParquet + a CSV copy** via `save_dataframe` (parquet is compact and
-  typed — what notebooks read; the CSV, geometry as WKT, is for transparency).
+- **Tabular** (Geo)DataFrames → **GeoParquet + a CSV copy** via `save_dataframe` (parquet is compact,
+  typed, and what notebooks read back via `load_dataframe`; the CSV, geometry as WKT, is the
+  committed transparency copy).
 - **Datacubes** (anything read natively with xarray) → **zarr v3 with an explicit `ZstdCodec`**
   (Icechunk-ready) via `save_datacube`, **never parquet** (parquet flattens away dims/coords/CRS/chunking).
 - **Two cache layers, kept separate:** `cache/` (git-ignored) is the persistent **HTTP request
-  cache** (sqlite; HyRiver + `async_retriever`) that makes re-runs fast; `data/` (committed) holds the
-  curated **outputs** other notebooks read (written every run, not freshness-gated).
-- **Git-ignored:** `cache/`, `data_temp/` (scratch/raw downloads), `.pixi/`, `_site/`, `.quarto/`.
-  **Committed:** `data/` outputs, `pixi.lock`, and `_freeze/` (the render cache).
+  cache** (sqlite; HyRiver + `async_retriever`) that makes re-runs fast; `data/*.parquet` (also
+  git-ignored, but committed CSVs sit right next to it) is a second, **backup** cache — read by
+  `load_dataframe` when a source library bypasses `cache/` entirely (see below). Neither layer is
+  committed; only the CSV output derived from them is.
+- **Git-ignored:** `cache/`, `data_temp/` (scratch/raw downloads), `.pixi/`, `_site/`, `.quarto/`,
+  and (as of this round) all `data/` parquet files (pattern `` data/**/*.parquet `` in
+  `.gitignore`) — parquet is a local cache, not a deliverable.
+  **Committed:** `data/*.csv` outputs, the derived climate zarr grids, `pixi.lock`, and `_freeze/`
+  (the render cache). A fresh clone has no parquet until a notebook runs once to (re)populate the
+  cache — CSVs are already there as the committed record.
 - **`data_temp/gwdb_download.zip`** (git-ignored scratch) caches TWDB's nightly full-state bulk
   file for a week — much larger than the HTTP request cache, so it's kept separate rather than
   routed through `cache/`.
