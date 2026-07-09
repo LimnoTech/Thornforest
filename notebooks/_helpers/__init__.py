@@ -25,6 +25,7 @@ from .usgs import (
     tidy_field,
     tidy_samples,
 )
+from .tceq import TCEQ_COLUMNS, fetch_wqp_results, tidy_wqp_results
 from .viz import (
     CATEGORICAL,
     categorical_colors,
@@ -41,5 +42,6 @@ __all__ = [
     "water_year", "mk_sen_trend", "coverage", "trend_by_group",
     "classify_parameter", "build_parameter_name_lookup", "station_parameters",
     "fetch_daily", "fetch_samples", "fetch_field", "tidy_daily", "tidy_samples", "tidy_field",
+    "TCEQ_COLUMNS", "fetch_wqp_results", "tidy_wqp_results",
     "conus404_monthly_grid", "zonal_by_huc8", "pixel_trend",
 ]
