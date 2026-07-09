@@ -94,14 +94,22 @@ def fetch_gwdb_members(
 ) -> pd.DataFrame:
     """Stream-read and filter each pipe-delimited member in the GWDB bulk zip to `well_ids`,
     chunked to bound memory (WaterQualityMajor.txt alone is ~1 GB uncompressed). Never extracts
-    the full archive or loads a whole member into memory at once."""
+    the full archive or loads a whole member into memory at once.
+
+    `encoding="latin-1"` (not the pandas default utf-8): verified live that
+    WaterLevelsMajor.txt contains non-UTF-8 bytes (e.g. a Windows-1252 ellipsis, 0x85, in a
+    free-text Remarks field) that raise UnicodeDecodeError under utf-8. latin-1 maps every byte
+    0-255 to a character, so it never fails to decode; the only fields we keep (`usecols`) are
+    numeric/ID columns unaffected by the encoding choice."""
     import zipfile
 
     frames = []
     with zipfile.ZipFile(zip_path) as z:
         for member in members:
             with z.open(member) as f:
-                for chunk in pd.read_csv(f, sep="|", usecols=usecols, dtype=str, chunksize=200_000):
+                for chunk in pd.read_csv(
+                    f, sep="|", usecols=usecols, dtype=str, chunksize=200_000, encoding="latin-1"
+                ):
                     matched = chunk[chunk["StateWellNumber"].isin(well_ids)]
                     if len(matched):
                         frames.append(matched)
