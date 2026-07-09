@@ -43,7 +43,7 @@ def tidy_wqp_results(
         return pd.DataFrame(columns=TCEQ_COLUMNS)
     renamed = raw.rename(columns={
         "MonitoringLocationIdentifier": "monitoring_location_id",
-        "ActivityStartDateTime": "datetime",
+        "ActivityStartDate": "datetime",
         "CharacteristicName": "characteristic",
         "USGSPCode": "parameter_code",
         "ResultMeasureValue": "value",
