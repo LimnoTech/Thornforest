@@ -9,18 +9,27 @@ platforms = ["osx-arm64", "win-64", "linux-64"]
 python = "3.13.*"
 
 # Data processing
-geopandas = "*"
+cf-xarray = "*"
+cftime = "*"
+cfunits = "*"
+openpyxl = "*"
+pandas = "*"
 pyarrow = "*"
-rioxarray = "*"
+pyyaml = "*"
 xarray = "*"
-xvec = "*"
 zarr = ">=3"
 
-# Other Geospatial
+# Geospatial
 gdal = "*"
+geopandas = "*"
 libgdal-arrow-parquet = "*"
 libgdal-xls = "*"
+py7zr = "*"
+pyogrio = "*"
 python-libarchive-c = "*"
+rasterio = "*"
+rioxarray = "*"
+xvec = "*"
 
 # Data analysis
 exactextract = ">=0.3.0,<0.4"
@@ -47,19 +56,25 @@ hvplot = "*"
 geoviews = "*"
 
 # Interactivity via Jupyter Notebooks
+ipywidgets = "*"
+ipywidgets_bokeh = "*"
 jupyter_bokeh = "*"
 jupyterlab = "*"
+jupyterlab-lsp = "*"
 jupytext = "*"
+pyviz_comms = "*"
 
-# Testing & linting
+# Development & Testing
 pytest = "*"
+pytest-cov = "*"
+pyrefly = "*"
 ruff = "*"
 
 # Documentation
 quarto = ">=1.9.38,<2"
 
 [tool.pixi.pypi-dependencies]
-# Put pip-only requirements here if needed
+# Put pip/uv commands or dependencies only available in PyPI here
 
 [tool.pixi.tasks]
 # Render the Quarto website into _site/ (executes notebooks as needed, refreshes _freeze/).
