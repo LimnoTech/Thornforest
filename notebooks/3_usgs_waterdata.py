@@ -54,6 +54,7 @@ from _helpers import (
     tidy_samples,
     tidy_field,
     coverage,
+    trend_by_group,
 )
 
 gv.extension("bokeh")
@@ -298,8 +299,8 @@ stations_param_map
 # ## Step 6 — Data availability & a sample series
 #
 # Confirm the fetch: per data type, how many records and what date span each station × priority
-# group has, a quick availability heatmap, and one illustrative series. (Trend and pre/post
-# analyses live in the later display notebooks.)
+# group has, a quick availability heatmap, and one illustrative series. (Pre/post-restoration
+# comparisons live in a later shared display notebook; trends are Step 7, below.)
 
 # %%
 show(coverage(daily, "date"))
@@ -334,3 +335,45 @@ else:
         x="date", y="value", title=f"Daily mean discharge — {gauge}", ylabel="ft³/s", xlabel="",
     )
 sample_series
+
+# %% [markdown]
+# ## Step 7 — Trends (Mann–Kendall + Sen's slope)
+#
+# For each station × priority-parameter series we run the **Mann–Kendall** test (is there a
+# monotonic trend?) and estimate **Sen's slope** (the robust per-year rate of change), same
+# granularity as the coverage table above. Discharge is aggregated to an **annual mean** (a rate);
+# water-quality samples and field measurements use the **annual median** (robust to non-detects and
+# uneven sampling). Trends with *p* < 0.05 are flagged significant.
+
+# %%
+daily_trends = trend_by_group(daily, ["monitoring_location_id", "priority_group"], "date", "value", agg="mean")
+samples_trends = trend_by_group(samples, ["monitoring_location_id", "priority_group"], "datetime", "value", agg="median")
+field_trends = trend_by_group(field, ["monitoring_location_id", "priority_group"], "datetime", "value", agg="median")
+
+usgs_trends = pd.concat(
+    [
+        daily_trends.assign(data_type="daily"),
+        samples_trends.assign(data_type="samples"),
+        field_trends.assign(data_type="field"),
+    ],
+    ignore_index=True,
+)
+usgs_trends["significant"] = usgs_trends["p"] < 0.05
+save_dataframe(usgs_trends, S.data_dir / "usgs_waterdata" / "usgs_trends.parquet")
+show(usgs_trends.round({"p": 4, "slope": 4}))
+
+# %% [markdown]
+# ### Trend rates (Sen's slope) by priority parameter
+#
+# Each bar is one station × priority-parameter trend; hover for the Mann–Kendall direction and
+# *p*-value.
+
+# %%
+trend_chart = usgs_trends.dropna(subset=["slope"]).hvplot.bar(
+    x="priority_group", y="slope", by="data_type",
+    hover_cols=["monitoring_location_id", "trend", "p", "significant"],
+    frame_height=360, rot=40,
+    ylabel="Sen's slope (per year)", xlabel="",
+    title="USGS station trend rates by priority parameter (Sen's slope)", legend="top_right",
+).opts(active_tools=[])
+trend_chart
