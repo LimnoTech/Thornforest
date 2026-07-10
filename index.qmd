@@ -62,6 +62,17 @@ water-level and water-quality measurements from TWDB's nightly bulk file.
 
 :::
 
+## Downloads
+
+Every saved table is also compiled into a single Excel workbook per source — one sheet per
+table, with the header row and first column frozen and autofilter enabled on the headers:
+
+- [Hydrography](data/hydrography/hydrography.xlsx)
+- [Climate](data/climate/climate.xlsx)
+- [USGS WaterData](data/usgs_waterdata/usgs_waterdata.xlsx)
+- [TCEQ Water Quality](data/tceq_waterquality/tceq_waterquality.xlsx)
+- [TWDB Groundwater](data/twdb_groundwater/twdb_groundwater.xlsx)
+
 ---
 
 Built with [Quarto](https://quarto.org); data from the USGS
