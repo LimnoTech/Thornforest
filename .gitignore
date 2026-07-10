@@ -235,6 +235,9 @@ __marimo__/
 # committed. The CSV written alongside each parquet by save_dataframe IS committed.
 /data/**/*.parquet
 
+# Excel lock/temp files, created automatically while a workbook is open in Excel.
+/data/**/~$*.xlsx
+
 # Quarto website (rendered output + scratch). NOTE: _freeze/ IS committed — it is the CI render cache.
 /_site/
 /.quarto/
