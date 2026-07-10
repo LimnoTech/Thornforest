@@ -89,6 +89,41 @@ def test_save_workbook_strips_timezone_from_pyarrow_backed_datetime_columns(tmp_
     assert rows[2][1].isoformat() == "2024-01-02T11:00:00"
 
 
+def test_save_workbook_bolds_and_wraps_header_row(tmp_path):
+    import openpyxl
+
+    sheets = {"data": pd.DataFrame({"a": [1, 2], "b": ["x", "y"]})}
+    out = tmp_path / "book.xlsx"
+    save_workbook(sheets, out)
+
+    ws = openpyxl.load_workbook(out)["data"]
+    for cell in (ws["A1"], ws["B1"]):
+        assert cell.font.bold is True
+        assert cell.alignment.wrap_text is True
+    # data rows are untouched
+    assert ws["A2"].font.bold is not True
+    assert ws["A2"].alignment.wrap_text is not True
+
+
+def test_save_workbook_autofits_text_column_width_capped_at_20(tmp_path):
+    import openpyxl
+
+    sheets = {
+        "data": pd.DataFrame({
+            "short_text": ["ab", "cde"],  # longest value shorter than the header itself
+            "long_text": ["x" * 30, "y" * 5],  # longest value exceeds the 20-char cap
+            "num": [1, 2],  # not a text column -- width must be left alone
+        })
+    }
+    out = tmp_path / "book.xlsx"
+    save_workbook(sheets, out)
+
+    ws = openpyxl.load_workbook(out)["data"]
+    assert ws.column_dimensions["A"].width == len("short_text")  # header is the longest string
+    assert ws.column_dimensions["B"].width == 20  # capped, not 30
+    assert ws.column_dimensions["C"].width == 13  # numeric column left at openpyxl's default
+
+
 def test_save_workbook_truncates_and_deduplicates_long_sheet_names(tmp_path):
     import openpyxl
 

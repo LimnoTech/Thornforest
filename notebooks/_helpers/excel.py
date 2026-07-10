@@ -24,6 +24,13 @@ def _is_tz_aware(dtype: object) -> bool:
     return pyarrow_dtype is not None and getattr(pyarrow_dtype, "tz", None) is not None
 
 
+def _text_column_width(series: "pd.Series", header: str, max_width: int = 20) -> int:
+    """Longest of the header and the column's string values, capped at max_width."""
+    values = series.dropna().astype(str)
+    longest = max([len(header), *(len(v) for v in values)], default=len(header))
+    return min(longest, max_width)
+
+
 def _unique_sheet_name(name: str, used: set[str]) -> str:
     """Excel sheet names must be <=31 characters and unique within the workbook. Truncate to 31
     characters, then shrink further and append a numeric suffix on collision."""
@@ -43,10 +50,13 @@ def save_workbook(sheets: dict[str, "pd.DataFrame"], xlsx_path: Path | str) -> N
     dtypes survive intact. GeoDataFrame geometry columns are converted to WKT text first (Excel
     has no native geometry type), matching save_dataframe's CSV output. Timezone-aware datetime
     columns have their timezone stripped (Excel has no tz-aware datetime type; the wall-clock
-    value is preserved, only the offset is dropped). Side-effect helper; prints a confirmation and
-    returns nothing."""
+    value is preserved, only the offset is dropped). The header row is bold with wrapped text;
+    text (string-dtype) columns are width-autofit to their longest value, capped at 20 characters.
+    Side-effect helper; prints a confirmation and returns nothing."""
     import geopandas as gpd
     import pandas as pd
+    from openpyxl.styles import Alignment, Font
+    from openpyxl.utils import get_column_letter
 
     xlsx_path = Path(xlsx_path)
     xlsx_path.parent.mkdir(parents=True, exist_ok=True)
@@ -73,6 +83,16 @@ def save_workbook(sheets: dict[str, "pd.DataFrame"], xlsx_path: Path | str) -> N
             worksheet = writer.sheets[sheet_name]
             worksheet.freeze_panes = "B2"
             worksheet.auto_filter.ref = worksheet.dimensions
+
+            for col_idx, column in enumerate(df.columns, start=1):
+                header_cell = worksheet.cell(row=1, column=col_idx)
+                header_cell.font = Font(bold=True)
+                header_cell.alignment = Alignment(wrap_text=True)
+                if pd.api.types.is_string_dtype(df[column].dtype):
+                    letter = get_column_letter(col_idx)
+                    worksheet.column_dimensions[letter].width = _text_column_width(
+                        df[column], column
+                    )
 
     try:
         shown = xlsx_path.relative_to(find_repo_root())
