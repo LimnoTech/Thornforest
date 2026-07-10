@@ -105,8 +105,21 @@ Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it
 - **Verification:** run `pixi run test` (pytest, `notebooks/tests/`) for the `_helpers` package,
   **plus** the deliverable is executed notebooks + the rendered site — execute notebooks headlessly
   and `pixi run render` + grep.
+  - **A dispatched subagent told to run `nbconvert --execute` in the foreground reliably backgrounds
+    it anyway** (or otherwise ends its turn before the process finishes) once a run takes more than
+    a few minutes — seen repeatedly across rounds. Don't re-dispatch hoping it waits this time:
+    check the orphaned process directly (`ps aux | grep nbconvert`), and poll completion via the
+    notebook's own `execution_count`/cell outputs (nbconvert's stdout isn't streamed live — it only
+    lands in the `.ipynb` at the end). **Never pipe the command through `tail`** when checking
+    success — `cmd | tail -N`'s exit code reflects `tail`, not `nbconvert`, so a real crash can look
+    clean; redirect to a file and `echo "EXIT=$?"` on the next line into that same file instead.
 - **Explore new data sources in a `sandbox/` notebook first**, then port the proven approach into the
   numbered notebooks. (`sandbox/` is excluded from the site render.)
+- **Writing PR/issue descriptions:** GitHub renders a single newline inside a PR/issue-body
+  paragraph as a literal line break (unlike CommonMark, which is what this repo's own `README.md`
+  follows when rendered by GitHub's file browser). Write each paragraph and bullet as one
+  continuous line in the source, however long — don't manually soft-wrap prose for local
+  readability, or it will render broken mid-sentence once posted.
 
 ## Notebooks & helpers
 
