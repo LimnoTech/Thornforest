@@ -69,6 +69,10 @@ The work is organized as a series of Jupyter notebooks following a **hybrid** st
     wells within the watersheds via TWDB's ArcGIS FeatureServer, then fetches water-level and
     water-quality measurements from TWDB's nightly bulk file (the FeatureServer itself carries only
     well inventory, not time series).
+  - Each source notebook's final step also compiles its saved tables into a single downloadable
+    **Excel workbook** (`data/<source>/<source>.xlsx`, one sheet per table, frozen header row +
+    first column, autofilter on the headers) — linked directly from the [home page's Downloads
+    section](https://limnotech.github.io/Thornforest/#downloads).
 - **Display / analyze notebooks (shared)** — read the saved data and work across sources by data type or
   watershed (maps, trend analyses, pre/post-restoration comparisons). A structured deliverable (Excel or
   the format American Forests prefers) is exported from the harmonized data at the end.

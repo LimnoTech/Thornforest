@@ -9,6 +9,10 @@ project:
   render:
     - index.qmd
     - notebooks/*.py
+  # Quarto does not copy data/ into _site/ by default — the committed Excel workbooks need an
+  # explicit resources: entry so the home page's download links resolve on the published site.
+  resources:
+    - "data/**/*.xlsx"
 
 website:
   title: "Thornforest Hydrology"

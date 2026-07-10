@@ -171,6 +171,8 @@ Define any new reusable task under `[tool.pixi.tasks]` in `pyproject.toml` so it
     `tidy_gwdb_water_levels`/`tidy_gwdb_water_quality`.
   - `climate` — `conus404_monthly_grid`, `zonal_by_huc8`, `pixel_trend`, plus the `CONUS404_VARIABLES`
     constant from `config`.
+  - `excel` — `save_workbook` (compiles a notebook's saved tables into one downloadable .xlsx,
+    one sheet each, frozen panes + autofilter).
   - Candidate to grow into a shareable cross-project package (`config.py` is the only
     Thornforest-specific module).
 - Per-notebook responsibilities and methods are described in [README § Approach](README.md#approach).

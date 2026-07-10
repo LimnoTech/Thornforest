@@ -38,6 +38,7 @@ from _helpers import (
     init_session,
     save_dataframe,
     load_dataframe,
+    save_workbook,
     show,
     categorical_colors,
     make_legend_clickable,
@@ -222,6 +223,23 @@ trend_chart = twdb_trends.dropna(subset=["slope"]).hvplot.bar(
     title="TWDB well trend rates by priority parameter (Sen's slope)", legend="top_right",
 ).opts(active_tools=[])
 trend_chart
+
+# %% [markdown]
+# ## Step 9 — Export to Excel
+#
+# Compiles all four saved tables into a single downloadable workbook — one sheet each, frozen
+# header row + first column, with autofilter enabled on the header.
+
+# %%
+save_workbook(
+    {
+        "twdb_wells": wells_in_area,
+        "twdb_water_levels": twdb_water_levels,
+        "twdb_water_quality": twdb_water_quality,
+        "twdb_trends": twdb_trends,
+    },
+    S.data_dir / "twdb_groundwater" / "twdb_groundwater.xlsx",
+)
 
 # %% [markdown]
 # ## What's next
