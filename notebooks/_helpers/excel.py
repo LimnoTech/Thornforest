@@ -12,6 +12,18 @@ if TYPE_CHECKING:
     import pandas as pd
 
 
+def _is_tz_aware(dtype: object) -> bool:
+    """True for both pandas' native tz-aware dtype and pyarrow-backed timestamp-with-tz dtype
+    (e.g. load_dataframe's dtype_backend="pyarrow" reads produce the latter, which
+    select_dtypes(include=["datetimetz"]) does not recognize)."""
+    import pandas as pd
+
+    if isinstance(dtype, pd.DatetimeTZDtype):
+        return True
+    pyarrow_dtype = getattr(dtype, "pyarrow_dtype", None)
+    return pyarrow_dtype is not None and getattr(pyarrow_dtype, "tz", None) is not None
+
+
 def _unique_sheet_name(name: str, used: set[str]) -> str:
     """Excel sheet names must be <=31 characters and unique within the workbook. Truncate to 31
     characters, then shrink further and append a numeric suffix on collision."""
@@ -29,8 +41,10 @@ def save_workbook(sheets: dict[str, "pd.DataFrame"], xlsx_path: Path | str) -> N
     preserved), each with the first row and first column frozen and autofilter enabled on the
     header row. Written directly from the in-memory frames (not re-read from CSV) so numeric/date
     dtypes survive intact. GeoDataFrame geometry columns are converted to WKT text first (Excel
-    has no native geometry type), matching save_dataframe's CSV output. Side-effect helper; prints
-    a confirmation and returns nothing."""
+    has no native geometry type), matching save_dataframe's CSV output. Timezone-aware datetime
+    columns have their timezone stripped (Excel has no tz-aware datetime type; the wall-clock
+    value is preserved, only the offset is dropped). Side-effect helper; prints a confirmation and
+    returns nothing."""
     import geopandas as gpd
     import pandas as pd
 
@@ -45,6 +59,12 @@ def save_workbook(sheets: dict[str, "pd.DataFrame"], xlsx_path: Path | str) -> N
                 wkt = df.geometry.to_wkt()
                 df = pd.DataFrame(df)  # drop GeoDataFrame-ness so to_excel treats it plainly
                 df[geometry_col] = wkt
+
+            tz_aware_columns = [c for c in df.columns if _is_tz_aware(df[c].dtype)]
+            if tz_aware_columns:
+                df = df.copy()
+                for col in tz_aware_columns:
+                    df[col] = pd.to_datetime(df[col]).dt.tz_localize(None)
 
             sheet_name = _unique_sheet_name(name, used_names)
             used_names.add(sheet_name)
