@@ -51,6 +51,44 @@ def test_save_workbook_converts_geodataframe_geometry_to_wkt(tmp_path):
     assert rows[2] == ("b", "POINT (1 1)")
 
 
+def test_save_workbook_strips_timezone_from_datetime_columns(tmp_path):
+    import openpyxl
+
+    sheets = {
+        "data": pd.DataFrame({
+            "id": ["a", "b"],
+            "datetime": pd.to_datetime(["2024-01-01 10:00", "2024-01-02 11:00"]).tz_localize("UTC"),
+        })
+    }
+    out = tmp_path / "book.xlsx"
+    save_workbook(sheets, out)  # must not raise ValueError: Excel does not support tz-aware datetimes
+
+    ws = openpyxl.load_workbook(out)["data"]
+    rows = list(ws.iter_rows(values_only=True))
+    assert rows[0] == ("id", "datetime")
+    assert rows[1][1].isoformat() == "2024-01-01T10:00:00"
+    assert rows[2][1].isoformat() == "2024-01-02T11:00:00"
+
+
+def test_save_workbook_strips_timezone_from_pyarrow_backed_datetime_columns(tmp_path):
+    import openpyxl
+
+    # load_dataframe (dtype_backend="pyarrow") produces this dtype for tz-aware timestamps —
+    # it is NOT a pandas.DatetimeTZDtype, so select_dtypes(include=["datetimetz"]) misses it.
+    tz_aware_pyarrow = pd.array(
+        ["2024-01-01T10:00:00", "2024-01-02T11:00:00"], dtype="timestamp[us, tz=UTC][pyarrow]"
+    )
+    sheets = {"data": pd.DataFrame({"id": ["a", "b"], "datetime": tz_aware_pyarrow})}
+    out = tmp_path / "book.xlsx"
+    save_workbook(sheets, out)  # must not raise ValueError: Excel does not support tz-aware datetimes
+
+    ws = openpyxl.load_workbook(out)["data"]
+    rows = list(ws.iter_rows(values_only=True))
+    assert rows[0] == ("id", "datetime")
+    assert rows[1][1].isoformat() == "2024-01-01T10:00:00"
+    assert rows[2][1].isoformat() == "2024-01-02T11:00:00"
+
+
 def test_save_workbook_truncates_and_deduplicates_long_sheet_names(tmp_path):
     import openpyxl
 

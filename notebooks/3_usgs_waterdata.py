@@ -40,6 +40,7 @@ from _helpers import (
     init_session,
     save_dataframe,
     load_dataframe,
+    save_workbook,
     show,
     categorical_colors,
     make_legend_clickable,
@@ -409,3 +410,31 @@ trend_chart = usgs_trends.dropna(subset=["slope"]).hvplot.bar(
     title="USGS station trend rates by priority parameter (Sen's slope)", legend="top_right",
 ).opts(active_tools=[])
 trend_chart
+
+# %% [markdown]
+# ## Step 8 — Export to Excel
+#
+# Compiles all six saved tables into a single downloadable workbook — one sheet each, frozen
+# header row + first column, with autofilter enabled on the header. `usgs_monitoring_locations`
+# (the pre-classification station table) is reconstructed by dropping the columns Step 3 added,
+# since by this point only the enriched station table still exists in memory — this works the
+# same whether the station data came from a fresh fetch or the cache above. `save_workbook`
+# strips timezone info from any tz-aware datetime column (e.g. `samples`/`field`'s UTC
+# `datetime`, as returned by the USGS Water Data API) before writing, since Excel has no
+# timezone-aware datetime type — the saved parquet/CSV keep the original tz-aware values.
+
+# %%
+station_enrichment_columns = [*DATA_TYPES, *PRIORITY_NAMES, "parameters"]
+stations_basic = stations_in_area.drop(columns=station_enrichment_columns)
+
+save_workbook(
+    {
+        "usgs_monitoring_locations": stations_basic,
+        "usgs_monitoring_locations_parameters": stations_in_area,
+        "usgs_daily_values": daily,
+        "usgs_field_measurements": field,
+        "usgs_samples": samples,
+        "usgs_trends": usgs_trends,
+    },
+    S.data_dir / "usgs_waterdata" / "usgs_waterdata.xlsx",
+)
