@@ -37,7 +37,7 @@ from pygeohydro import WBD
 import geoviews as gv
 import geoviews.tile_sources as gvts
 
-from _helpers import init_session, save_dataframe, show, categorical_colors
+from _helpers import init_session, save_dataframe, save_workbook, show, categorical_colors
 
 gv.extension("bokeh")
 S = init_session()
@@ -110,6 +110,15 @@ watersheds_map = watersheds_map.opts(
     legend_position="top_left",
 )
 watersheds_map
+
+# %% [markdown]
+# ## Step 5 — Export to Excel
+#
+# Compiles the one saved table into a single downloadable workbook — one sheet, frozen header
+# row + first column, with autofilter enabled on the header.
+
+# %%
+save_workbook({"huc8_watersheds": watersheds_gdf}, S.data_dir / "hydrography" / "hydrography.xlsx")
 
 # %% [markdown]
 # ## What's next
