@@ -57,6 +57,7 @@ from _helpers import (
     init_session,
     show,
     save_datacube,
+    save_workbook,
     categorical_colors,
     make_legend_clickable,
     conus404_monthly_grid,
@@ -388,6 +389,18 @@ trend_fig = trends.hvplot.bar(
     title="Long-term trend rates by watershed (Sen's slope)", legend="top_right",
 ).opts(active_tools=[])
 trend_fig
+
+# %% [markdown]
+# ## Step 9 — Export to Excel
+#
+# Compiles the two saved tables into a single downloadable workbook — one sheet each, frozen
+# header row + first column, with autofilter enabled on the header.
+
+# %%
+save_workbook(
+    {"conus404_wateryear_by_huc8": wy, "conus404_trends_by_huc8": trends},
+    S.data_dir / "climate" / "climate.xlsx",
+)
 
 # %% [markdown]
 # ## What's next
