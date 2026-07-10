@@ -40,6 +40,7 @@ from _helpers import (
     init_session,
     save_dataframe,
     load_dataframe,
+    save_workbook,
     show,
     categorical_colors,
     make_legend_clickable,
@@ -236,6 +237,22 @@ trend_chart = tceq_trends.dropna(subset=["slope"]).hvplot.bar(
     title="TCEQ station trend rates by priority parameter (Sen's slope)",
 ).opts(active_tools=[])
 trend_chart
+
+# %% [markdown]
+# ## Step 8 — Export to Excel
+#
+# Compiles all three saved tables into a single downloadable workbook — one sheet each, frozen
+# header row + first column, with autofilter enabled on the header.
+
+# %%
+save_workbook(
+    {
+        "tceq_monitoring_locations": stations_in_area,
+        "tceq_results": tceq_results,
+        "tceq_trends": tceq_trends,
+    },
+    S.data_dir / "tceq_waterquality" / "tceq_waterquality.xlsx",
+)
 
 # %% [markdown]
 # ## What's next
