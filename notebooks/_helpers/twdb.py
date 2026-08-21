@@ -7,12 +7,16 @@ codes, so classification reuses classify_parameter(parameter_code=...) unchanged
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pandas as pd
 
 from .analysis import _warn_missing_huc8
 from .config import PRIORITY_GROUPS
 from .usgs import classify_parameter
+
+if TYPE_CHECKING:
+    import geopandas as gpd
 
 GWDB_FEATURESERVER_URL = (
     "https://services.twdb.texas.gov/arcgis/rest/services/Public/"
@@ -43,7 +47,7 @@ GWDB_COLUMNS_QUALITY = ["monitoring_location_id", "datetime", "parameter_code", 
                        "value", "unit", "priority_group", "huc8"]
 
 
-def fetch_gwdb_wells(bbox: list[float]) -> "gpd.GeoDataFrame":
+def fetch_gwdb_wells(bbox: list[float]) -> gpd.GeoDataFrame:
     """Query the TWDB GWDB well-inventory ArcGIS FeatureServer within a bounding box, paginating
     past the server's 1,000-record page limit. Docs:
     https://www.twdb.texas.gov/mapping/data-services.asp"""

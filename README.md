@@ -106,7 +106,7 @@ We recommend using [pixi](https://pixi.prefix.dev/latest/), the next-generation 
 
 If you are new to pixi but familiar with conda, this [Switching from Conda](https://pixi.prefix.dev/latest/switching_from/conda/) documentation succinctly compares similarities and differences.
 
-For required dependencies see [pixi.toml](pixi.toml).
+For required dependencies see [pyproject.toml](pyproject.toml).
 
 ### 1. Install Pixi
 
@@ -122,11 +122,21 @@ Place your copy of these repos in any convenient location on your computer.
 
 ### 3. Create a Workspace and Python Environment
 
-Create a project-specific Pixi workspace and Python enviornment(s) from the `pixi.toml` manifest file.
+Create a project-specific Pixi workspace and Python environment(s) from the `pyproject.toml` manifest file.
 
 ```bash
 pixi install              # create/refresh the env from pixi.lock
 pixi run jupyter lab      # work on notebooks interactively
+```
+
+Once installed, these tasks are available:
+
+```bash
+pixi run render     # build the website into _site/ (executes notebooks, refreshes _freeze/)
+pixi run preview    # live-reload preview server
+pixi run test       # run the unit test suite (notebooks/tests/)
+pixi run lint       # ruff check the notebooks/_helpers package and its tests
+pixi run format     # ruff format the same
 ```
 
 ## USGS API key (optional)
