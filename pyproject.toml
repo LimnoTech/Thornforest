@@ -82,6 +82,11 @@ render = "quarto render"
 preview = "quarto preview"
 # Run the unit test suite.
 test = "pytest"
+# Lint and format the helper package and its tests. The numbered notebooks and
+# notebooks/sandbox/ are deliberately NOT linted: they are jupytext scripts, where
+# top-level statements, out-of-order imports, and display-only expressions are normal.
+lint = "ruff check notebooks/_helpers notebooks/tests"
+format = "ruff format notebooks/_helpers notebooks/tests"
 
 [tool.pytest.ini_options]
 testpaths = ["notebooks/tests"]

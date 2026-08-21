@@ -10,13 +10,46 @@ import pandas as pd
 from .analysis import _warn_missing_huc8
 from .config import PRIORITY_GROUPS
 
-DAILY_COLUMNS = ["monitoring_location_id", "date", "parameter_code", "parameter_name",
-                 "statistic", "value", "unit", "approval_status", "qualifier", "priority_group", "huc8"]
-SAMPLES_COLUMNS = ["monitoring_location_id", "datetime", "characteristic", "parameter_code", "value",
-                   "unit", "fraction", "detection_condition", "qualifier", "characteristic_group",
-                   "lab_name", "priority_group", "huc8"]
-FIELD_COLUMNS = ["monitoring_location_id", "datetime", "parameter_code", "parameter_name", "value",
-                 "unit", "qualifier", "approval_status", "priority_group", "huc8"]
+DAILY_COLUMNS = [
+    "monitoring_location_id",
+    "date",
+    "parameter_code",
+    "parameter_name",
+    "statistic",
+    "value",
+    "unit",
+    "approval_status",
+    "qualifier",
+    "priority_group",
+    "huc8",
+]
+SAMPLES_COLUMNS = [
+    "monitoring_location_id",
+    "datetime",
+    "characteristic",
+    "parameter_code",
+    "value",
+    "unit",
+    "fraction",
+    "detection_condition",
+    "qualifier",
+    "characteristic_group",
+    "lab_name",
+    "priority_group",
+    "huc8",
+]
+FIELD_COLUMNS = [
+    "monitoring_location_id",
+    "datetime",
+    "parameter_code",
+    "parameter_name",
+    "value",
+    "unit",
+    "qualifier",
+    "approval_status",
+    "priority_group",
+    "huc8",
+]
 
 
 def classify_parameter(
@@ -98,7 +131,9 @@ def fetch_daily(station_ids: list[str], parameter_codes: list[str]) -> pd.DataFr
         print("no daily stations — returning empty frame")
         return pd.DataFrame()
     raw, _ = waterdata.get_daily(
-        monitoring_location_id=list(station_ids), parameter_code=list(parameter_codes), skip_geometry=True
+        monitoring_location_id=list(station_ids),
+        parameter_code=list(parameter_codes),
+        skip_geometry=True,
     )
     return raw
 
@@ -111,7 +146,9 @@ def fetch_field(station_ids: list[str], parameter_codes: list[str]) -> pd.DataFr
         print("no field-measurement stations — returning empty frame")
         return pd.DataFrame()
     raw, _ = waterdata.get_field_measurements(
-        monitoring_location_id=list(station_ids), parameter_code=list(parameter_codes), skip_geometry=True
+        monitoring_location_id=list(station_ids),
+        parameter_code=list(parameter_codes),
+        skip_geometry=True,
     )
     return raw
 
@@ -142,16 +179,23 @@ def tidy_daily(
     """Rename → tag priority_group/parameter_name/huc8 → select/sort. Pure; no network."""
     if raw.empty:
         return pd.DataFrame(columns=DAILY_COLUMNS)
-    renamed = raw.rename(columns={"time": "date", "statistic_id": "statistic", "unit_of_measure": "unit"})
-    priority = renamed["parameter_code"].map(lambda c: classify_parameter(parameter_code=c, groups=groups))
+    renamed = raw.rename(
+        columns={"time": "date", "statistic_id": "statistic", "unit_of_measure": "unit"}
+    )
+    priority = renamed["parameter_code"].map(
+        lambda c: classify_parameter(parameter_code=c, groups=groups)
+    )
     keep = priority.notna()
     tidy = renamed.loc[keep].assign(
         parameter_name=lambda d: d["parameter_code"].map(lambda c: parameter_name(c, name_lookup)),
         priority_group=priority[keep].to_numpy(),
         huc8=lambda d: d["monitoring_location_id"].map(huc8_by_station),
     )
-    tidy = tidy[DAILY_COLUMNS].sort_values(
-        ["monitoring_location_id", "parameter_code", "date"]).reset_index(drop=True)
+    tidy = (
+        tidy[DAILY_COLUMNS]
+        .sort_values(["monitoring_location_id", "parameter_code", "date"])
+        .reset_index(drop=True)
+    )
     return _warn_missing_huc8(tidy, "daily")
 
 
@@ -165,15 +209,20 @@ def tidy_field(
     if raw.empty:
         return pd.DataFrame(columns=FIELD_COLUMNS)
     renamed = raw.rename(columns={"time": "datetime", "unit_of_measure": "unit"})
-    priority = renamed["parameter_code"].map(lambda c: classify_parameter(parameter_code=c, groups=groups))
+    priority = renamed["parameter_code"].map(
+        lambda c: classify_parameter(parameter_code=c, groups=groups)
+    )
     keep = priority.notna()
     tidy = renamed.loc[keep].assign(
         parameter_name=lambda d: d["parameter_code"].map(lambda c: parameter_name(c, name_lookup)),
         priority_group=priority[keep].to_numpy(),
         huc8=lambda d: d["monitoring_location_id"].map(huc8_by_station),
     )
-    tidy = tidy[FIELD_COLUMNS].sort_values(
-        ["monitoring_location_id", "parameter_code", "datetime"]).reset_index(drop=True)
+    tidy = (
+        tidy[FIELD_COLUMNS]
+        .sort_values(["monitoring_location_id", "parameter_code", "datetime"])
+        .reset_index(drop=True)
+    )
     return _warn_missing_huc8(tidy, "field")
 
 
@@ -192,19 +241,32 @@ def tidy_samples(
     fix) rather than downstream where the warning would otherwise fire. Pure; no network."""
     if raw.empty:
         return pd.DataFrame(columns=SAMPLES_COLUMNS)
-    renamed = raw.rename(columns={
-        "Location_Identifier": "monitoring_location_id", "Activity_StartDateTime": "datetime",
-        "Result_Characteristic": "characteristic", "USGSpcode": "parameter_code",
-        "Result_Measure": "value", "Result_MeasureUnit": "unit", "Result_SampleFraction": "fraction",
-        "Result_ResultDetectionCondition": "detection_condition", "Result_MeasureQualifierCode": "qualifier",
-        "Result_CharacteristicGroup": "characteristic_group", "LabInfo_Name": "lab_name",
-    }).copy()
-    priority = renamed["characteristic"].map(lambda c: classify_parameter(characteristic=c, groups=groups))
+    renamed = raw.rename(
+        columns={
+            "Location_Identifier": "monitoring_location_id",
+            "Activity_StartDateTime": "datetime",
+            "Result_Characteristic": "characteristic",
+            "USGSpcode": "parameter_code",
+            "Result_Measure": "value",
+            "Result_MeasureUnit": "unit",
+            "Result_SampleFraction": "fraction",
+            "Result_ResultDetectionCondition": "detection_condition",
+            "Result_MeasureQualifierCode": "qualifier",
+            "Result_CharacteristicGroup": "characteristic_group",
+            "LabInfo_Name": "lab_name",
+        }
+    ).copy()
+    priority = renamed["characteristic"].map(
+        lambda c: classify_parameter(characteristic=c, groups=groups)
+    )
     keep = priority.notna()
     tidy = renamed.loc[keep].assign(
         priority_group=priority[keep].to_numpy(),
         huc8=lambda d: d["monitoring_location_id"].map(huc8_by_station),
     )
-    tidy = tidy[SAMPLES_COLUMNS].sort_values(
-        ["monitoring_location_id", "characteristic", "datetime"]).reset_index(drop=True)
+    tidy = (
+        tidy[SAMPLES_COLUMNS]
+        .sort_values(["monitoring_location_id", "characteristic", "datetime"])
+        .reset_index(drop=True)
+    )
     return _warn_missing_huc8(tidy, "samples")

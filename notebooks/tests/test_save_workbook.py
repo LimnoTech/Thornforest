@@ -55,13 +55,19 @@ def test_save_workbook_strips_timezone_from_datetime_columns(tmp_path):
     import openpyxl
 
     sheets = {
-        "data": pd.DataFrame({
-            "id": ["a", "b"],
-            "datetime": pd.to_datetime(["2024-01-01 10:00", "2024-01-02 11:00"]).tz_localize("UTC"),
-        })
+        "data": pd.DataFrame(
+            {
+                "id": ["a", "b"],
+                "datetime": pd.to_datetime(["2024-01-01 10:00", "2024-01-02 11:00"]).tz_localize(
+                    "UTC"
+                ),
+            }
+        )
     }
     out = tmp_path / "book.xlsx"
-    save_workbook(sheets, out)  # must not raise ValueError: Excel does not support tz-aware datetimes
+    save_workbook(
+        sheets, out
+    )  # must not raise ValueError: Excel does not support tz-aware datetimes
 
     ws = openpyxl.load_workbook(out)["data"]
     rows = list(ws.iter_rows(values_only=True))
@@ -80,7 +86,9 @@ def test_save_workbook_strips_timezone_from_pyarrow_backed_datetime_columns(tmp_
     )
     sheets = {"data": pd.DataFrame({"id": ["a", "b"], "datetime": tz_aware_pyarrow})}
     out = tmp_path / "book.xlsx"
-    save_workbook(sheets, out)  # must not raise ValueError: Excel does not support tz-aware datetimes
+    save_workbook(
+        sheets, out
+    )  # must not raise ValueError: Excel does not support tz-aware datetimes
 
     ws = openpyxl.load_workbook(out)["data"]
     rows = list(ws.iter_rows(values_only=True))
@@ -109,11 +117,13 @@ def test_save_workbook_autofits_text_column_width_capped_at_20(tmp_path):
     import openpyxl
 
     sheets = {
-        "data": pd.DataFrame({
-            "short_text": ["ab", "cde"],  # longest value shorter than the header itself
-            "long_text": ["x" * 30, "y" * 5],  # longest value exceeds the 20-char cap
-            "num": [1, 2],  # not a text column -- width must be left alone
-        })
+        "data": pd.DataFrame(
+            {
+                "short_text": ["ab", "cde"],  # longest value shorter than the header itself
+                "long_text": ["x" * 30, "y" * 5],  # longest value exceeds the 20-char cap
+                "num": [1, 2],  # not a text column -- width must be left alone
+            }
+        )
     }
     out = tmp_path / "book.xlsx"
     save_workbook(sheets, out)

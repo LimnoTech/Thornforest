@@ -32,13 +32,23 @@ def mk_sen_trend(series) -> dict:
     s = np.asarray(series, dtype=float)
     s = s[~np.isnan(s)]
     if len(s) < 4:
-        return {"trend": "insufficient", "p": float("nan"),
-                "slope": float("nan"), "intercept": float("nan"), "n": int(len(s))}
+        return {
+            "trend": "insufficient",
+            "p": float("nan"),
+            "slope": float("nan"),
+            "intercept": float("nan"),
+            "n": int(len(s)),
+        }
     import pymannkendall as mk
 
     r = mk.original_test(s)
-    return {"trend": r.trend, "p": float(r.p), "slope": float(r.slope),
-            "intercept": float(r.intercept), "n": int(len(s))}
+    return {
+        "trend": r.trend,
+        "p": float(r.p),
+        "slope": float(r.slope),
+        "intercept": float(r.intercept),
+        "n": int(len(s)),
+    }
 
 
 def trend_by_group(

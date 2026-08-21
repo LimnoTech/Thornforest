@@ -27,9 +27,17 @@ CONUS404_ENDPOINT = "https://usgs.osn.mghpcc.org"
 # Monthly AC* values are MONTHLY accumulations (mm). SMOIS is 4-D (soil layers)
 # — the surface layer is taken as a representative state.
 CONUS404_VARS = [
-    "PREC_ACC_NC", "ACETLSM", "ACRUNSB", "ACRUNSF", "RECH",  # fluxes (mm/month)
-    "SMOIS", "SNOW", "CANWAT",                                # storage states
-    "T2", "TD2", "Q2",                                        # forcing
+    "PREC_ACC_NC",
+    "ACETLSM",
+    "ACRUNSB",
+    "ACRUNSF",
+    "RECH",  # fluxes (mm/month)
+    "SMOIS",
+    "SNOW",
+    "CANWAT",  # storage states
+    "T2",
+    "TD2",
+    "Q2",  # forcing
 ]
 
 
@@ -68,7 +76,8 @@ def conus404_monthly_grid(
         print(f"fetching CONUS404 monthly cube ({len(variables)} vars) from OSN…")
 
     ds = xr.open_zarr(
-        CONUS404_MONTHLY_ZARR, consolidated=True,
+        CONUS404_MONTHLY_ZARR,
+        consolidated=True,
         storage_options={"anon": True, "client_kwargs": {"endpoint_url": CONUS404_ENDPOINT}},
     )
     crs = pyproj.CRS.from_cf(ds["crs"].attrs)
@@ -101,12 +110,18 @@ def zonal_by_huc8(
     variables = list(variables) if variables is not None else CONUS404_VARS
     crs = pyproj.CRS.from_cf(grid_ds["crs"].attrs)
     ws = watersheds.to_crs(crs)
-    za = grid_ds[variables].xvec.zonal_stats(
-        ws.geometry, x_coords="x", y_coords="y", stats="mean", method="exactextract"
-    ).load()
-    za = (za.assign_coords(huc8=("geometry", ws["huc8"].values),
-                           name=("geometry", ws["name"].values))
-            .swap_dims({"geometry": "huc8"}).drop_vars("geometry"))
+    za = (
+        grid_ds[variables]
+        .xvec.zonal_stats(
+            ws.geometry, x_coords="x", y_coords="y", stats="mean", method="exactextract"
+        )
+        .load()
+    )
+    za = (
+        za.assign_coords(huc8=("geometry", ws["huc8"].values), name=("geometry", ws["name"].values))
+        .swap_dims({"geometry": "huc8"})
+        .drop_vars("geometry")
+    )
     df = za.to_dataframe().reset_index()
     df = df.drop(columns=[c for c in ("index_right", "spatial_ref") if c in df.columns])
     return df.rename(columns={"time": "date"}).sort_values(["huc8", "date"]).reset_index(drop=True)
@@ -124,10 +139,14 @@ def pixel_trend(annual_da: xr.DataArray, dim: str = "water_year") -> xr.Dataset:
         return np.array([r["slope"], r["p"]], dtype=float)
 
     out = xr.apply_ufunc(
-        _slope_p, annual_da,
-        input_core_dims=[[dim]], output_core_dims=[["stat"]],
-        exclude_dims={dim}, vectorize=True,
-        dask="parallelized", output_dtypes=[float],
+        _slope_p,
+        annual_da,
+        input_core_dims=[[dim]],
+        output_core_dims=[["stat"]],
+        exclude_dims={dim},
+        vectorize=True,
+        dask="parallelized",
+        output_dtypes=[float],
         dask_gufunc_kwargs={"output_sizes": {"stat": 2}},
     )
     out = out.assign_coords(stat=["slope", "p"])

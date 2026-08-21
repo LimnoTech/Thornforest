@@ -11,9 +11,20 @@ from .analysis import _warn_missing_huc8
 from .config import PRIORITY_GROUPS
 from .usgs import classify_parameter
 
-TCEQ_COLUMNS = ["monitoring_location_id", "datetime", "characteristic", "parameter_code",
-                "value", "unit", "fraction", "detection_condition", "qualifier", "lab_name",
-                "priority_group", "huc8"]
+TCEQ_COLUMNS = [
+    "monitoring_location_id",
+    "datetime",
+    "characteristic",
+    "parameter_code",
+    "value",
+    "unit",
+    "fraction",
+    "detection_condition",
+    "qualifier",
+    "lab_name",
+    "priority_group",
+    "huc8",
+]
 
 
 def fetch_wqp_results(bbox: list[float], organization: str = "TCEQMAIN") -> pd.DataFrame:
@@ -41,24 +52,31 @@ def tidy_wqp_results(
     group -> tag priority_group/huc8 -> select/sort. Pure; no network."""
     if raw.empty:
         return pd.DataFrame(columns=TCEQ_COLUMNS)
-    renamed = raw.rename(columns={
-        "MonitoringLocationIdentifier": "monitoring_location_id",
-        "ActivityStartDate": "datetime",
-        "CharacteristicName": "characteristic",
-        "USGSPCode": "parameter_code",
-        "ResultMeasureValue": "value",
-        "ResultMeasure/MeasureUnitCode": "unit",
-        "ResultSampleFractionText": "fraction",
-        "ResultDetectionConditionText": "detection_condition",
-        "MeasureQualifierCode": "qualifier",
-        "LaboratoryName": "lab_name",
-    })
-    priority = renamed["characteristic"].map(lambda c: classify_parameter(characteristic=c, groups=groups))
+    renamed = raw.rename(
+        columns={
+            "MonitoringLocationIdentifier": "monitoring_location_id",
+            "ActivityStartDate": "datetime",
+            "CharacteristicName": "characteristic",
+            "USGSPCode": "parameter_code",
+            "ResultMeasureValue": "value",
+            "ResultMeasure/MeasureUnitCode": "unit",
+            "ResultSampleFractionText": "fraction",
+            "ResultDetectionConditionText": "detection_condition",
+            "MeasureQualifierCode": "qualifier",
+            "LaboratoryName": "lab_name",
+        }
+    )
+    priority = renamed["characteristic"].map(
+        lambda c: classify_parameter(characteristic=c, groups=groups)
+    )
     keep = priority.notna()
     tidy = renamed.loc[keep].assign(
         priority_group=priority[keep].to_numpy(),
         huc8=lambda d: d["monitoring_location_id"].map(huc8_by_station),
     )
-    tidy = tidy[TCEQ_COLUMNS].sort_values(
-        ["monitoring_location_id", "characteristic", "datetime"]).reset_index(drop=True)
+    tidy = (
+        tidy[TCEQ_COLUMNS]
+        .sort_values(["monitoring_location_id", "characteristic", "datetime"])
+        .reset_index(drop=True)
+    )
     return _warn_missing_huc8(tidy, "TCEQ WQP")
