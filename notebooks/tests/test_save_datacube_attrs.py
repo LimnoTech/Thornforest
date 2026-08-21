@@ -13,7 +13,10 @@ def test_save_datacube_preserves_variable_attrs(tmp_path):
         {"PREC_ACC_NC": (("time", "y", "x"), np.ones((2, 2, 2)))},
         coords={"time": [0, 1], "y": [0, 1], "x": [0, 1]},
     )
-    ds["PREC_ACC_NC"].attrs = {"long_name": "ACCUMULATED TOTAL GRID SCALE PRECIPITATION", "units": "mm"}
+    ds["PREC_ACC_NC"].attrs = {
+        "long_name": "ACCUMULATED TOTAL GRID SCALE PRECIPITATION",
+        "units": "mm",
+    }
 
     out = save_datacube(ds, tmp_path / "cube.zarr")
 

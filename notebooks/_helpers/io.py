@@ -33,7 +33,9 @@ def save_dataframe(df: pd.DataFrame, parquet_path: Path | str) -> None:
     parquet_path = Path(parquet_path)
     parquet_path.parent.mkdir(parents=True, exist_ok=True)
     ordered.to_parquet(parquet_path, engine="pyarrow")
-    ordered.to_csv(parquet_path.with_suffix(".csv"), index=False)  # geometry -> WKT when GeoDataFrame
+    ordered.to_csv(
+        parquet_path.with_suffix(".csv"), index=False
+    )  # geometry -> WKT when GeoDataFrame
 
     try:
         shown = parquet_path.relative_to(find_repo_root())
@@ -42,7 +44,9 @@ def save_dataframe(df: pd.DataFrame, parquet_path: Path | str) -> None:
     print(f"saved {len(ordered)} rows → {shown} (+ .csv)")
 
 
-def load_dataframe(parquet_path: Path | str, max_age_days: float | None = None) -> pd.DataFrame | None:
+def load_dataframe(
+    parquet_path: Path | str, max_age_days: float | None = None
+) -> pd.DataFrame | None:
     """Load a (Geo)DataFrame previously written by `save_dataframe`, if present and (when
     `max_age_days` is given) still fresh — a lightweight "backup cache" for fetch calls
     (`dataretrieval`, ArcGIS, WQP) that bypass the HTTP request cache (`cache/aiohttp_cache.sqlite`)

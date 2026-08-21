@@ -47,7 +47,9 @@ def set_plot_defaults(width: int = PLOT_WIDTH) -> None:
 
 # --- Colors for *data* in figures (colorcet, NOT the LimnoTech brand) ----------
 
-CATEGORICAL = cc.b_glasbey_category10  # distinct, colorblind-aware categorical hex list (Bokeh hex strings)
+CATEGORICAL = (
+    cc.b_glasbey_category10
+)  # distinct, colorblind-aware categorical hex list (Bokeh hex strings)
 
 
 def categorical_colors(keys: Iterable, palette: list[str] = CATEGORICAL) -> dict:
@@ -58,6 +60,7 @@ def categorical_colors(keys: Iterable, palette: list[str] = CATEGORICAL) -> dict
 
 
 # --- GeoViews/Bokeh helpers ---------------------------------------------------
+
 
 def make_legend_clickable(plot, element) -> None:
     """Bokeh hook: clicking a legend entry hides/shows that layer (click_policy='hide')."""

@@ -37,14 +37,41 @@ WATER_QUALITY_MEMBERS = [
     "GWDBDownload/WaterQualityCombination.txt",
     "GWDBDownload/WaterQualityOtherUnassigned.txt",
 ]
-WATER_LEVEL_USECOLS = ["StateWellNumber", "MeasurementDate", "DepthFromLSD", "WaterElevation", "MeasuringAgency"]
-WATER_QUALITY_USECOLS = ["StateWellNumber", "SampleDate", "ParameterCode", "ParameterDescription",
-                         "ParameterUnitOfMeasure", "ParameterValue"]
+WATER_LEVEL_USECOLS = [
+    "StateWellNumber",
+    "MeasurementDate",
+    "DepthFromLSD",
+    "WaterElevation",
+    "MeasuringAgency",
+]
+WATER_QUALITY_USECOLS = [
+    "StateWellNumber",
+    "SampleDate",
+    "ParameterCode",
+    "ParameterDescription",
+    "ParameterUnitOfMeasure",
+    "ParameterValue",
+]
 
-GWDB_COLUMNS_LEVELS = ["monitoring_location_id", "datetime", "depth_from_lsd_ft", "water_elevation_ft",
-                      "measuring_agency", "priority_group", "huc8"]
-GWDB_COLUMNS_QUALITY = ["monitoring_location_id", "datetime", "parameter_code", "parameter_description",
-                       "value", "unit", "priority_group", "huc8"]
+GWDB_COLUMNS_LEVELS = [
+    "monitoring_location_id",
+    "datetime",
+    "depth_from_lsd_ft",
+    "water_elevation_ft",
+    "measuring_agency",
+    "priority_group",
+    "huc8",
+]
+GWDB_COLUMNS_QUALITY = [
+    "monitoring_location_id",
+    "datetime",
+    "parameter_code",
+    "parameter_description",
+    "value",
+    "unit",
+    "priority_group",
+    "huc8",
+]
 
 
 def fetch_gwdb_wells(bbox: list[float]) -> gpd.GeoDataFrame:
@@ -127,19 +154,24 @@ def tidy_gwdb_water_levels(raw: pd.DataFrame, huc8_by_well: dict[str, str]) -> p
     file has no other analyte) + huc8 -> select/sort. Pure; no network."""
     if raw.empty:
         return pd.DataFrame(columns=GWDB_COLUMNS_LEVELS)
-    renamed = raw.rename(columns={
-        "StateWellNumber": "monitoring_location_id",
-        "MeasurementDate": "datetime",
-        "DepthFromLSD": "depth_from_lsd_ft",
-        "WaterElevation": "water_elevation_ft",
-        "MeasuringAgency": "measuring_agency",
-    })
+    renamed = raw.rename(
+        columns={
+            "StateWellNumber": "monitoring_location_id",
+            "MeasurementDate": "datetime",
+            "DepthFromLSD": "depth_from_lsd_ft",
+            "WaterElevation": "water_elevation_ft",
+            "MeasuringAgency": "measuring_agency",
+        }
+    )
     tidy = renamed.assign(
         priority_group="water_level",
         huc8=lambda d: d["monitoring_location_id"].map(huc8_by_well),
     )
-    tidy = tidy[GWDB_COLUMNS_LEVELS].sort_values(
-        ["monitoring_location_id", "datetime"]).reset_index(drop=True)
+    tidy = (
+        tidy[GWDB_COLUMNS_LEVELS]
+        .sort_values(["monitoring_location_id", "datetime"])
+        .reset_index(drop=True)
+    )
     return _warn_missing_huc8(tidy, "GWDB water levels")
 
 
@@ -153,20 +185,27 @@ def tidy_gwdb_water_quality(
     network."""
     if raw.empty:
         return pd.DataFrame(columns=GWDB_COLUMNS_QUALITY)
-    renamed = raw.rename(columns={
-        "StateWellNumber": "monitoring_location_id",
-        "SampleDate": "datetime",
-        "ParameterCode": "parameter_code",
-        "ParameterDescription": "parameter_description",
-        "ParameterValue": "value",
-        "ParameterUnitOfMeasure": "unit",
-    })
-    priority = renamed["parameter_code"].map(lambda c: classify_parameter(parameter_code=c, groups=groups))
+    renamed = raw.rename(
+        columns={
+            "StateWellNumber": "monitoring_location_id",
+            "SampleDate": "datetime",
+            "ParameterCode": "parameter_code",
+            "ParameterDescription": "parameter_description",
+            "ParameterValue": "value",
+            "ParameterUnitOfMeasure": "unit",
+        }
+    )
+    priority = renamed["parameter_code"].map(
+        lambda c: classify_parameter(parameter_code=c, groups=groups)
+    )
     keep = priority.notna()
     tidy = renamed.loc[keep].assign(
         priority_group=priority[keep].to_numpy(),
         huc8=lambda d: d["monitoring_location_id"].map(huc8_by_well),
     )
-    tidy = tidy[GWDB_COLUMNS_QUALITY].sort_values(
-        ["monitoring_location_id", "parameter_code", "datetime"]).reset_index(drop=True)
+    tidy = (
+        tidy[GWDB_COLUMNS_QUALITY]
+        .sort_values(["monitoring_location_id", "parameter_code", "datetime"])
+        .reset_index(drop=True)
+    )
     return _warn_missing_huc8(tidy, "GWDB water quality")

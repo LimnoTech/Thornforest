@@ -6,7 +6,7 @@ from _helpers import classify_parameter
 
 
 def test_classify_by_parameter_code_zero_pads():
-    assert classify_parameter(parameter_code="60") == "discharge"      # 00060, zero-padded
+    assert classify_parameter(parameter_code="60") == "discharge"  # 00060, zero-padded
     assert classify_parameter(parameter_code="00010") == "temperature"
 
 
@@ -35,5 +35,5 @@ def test_widened_oxygen_and_temperature_match_tceq_naming():
 
 
 def test_twdb_parameter_codes_classify():
-    assert classify_parameter(parameter_code="00403") == "pH"        # TWDB lab pH
+    assert classify_parameter(parameter_code="00403") == "pH"  # TWDB lab pH
     assert classify_parameter(parameter_code="82079") == "turbidity"  # TWDB lab turbidity

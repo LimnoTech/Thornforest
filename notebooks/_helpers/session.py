@@ -24,9 +24,11 @@ def find_repo_root(marker: str = "pyproject.toml", start: Path | None = None) ->
 
 # --- Session setup (shared by every notebook) ---------------------------------
 
+
 @dataclass(frozen=True)
 class Session:
     """Resolved per-notebook configuration returned by init_session()."""
+
     repo_root: Path
     data_dir: Path
     cache_file: str
@@ -49,9 +51,7 @@ def init_session(cache_expire_seconds: int = 7 * 24 * 3600) -> Session:
     os.environ.setdefault("HYRIVER_CACHE_NAME", cache_file)
     os.environ.setdefault("HYRIVER_CACHE_EXPIRE", str(cache_expire_seconds))
     print(
-        "USGS API key loaded."
-        if api_key
-        else "No API key — using anonymous (lower) rate limits."
+        "USGS API key loaded." if api_key else "No API key — using anonymous (lower) rate limits."
     )
     set_plot_defaults()
     return Session(
