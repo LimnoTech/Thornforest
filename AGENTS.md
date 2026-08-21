@@ -99,14 +99,11 @@ above.
 ## Dependencies
 
 `pyproject.toml` holds the pixi workspace, the dependency list, the tasks, and the pytest and
-ruff config. **This repo is not an installable package** — there is no `[project]` table, no
-build backend, and no `src/` layout. Dependencies are a single conda list in
-`[tool.pixi.dependencies]` (plus a small `[tool.pixi.pypi-dependencies]`), so there is no
-PyPI-vs-conda dual declaration to keep in step.
-
-*Sibling repos differ here: `data-engine` is a real installable package and declares every
-dependency twice, guarded by a parity test. If helpers from this repo are ever lifted into a
-shared package, that is the model to follow.*
+ruff config. **This repo is deliberately not an installable package** — there is no `[project]`
+table, no build backend, and no `src/` layout. It is a client deliverable published as a
+website, not a library anyone installs, so dependencies are a single conda list in
+`[tool.pixi.dependencies]` (plus a small `[tool.pixi.pypi-dependencies]` for what conda-forge
+lacks). One list, nothing to keep in step.
 
 **`pixi.lock` is generated.** Never hand-edit it; expect large diffs from any dependency change.
 
