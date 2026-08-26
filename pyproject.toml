@@ -39,6 +39,7 @@ pymannkendall = ">=1.4.3,<2"
 fsspec = "*"
 python-dotenv = ">=1.2.2,<2"
 s3fs = "*"
+sqlite = ">=3.38"                # see AGENTS.md; proj/libspatialite leave it unbounded
 universal_pathlib = "*"
 
 # USGS packages for data fetching

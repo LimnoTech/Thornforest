@@ -339,3 +339,14 @@ the whole area, since it's gridded model output rather than US-only gauges.)
 - **Never judge a command's success through a pipe.** `cmd | tail -N` reports `tail`'s exit code,
   not `cmd`'s, so a real crash looks clean. Redirect to a file and `echo "EXIT=$?"` on the next
   line into that same file.
+
+### Inherited from sibling repos — applied preventively here
+
+- **`proj` and `libspatialite` require `sqlite` with no version bound**, and a constrained solve can
+  satisfy that with `sqlite 3.32.3` — a 2020 `.tar.bz2` predating conda-forge's `libsqlite`/`sqlite`
+  split, which ships its own `lib/libsqlite3.so.0` and clobbers the modern `libsqlite`. `libgdal`
+  then fails at import with `undefined symbol: sqlite3_error_offset` (added in SQLite 3.38). This
+  broke `stream-design`'s linux-64 CI leg; it has not bitten this repo, but the same unbounded
+  requirement is present here, so `pyproject.toml` carries the same preventive
+  `sqlite = ">=3.38"` floor. **Don't remove it because "nothing imports sqlite":** it is a
+  system-library constraint, not a Python dependency.
