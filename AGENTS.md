@@ -93,8 +93,10 @@ When starting a superpowers spec/plan cycle, also run the **`fewer-permission-pr
 keep [`.claude/settings.json`](.claude/settings.json) `permissions.allow` current — the
 plan/execute loop runs the same dev tools repeatedly, so allowlisting them up front avoids
 stopping to approve each call. Never allowlist mutating or publishing commands
-(`git commit`/`push`/`merge`, `rm`, `pixi add|install`) — those stay manual per the guardrails
-above.
+(`git commit`/`push`/`merge`, `rm`, `pixi add|install`) — they must not run unprompted.
+**"Do not allowlist" is not "do not run".** Only `git commit`, `git merge`, and `git push` are
+forbidden outright; the agent may run `pixi install` when the work needs it, with the usual
+approval.
 
 ## Dependencies
 
@@ -316,6 +318,50 @@ waterways. Until decided, the stream network is omitted. (CONUS404 climate in NB
 the whole area, since it's gridded model output rather than US-only gauges.)
 
 ## Gotchas
+
+### Learned in `stream-design` — will apply here once code lands in `src/`
+
+These cost real time in the sibling repo. **None is applied here yet**, deliberately: this repo's
+`src/` is not yet populated, so ruff and pyrefly have little to check and a sweep would be
+premature. Read them before the first lint or typing round rather than rediscovering them.
+
+- **Run `ruff check --fix` BEFORE `ruff format`, never after.** The `B010` autofix rewrites
+  `setattr(obj, "name", value)` into `obj.name = value`, producing over-long lines a prior format
+  pass cannot have cleaned up. Measured on the same code: fix-then-format left **11** residual
+  errors, format-then-fix left **19**.
+- **Two ruff rules fight over "access an attribute for its side effect".** `B018` rejects the bare
+  expression `obj.attr`; `B009`'s autofix rewrites `getattr(obj, "attr")` straight back into
+  `obj.attr`, re-triggering `B018`. `_ = obj.attr` satisfies both and survives `--fix`.
+- **A long one-line docstring cannot be split with parenthesized string concatenation.** A
+  parenthesized string is no longer a docstring, so `ruff format` collapses it back onto one line
+  and the `E501` returns. Use a multi-line triple-quoted docstring.
+- **Eager re-exports in `__init__.py` make every optional dependency mandatory.** If `__init__` does
+  `from .plotting import x` and `plotting` imports holoviews at module level, then `import <pkg>`
+  requires holoviews and `viz` cannot be a real extra. A PEP 562 `__getattr__` over a name→module
+  dict defers those imports. Keep `__all__` and an `if TYPE_CHECKING:` block in step with that dict
+  — IDEs and type checkers cannot see through `__getattr__` — and guard the property with a test
+  that runs in a **subprocess**, because an in-process check passes trivially once anything else in
+  the session has already imported the heavy module.
+- **conda's `matplotlib` metapackage pulls a GUI backend.** On `linux-64` that means `pyside6`,
+  `qt6-main`, and the GL/X/Wayland stack — dozens of packages in an environment that never opens a
+  window. Declare `matplotlib-base` in the pixi feature; PyPI has no such name, so
+  `[project.dependencies]` keeps `matplotlib` and the parity test maps the two. Do **not** reach for
+  `geopandas-base` by the same reasoning without first grepping for `GeoDataFrame.plot()` —
+  that one genuinely needs matplotlib.
+- **A whole-package reformat collides with any outstanding branch touching the same files; a pure
+  rename does not.** Git's rename detection reapplies an outstanding branch's edits at the new path
+  with no conflict, so even a 23-file package move merged cleanly. A reformat rewrites the very
+  lines that branch edited. The usual remedy — have every branch run the formatter first —
+  measured *worse*: the sweep also contained hand edits a plain `ruff format` cannot reproduce.
+  Measure before landing a reformat: `git merge-tree --write-tree --name-only <ours> <theirs>`. And
+  treat "no unmerged branches" as a snapshot, not a guarantee: one appeared mid-round in
+  `stream-design` and changed the decision.
+
+- **The shell here is zsh, where `$VAR:path` is a substitution modifier — and quoting alone does
+  not save you.** `git show "$REV:src/thing.py"` still fails with `bad substitution`, because zsh
+  reads the `:s` as the substitute modifier even inside double quotes. Brace the variable:
+  `git show "${REV}:src/thing.py"`. Unbraced, git errors and a `>` redirect silently truncates the
+  target file to zero bytes.
 
 ### Learned in this repo
 
